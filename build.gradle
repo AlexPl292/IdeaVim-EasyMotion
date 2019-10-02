@@ -14,9 +14,6 @@ repositories {
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     testCompile "junit:junit:4.12"
-
-    implementation project(":acejump")
-    implementation project(":IdeaVIM")
 }
 
 intellij {
