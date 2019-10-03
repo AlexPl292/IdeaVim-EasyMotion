@@ -2,17 +2,13 @@
 
 package org.jetbrains
 
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
-import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
 import org.acejump.view.Boundary
-import java.awt.Toolkit
 
 class AceExtension : VimNonDisposableExtension() {
     override fun getName(): String = "acejump"
@@ -34,38 +30,11 @@ class AceExtension : VimNonDisposableExtension() {
         putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
     }
 
-    private class BidirectionalMultiInput : VimExtensionHandler {
-        override fun execute(editor: Editor, context: DataContext) {
-            val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
-            val loop = systemQueue.createSecondaryLoop()
+    private class BidirectionalMultiInput : HandlerProcessor
 
-            Handler.addAceJumpListener(object : Handler.AceJumpListener {
-                override fun finished() {
-                    Handler.removeAceJumpListener(this)
-                    loop.exit()
-                }
-            })
-
-            Handler.activate()
-            loop.enter()
-        }
-    }
-
-    private class BidirectionalLine(val bounds: Boundary) : VimExtensionHandler {
-        override fun execute(editor: Editor, context: DataContext) {
-            val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
-            val loop = systemQueue.createSecondaryLoop()
-
-            Handler.addAceJumpListener(object : Handler.AceJumpListener {
-                override fun finished() {
-                    Handler.removeAceJumpListener(this)
-                    loop.exit()
-                }
-            })
-
-            Handler.activate()
+    private class BidirectionalLine(val bounds: Boundary) : HandlerProcessor {
+        override fun customization() {
             Handler.regexSearch(Pattern.CODE_INDENTS, bounds)
-            loop.enter()
         }
     }
 }
