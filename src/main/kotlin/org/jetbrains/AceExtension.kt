@@ -5,7 +5,6 @@ package org.jetbrains
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.command.MappingMode
-import com.maddyhome.idea.vim.extension.VimExtensionFacade.putExtensionHandlerMapping
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
@@ -20,15 +19,13 @@ class AceExtension : VimNonDisposableExtension() {
 
     private val prefix = "<Plug>(easymotion-prefix)"
 
-    private val sn = "<Plug>(easymotion-sn)"
-    private val bd_fn = "<Plug>(easymotion-bd-fn)"
-    private val bd_jk = "<Plug>(easymotion-bd-jk)"
-    private val j = "<Plug>(easymotion-j)"
+    private val sn by command()
+    private val j by command()
 
     override fun initOnce() {
         putAceMapping(sn, BidirectionalMultiInput())
-        putAceMapping(bd_fn, BidirectionalMultiInput())
-        putAceMapping(bd_jk, BidirectionalLine(Boundary.FULL_FILE_BOUNDARY))
+        putAceMapping(command("bd-fn"), BidirectionalMultiInput())
+        putAceMapping(command("bd-jk"), BidirectionalLine(Boundary.FULL_FILE_BOUNDARY))
         putAceMapping(j, BidirectionalLine(Boundary.AFTER_CARET_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(sn), true)
@@ -71,10 +68,6 @@ class AceExtension : VimNonDisposableExtension() {
             loop.enter()
         }
     }
-
-    private fun putAceMapping(keys: String, handler: VimExtensionHandler) {
-        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(keys), handler, false)
-    }
 }
 
 /*
@@ -97,7 +90,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-k) | <Leader>k
     <Plug>(easymotion-n) | <Leader>n
     <Plug>(easymotion-N) | <Leader>N
-    <Plug>(easymotion-s) | <Leader>s
+    <Plug>(easymotion-s) | <Leader>s      + mapped to sn
 
     More <Plug> Mapping Table         | (No assignment by default)
     ----------------------------------|---------------------------------
