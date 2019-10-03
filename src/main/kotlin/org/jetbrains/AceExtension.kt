@@ -14,23 +14,29 @@ import java.awt.Toolkit
 class AceExtension : VimNonDisposableExtension() {
     override fun getName(): String = "acejump"
 
-    override fun initOnce() {
-        putExtensionHandlerMapping(MappingMode.NO, parseKeys("<Plug>I"), Move(), false)
+    private val prefix = "<Plug>(easymotion-prefix)"
 
-        putKeyMapping(MappingMode.NO, parseKeys("I"), parseKeys("<Plug>I"), true)
+    private val sn = "<Plug>(easymotion-sn)"
+
+    override fun initOnce() {
+        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(sn), BidirectionalMultiInput(), false)
+
+        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(sn), true)
+
+        putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
     }
 
-    private class Move : VimExtensionHandler {
+    private class BidirectionalMultiInput : VimExtensionHandler {
         override fun execute(editor: Editor, context: DataContext) {
             val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
             val loop = systemQueue.createSecondaryLoop()
-            val listener = object : Handler.AceJumpListener {
+
+            Handler.addAceJumpListener(object : Handler.AceJumpListener {
                 override fun finished() {
                     Handler.removeAceJumpListener(this)
                     loop.exit()
                 }
-            }
-            Handler.addAceJumpListener(listener)
+            })
 
             Handler.activate()
             loop.enter()
