@@ -12,6 +12,7 @@ import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
+import org.acejump.view.Boundary
 import java.awt.Toolkit
 
 class AceExtension : VimNonDisposableExtension() {
@@ -22,13 +23,16 @@ class AceExtension : VimNonDisposableExtension() {
     private val sn = "<Plug>(easymotion-sn)"
     private val bd_fn = "<Plug>(easymotion-bd-fn)"
     private val bd_jk = "<Plug>(easymotion-bd-jk)"
+    private val j = "<Plug>(easymotion-j)"
 
     override fun initOnce() {
-        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(sn), BidirectionalMultiInput(), false)
-        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(bd_fn), BidirectionalMultiInput(), false)
-        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(bd_jk), BidirectionalLine(), false)
+        putAceMapping(sn, BidirectionalMultiInput())
+        putAceMapping(bd_fn, BidirectionalMultiInput())
+        putAceMapping(bd_jk, BidirectionalLine(Boundary.FULL_FILE_BOUNDARY))
+        putAceMapping(j, BidirectionalLine(Boundary.AFTER_CARET_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(sn), true)
+        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}j"), parseKeys(j), true)
 
         putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
     }
@@ -50,7 +54,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BidirectionalLine : VimExtensionHandler {
+    private class BidirectionalLine(val bounds: Boundary) : VimExtensionHandler {
         override fun execute(editor: Editor, context: DataContext) {
             val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
             val loop = systemQueue.createSecondaryLoop()
@@ -63,9 +67,13 @@ class AceExtension : VimNonDisposableExtension() {
             })
 
             Handler.activate()
-            Handler.regexSearch(Pattern.CODE_INDENTS)
+            Handler.regexSearch(Pattern.CODE_INDENTS, bounds)
             loop.enter()
         }
+    }
+
+    private fun putAceMapping(keys: String, handler: VimExtensionHandler) {
+        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(keys), handler, false)
     }
 }
 
@@ -85,7 +93,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-E) | <Leader>E
     <Plug>(easymotion-ge)| <Leader>ge
     <Plug>(easymotion-gE)| <Leader>gE
-    <Plug>(easymotion-j) | <Leader>j
+    <Plug>(easymotion-j) | <Leader>j      +
     <Plug>(easymotion-k) | <Leader>k
     <Plug>(easymotion-n) | <Leader>n
     <Plug>(easymotion-N) | <Leader>N
