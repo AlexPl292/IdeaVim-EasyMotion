@@ -15,16 +15,17 @@ class AceExtension : VimNonDisposableExtension() {
 
     private val prefix = "<Plug>(easymotion-prefix)"
 
-    private val sn by command()
+    private val s by command()
     private val j by command()
 
     override fun initOnce() {
-        putAceMapping(sn, BidirectionalMultiInput())
+        putAceMapping(s, BidirectionalMultiInput())
+        putAceMapping(command("sn"), BidirectionalMultiInput())
         putAceMapping(command("bd-fn"), BidirectionalMultiInput())
         putAceMapping(command("bd-jk"), BidirectionalLine(Boundary.FULL_FILE_BOUNDARY))
         putAceMapping(j, BidirectionalLine(Boundary.AFTER_CARET_BOUNDARY))
 
-        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(sn), true)
+        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(s), true)
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}j"), parseKeys(j), true)
 
         putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
