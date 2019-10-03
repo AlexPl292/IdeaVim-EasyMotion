@@ -3,6 +3,7 @@ package org.jetbrains
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.util.ui.UIUtil
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import org.acejump.control.Handler
 import java.awt.Toolkit
@@ -40,12 +41,17 @@ class StandardHandler(private val processor: HandlerProcessor) : VimExtensionHan
 }
 
 object TestProcessor {
+    var handlerWasCalled = false
+
     var handler: (processor: HandlerProcessor, editor: Editor, context: DataContext) -> Unit = { _, _, _ -> }
 
     class TestHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
         override fun execute(editor: Editor, context: DataContext) {
+            handlerWasCalled = true
             Handler.activate()
+            UIUtil.dispatchAllInvocationEvents()
             processor.customization()
+            UIUtil.dispatchAllInvocationEvents()
             handler(processor, editor, context)
             processor.onFinish()
         }
