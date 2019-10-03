@@ -11,6 +11,7 @@ import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
+import org.acejump.label.Pattern
 import java.awt.Toolkit
 
 class AceExtension : VimNonDisposableExtension() {
@@ -20,10 +21,12 @@ class AceExtension : VimNonDisposableExtension() {
 
     private val sn = "<Plug>(easymotion-sn)"
     private val bd_fn = "<Plug>(easymotion-bd-fn)"
+    private val bd_jk = "<Plug>(easymotion-bd-jk)"
 
     override fun initOnce() {
         putExtensionHandlerMapping(MappingMode.NVO, parseKeys(sn), BidirectionalMultiInput(), false)
         putExtensionHandlerMapping(MappingMode.NVO, parseKeys(bd_fn), BidirectionalMultiInput(), false)
+        putExtensionHandlerMapping(MappingMode.NVO, parseKeys(bd_jk), BidirectionalLine(), false)
 
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(sn), true)
 
@@ -43,6 +46,24 @@ class AceExtension : VimNonDisposableExtension() {
             })
 
             Handler.activate()
+            loop.enter()
+        }
+    }
+
+    private class BidirectionalLine : VimExtensionHandler {
+        override fun execute(editor: Editor, context: DataContext) {
+            val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
+            val loop = systemQueue.createSecondaryLoop()
+
+            Handler.addAceJumpListener(object : Handler.AceJumpListener {
+                override fun finished() {
+                    Handler.removeAceJumpListener(this)
+                    loop.exit()
+                }
+            })
+
+            Handler.activate()
+            Handler.regexSearch(Pattern.CODE_INDENTS)
             loop.enter()
         }
     }
@@ -78,7 +99,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-W)           | See |<Plug>(easymotion-bd-W)|
     <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|
     <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|
-    <Plug>(easymotion-bd-jk)          | See |<Plug>(easymotion-bd-jk)|
+    <Plug>(easymotion-bd-jk)          | See |<Plug>(easymotion-bd-jk)|     +
     <Plug>(easymotion-bd-n)           | See |<Plug>(easymotion-bd-n)|
     <Plug>(easymotion-jumptoanywhere) | See |<Plug>(easymotion-jumptoanywhere)|
     <Plug>(easymotion-repeat)         | See |<Plug>(easymotion-repeat)|
