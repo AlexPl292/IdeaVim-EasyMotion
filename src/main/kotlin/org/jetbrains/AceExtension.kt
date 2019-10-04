@@ -8,41 +8,34 @@ import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
+import org.acejump.label.Pattern.*
 import org.acejump.view.Boundary
+import org.acejump.view.Boundary.*
 
 class AceExtension : VimNonDisposableExtension() {
     override fun getName(): String = "acejump"
 
-    private val prefix = "<Plug>(easymotion-prefix)"
-
-    private val s by command()
-    private val j by command()
-    private val k by command()
-    private val w by command()
-    private val b by command()
+    companion object {
+        const val prefix = "<Plug>(easymotion-prefix)"
+    }
 
     override fun initOnce() {
-        putAceMapping(s, BidirectionalMultiInput())
-        putAceMapping(command("s2"), BidirectionalMultiInput())
-        putAceMapping(command("sn"), BidirectionalMultiInput())
-        putAceMapping(command("bd-f2"), BidirectionalMultiInput())
-        putAceMapping(command("bd-fn"), BidirectionalMultiInput())
-        putAceMapping(command("bd-jk"), BidirectionalLine(Pattern.CODE_INDENTS, Boundary.FULL_FILE_BOUNDARY))
-        putAceMapping(j, BidirectionalLine(Pattern.CODE_INDENTS, Boundary.AFTER_CARET_BOUNDARY))
-        putAceMapping(k, BidirectionalLine(Pattern.CODE_INDENTS, Boundary.BEFORE_CARET_BOUNDARY))
-        putAceMapping(command("eol-j"), BidirectionalLine(Pattern.END_OF_LINE, Boundary.AFTER_CARET_BOUNDARY))
-        putAceMapping(command("eol-k"), BidirectionalLine(Pattern.END_OF_LINE, Boundary.BEFORE_CARET_BOUNDARY))
-        putAceMapping(command("sol-j"), BidirectionalLine(Pattern.START_OF_LINE, Boundary.AFTER_CARET_BOUNDARY))
-        putAceMapping(command("sol-k"), BidirectionalLine(Pattern.START_OF_LINE, Boundary.BEFORE_CARET_BOUNDARY))
-        putAceMapping(w, BidirectionalLine(Pattern.ALL_WORDS, Boundary.AFTER_CARET_BOUNDARY))
-        putAceMapping(b, BidirectionalLine(Pattern.ALL_WORDS, Boundary.BEFORE_CARET_BOUNDARY))
-        putAceMapping(command("bd-w"), BidirectionalLine(Pattern.ALL_WORDS, Boundary.SCREEN_BOUNDARY))
+        mapToFunctionAndProvideKeys("w", BidirectionalLine(ALL_WORDS, AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("k", BidirectionalLine(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("s", BidirectionalMultiInput())
 
-        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(s), true)
-        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}j"), parseKeys(j), true)
-        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}k"), parseKeys(k), true)
-        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}w"), parseKeys(w), true)
-        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}b"), parseKeys(b), true)
+        mapToFunction("s2", BidirectionalMultiInput())
+        mapToFunction("sn", BidirectionalMultiInput())
+        mapToFunction("bd-f2", BidirectionalMultiInput())
+        mapToFunction("bd-fn", BidirectionalMultiInput())
+        mapToFunction("bd-jk", BidirectionalLine(CODE_INDENTS, FULL_FILE_BOUNDARY))
+        mapToFunction("eol-j", BidirectionalLine(END_OF_LINE, AFTER_CARET_BOUNDARY))
+        mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
+        mapToFunction("sol-j", BidirectionalLine(START_OF_LINE, AFTER_CARET_BOUNDARY))
+        mapToFunction("sol-k", BidirectionalLine(START_OF_LINE, BEFORE_CARET_BOUNDARY))
+        mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
     }

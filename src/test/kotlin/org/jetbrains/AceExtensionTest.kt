@@ -1,7 +1,6 @@
 package org.jetbrains
 
 import com.intellij.ide.IdeEventQueue
-import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.fileTypes.PlainTextFileType
@@ -14,6 +13,7 @@ import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.TestInputModel
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
+import org.acejump.control.Handler
 import org.acejump.label.Tagger
 import java.awt.Dimension
 import javax.swing.JViewport
@@ -223,23 +223,24 @@ class AceExtensionTest : BasePlatformTestCase() {
     }
 
     private fun assertTestHandlerWasCalled() {
-        waitAndAssert { TestProcessor.handlerWasCalled }
+        waitAndAssert(message = "Command was not executed") { TestProcessor.handlerWasCalled }
     }
 
-    private inline fun waitAndAssert(timeInMillis: Int = 1000, condition: () -> Boolean) {
+    private inline fun waitAndAssert(timeInMillis: Int = 1000, message: String = "", condition: () -> Boolean) {
         val end = System.currentTimeMillis() + timeInMillis
         while (end > System.currentTimeMillis()) {
             Thread.sleep(10)
             IdeEventQueue.getInstance().flushQueue()
             if (condition()) return
         }
-        kotlin.test.fail()
+        kotlin.test.fail(message)
     }
 
     override fun tearDown() {
-        myFixture.performEditorAction(IdeActions.ACTION_EDITOR_ESCAPE)
+        Handler.reset()
         UIUtil.dispatchAllInvocationEvents()
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
+        TestProcessor.handlerWasCalled = false
         super.tearDown()
     }
 }

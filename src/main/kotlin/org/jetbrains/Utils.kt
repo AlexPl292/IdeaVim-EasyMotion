@@ -3,21 +3,25 @@ package org.jetbrains
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+import org.jetbrains.AceExtension.Companion.prefix
 
-
-fun putAceMapping(keys: String, handler: HandlerProcessor) {
+fun mapToFunction(keys: String, handler: HandlerProcessor) {
     VimExtensionFacade.putExtensionHandlerMapping(
         MappingMode.NVO,
-        StringHelper.parseKeys(keys),
+        StringHelper.parseKeys(command(keys)),
         makeHandler(handler),
         false
     )
 }
 
-fun command(keys: String) = "<Plug>(easymotion-$keys)"
-
-fun command() = object : ReadOnlyProperty<Any?, String> {
-    override fun getValue(thisRef: Any?, property: KProperty<*>): String = command(property.name.replace('_', '-'))
+fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
+    mapToFunction(keys, handler)
+    VimExtensionFacade.putKeyMapping(
+        MappingMode.NVO,
+        StringHelper.parseKeys("${prefix}$keys"),
+        StringHelper.parseKeys(command(keys)),
+        true
+    )
 }
+
+fun command(keys: String) = "<Plug>(easymotion-$keys)"
