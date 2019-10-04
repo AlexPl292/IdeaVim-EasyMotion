@@ -11,6 +11,7 @@ import org.acejump.label.Pattern
 import org.acejump.label.Pattern.*
 import org.acejump.view.Boundary
 import org.acejump.view.Boundary.*
+import org.acejump.view.Model
 
 class AceExtension : VimNonDisposableExtension() {
     override fun getName(): String = "acejump"
@@ -25,11 +26,14 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("k", BidirectionalLine(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("s", BidirectionalMultiInput())
+        mapToFunctionAndProvideKeys("f", ForwardMultiInput())
 
         mapToFunction("s2", BidirectionalMultiInput())
         mapToFunction("sn", BidirectionalMultiInput())
         mapToFunction("bd-f2", BidirectionalMultiInput())
         mapToFunction("bd-fn", BidirectionalMultiInput())
+        mapToFunction("fn", ForwardMultiInput())
+        mapToFunction("f2", ForwardMultiInput())
         mapToFunction("bd-jk", BidirectionalLine(CODE_INDENTS, FULL_FILE_BOUNDARY))
         mapToFunction("eol-j", BidirectionalLine(END_OF_LINE, AFTER_CARET_BOUNDARY))
         mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
@@ -47,13 +51,19 @@ class AceExtension : VimNonDisposableExtension() {
             Handler.regexSearch(pattern, bounds)
         }
     }
+
+    private class ForwardMultiInput : HandlerProcessor {
+        override fun customization() {
+            Model.boundaries = AFTER_CARET_BOUNDARY
+        }
+    }
 }
 
 /*
 
     <Plug> Mapping Table | Default
     ---------------------|----------------------------------------------
-    <Plug>(easymotion-f) | <Leader>f{char}
+    <Plug>(easymotion-f) | <Leader>f{char} +  mapped to fn
     <Plug>(easymotion-F) | <Leader>F{char}
     <Plug>(easymotion-t) | <Leader>t{char}
     <Plug>(easymotion-T) | <Leader>T{char}
@@ -120,7 +130,7 @@ class AceExtension : VimNonDisposableExtension() {
     Multi Input Find Motion           | See |easymotion-multi-input|
     ----------------------------------|---------------------------------
     <Plug>(easymotion-s2)             | See |<Plug>(easymotion-s2)|   +
-    <Plug>(easymotion-f2)             | See |<Plug>(easymotion-f2)|
+    <Plug>(easymotion-f2)             | See |<Plug>(easymotion-f2)|   +
     <Plug>(easymotion-F2)             | See |<Plug>(easymotion-F2)|
     <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|   +
     <Plug>(easymotion-t2)             | See |<Plug>(easymotion-t2)|
@@ -134,7 +144,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-Tl2)            | See |<Plug>(easymotion-Tl2)|
                                       |
     <Plug>(easymotion-sn)             | See |<Plug>(easymotion-sn)|   +
-    <Plug>(easymotion-fn)             | See |<Plug>(easymotion-fn)|
+    <Plug>(easymotion-fn)             | See |<Plug>(easymotion-fn)|   +
     <Plug>(easymotion-Fn)             | See |<Plug>(easymotion-Fn)|
     <Plug>(easymotion-bd-fn)          | See |<Plug>(easymotion-sn)|   +
     <Plug>(easymotion-tn)             | See |<Plug>(easymotion-tn)|

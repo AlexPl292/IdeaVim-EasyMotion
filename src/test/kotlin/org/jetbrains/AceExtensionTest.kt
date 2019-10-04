@@ -153,6 +153,17 @@ class AceExtensionTest : BasePlatformTestCase() {
             })
     }
 
+    fun `test forward mapping`() {
+        doTest(
+            command = parseKeysWithLeader("f"),
+            putCaretAtWord = "lavender",
+            searchQuery = "it",
+            test = { editorText, matches ->
+                assertEquals(1, matches.size)
+                assertEquals(editorText.lastIndexOf("it"), matches[0])
+            })
+    }
+
     private fun doTest(
         command: MutableList<KeyStroke>,
         editorText: String = text,
