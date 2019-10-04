@@ -8,6 +8,7 @@ import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import org.acejump.control.AceAction
 import org.acejump.control.Handler
+import org.acejump.label.Tagger
 import java.awt.Toolkit
 
 interface HandlerProcessor {
@@ -45,7 +46,7 @@ class StandardHandler(private val processor: HandlerProcessor) : VimExtensionHan
 object TestProcessor {
     var handlerWasCalled = false
 
-    var handler: (processor: HandlerProcessor, editor: Editor, context: DataContext) -> Unit = { _, _, _ -> }
+    var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
 
     class TestHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
         override fun execute(editor: Editor, context: DataContext) {
@@ -54,7 +55,7 @@ object TestProcessor {
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             processor.customization()
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-            handler(processor, editor, context)
+            handler(editor.document.text, Tagger.textMatches.sorted())
             processor.onFinish()
         }
     }

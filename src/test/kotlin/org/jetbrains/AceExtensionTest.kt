@@ -27,188 +27,146 @@ class AceExtensionTest : BasePlatformTestCase() {
     }
 
     fun `test bidirectional mapping`() {
-        val command = parseKeysWithLeader("s")
-        setupEditor()
-
-        TestProcessor.handler = { _, _, _ ->
-            search("found")
-            assertEquals(1, Tagger.textMatches.size)
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeysWithLeader("s"),
+            test = { _, _ ->
+                search("found")
+                assertEquals(1, Tagger.textMatches.size)
+            })
     }
 
     fun `test bidirectional line motion`() {
-        val command = parseKeys(command("bd-jk"))
-        val before = text.indentLineThatStartsWith("I found")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("all")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-            assertEquals(6, jumpLocations.size)
-            assertEquals(before.indexOf("I found"), jumpLocations[2])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeys(command("bd-jk")),
+            editorText = text.indentLineThatStartsWith("I found"),
+            putCaretAtWord = "all",
+            test = { editorText, jumpLocations ->
+                assertEquals(6, jumpLocations.size)
+                assertEquals(editorText.indexOf("I found"), jumpLocations[2])
+            })
     }
 
     fun `test forward line motion`() {
-        val command = parseKeysWithLeader("j")
-        val before = text.indentLineThatStartsWith("where")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("all")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            // It should probably be one less jump location because currently AceJump includes the current line
-            assertEquals(3, jumpLocations.size)
-            assertEquals(before.indexOf("where"), jumpLocations[1])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeysWithLeader("j"),
+            editorText = text.indentLineThatStartsWith("where"),
+            putCaretAtWord = "all",
+            test = { editorText, jumpLocations ->
+                // It should probably be one less jump location because currently AceJump includes the current line
+                assertEquals(3, jumpLocations.size)
+                assertEquals(editorText.indexOf("where"), jumpLocations[1])
+            })
     }
 
     fun `test backward line motion`() {
-        val command = parseKeysWithLeader("k")
-        val before = text.indentLineThatStartsWith("I found")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("lavender")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            // It should probably be one less jump location because currently AceJump includes the current line
-            assertEquals(4, jumpLocations.size)
-            assertEquals(before.indexOf("I found"), jumpLocations[2])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeysWithLeader("k"),
+            editorText = text.indentLineThatStartsWith("I found"),
+            putCaretAtWord = "lavender",
+            test = { editorText, jumpLocations ->
+                // It should probably be one less jump location because currently AceJump includes the current line
+                assertEquals(4, jumpLocations.size)
+                assertEquals(editorText.indexOf("I found"), jumpLocations[2])
+            })
     }
 
     fun `test backward line motion sol`() {
-        val command = parseKeys(command("sol-k"))
-        val before = text.indentLineThatStartsWith("I found")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("lavender")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            // It should probably be one less jump location because currently AceJump includes the current line
-            assertEquals(4, jumpLocations.size)
-            assertEquals(before.indexOf("I found") - 4, jumpLocations[2])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeys(command("sol-k")),
+            editorText = text.indentLineThatStartsWith("I found"),
+            putCaretAtWord = "lavender",
+            test = { editorText, jumpLocations ->
+                // It should probably be one less jump location because currently AceJump includes the current line
+                assertEquals(4, jumpLocations.size)
+                assertEquals(editorText.indexOf("I found") - 4, jumpLocations[2])
+            })
     }
 
     fun `test backward line motion eol`() {
-        val command = parseKeys(command("eol-k"))
-        val before = text.indentLineThatStartsWith("I found")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("lavender")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            // It should probably be one less jump location because currently AceJump includes the current line
-            assertEquals(3, jumpLocations.size)
-            assertEquals(before.indexOf("land") + 4, jumpLocations[2])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeys(command("eol-k")),
+            editorText = text.indentLineThatStartsWith("I found"),
+            putCaretAtWord = "lavender",
+            test = { editorText, jumpLocations ->
+                // It should probably be one less jump location because currently AceJump includes the current line
+                assertEquals(3, jumpLocations.size)
+                assertEquals(editorText.indexOf("land") + 4, jumpLocations[2])
+            })
     }
 
     fun `test forward line motion sol`() {
-        val command = parseKeys(command("sol-j"))
-        val before = text.indentLineThatStartsWith("where")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("lavender")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            // It should probably be one less jump location because currently AceJump includes the current line
-            assertEquals(2, jumpLocations.size)
-            assertEquals(before.indexOf("where") - 4, jumpLocations[0])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeys(command("sol-j")),
+            editorText = text.indentLineThatStartsWith("where"),
+            putCaretAtWord = "lavender",
+            test = { editorText, jumpLocations ->
+                // It should probably be one less jump location because currently AceJump includes the current line
+                assertEquals(2, jumpLocations.size)
+                assertEquals(editorText.indexOf("where") - 4, jumpLocations[0])
+            })
     }
 
     fun `test forward line motion eol`() {
-        val command = parseKeys(command("eol-j"))
-        val before = text.indentLineThatStartsWith("where")
-        setupEditor(before)
-        myFixture.editor.moveCaretBefore("lavender")
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            // Bug in AceJump. Should be 3
-            assertEquals(2, jumpLocations.size)
-            assertEquals(before.indexOf("sand") + 4, jumpLocations[1])
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeys(command("eol-j")),
+            editorText = text.indentLineThatStartsWith("where"),
+            putCaretAtWord = "lavender",
+            test = { editorText, jumpLocations ->
+                // Bug in AceJump. Should be 3
+                assertEquals(2, jumpLocations.size)
+                assertEquals(editorText.indexOf("sand") + 4, jumpLocations[1])
+            })
     }
 
     fun `test forward word motion`() {
-        val command = parseKeysWithLeader("w")
-        setupEditor()
-        myFixture.editor.moveCaretBefore("lavender", 2)
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            assertEquals(19, jumpLocations.size)
-            assertTrue(text.indexOf("settled") in jumpLocations)
-            assertTrue(text.indexOf("found") !in jumpLocations)
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeysWithLeader("w"),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            test = { _, jumpLocations ->
+                assertEquals(19, jumpLocations.size)
+                assertTrue(text.indexOf("settled") in jumpLocations)
+                assertTrue(text.indexOf("found") !in jumpLocations)
+            })
     }
 
     fun `test backward word motion`() {
-        val command = parseKeysWithLeader("b")
-        setupEditor()
-        myFixture.editor.moveCaretBefore("lavender", 2)
-
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            assertEquals(13, jumpLocations.size)
-            assertTrue(text.indexOf("settled") !in jumpLocations)
-            assertTrue(text.indexOf("found") in jumpLocations)
-        }
-
-        typeText(command)
-        assertTestHandlerWasCalled()
+        doTest(
+            command = parseKeysWithLeader("b"),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            test = { _, jumpLocations ->
+                assertEquals(13, jumpLocations.size)
+                assertTrue(text.indexOf("settled") !in jumpLocations)
+                assertTrue(text.indexOf("found") in jumpLocations)
+            })
     }
 
     fun `test both directions word motion`() {
-        val command = parseKeys(command("bd-w"))
-        setupEditor()
-        myFixture.editor.moveCaretBefore("lavender", 2)
+        doTest(
+            command = parseKeys(command("bd-w")),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            test = { _, jumpLocations ->
+                assertEquals(13 + 19, jumpLocations.size)
+                assertTrue(text.indexOf("settled") in jumpLocations)
+                assertTrue(text.indexOf("found") in jumpLocations)
+            })
+    }
 
-        TestProcessor.handler = { _, _, _ ->
-            val jumpLocations = Tagger.textMatches.sorted()
-
-            assertEquals(13 + 19, jumpLocations.size)
-            assertTrue(text.indexOf("settled") in jumpLocations)
-            assertTrue(text.indexOf("found") in jumpLocations)
+    private fun doTest(
+        command: MutableList<KeyStroke>,
+        editorText: String = text,
+        putCaretAtWord: String = "",
+        caretShift: Int = 0,
+        test: (String, List<Int>) -> Unit
+    ) {
+        setupEditor(editorText)
+        if (putCaretAtWord.isNotEmpty()) {
+            myFixture.editor.moveCaretBefore(putCaretAtWord, caretShift)
         }
+
+        TestProcessor.handler = test
 
         typeText(command)
         assertTestHandlerWasCalled()
@@ -260,7 +218,7 @@ class AceExtensionTest : BasePlatformTestCase() {
         myFixture.type(query).also { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
     }
 
-    private fun Editor.moveCaretBefore(str: String, addition: Int = 0) {
+    private fun Editor.moveCaretBefore(str: String, addition: Int) {
         this.caretModel.moveToOffset(this.document.text.indexOf(str) + addition)
     }
 
