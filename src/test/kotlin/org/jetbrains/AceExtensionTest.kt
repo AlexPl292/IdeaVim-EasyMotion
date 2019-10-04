@@ -3,6 +3,7 @@ package org.jetbrains
 import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -14,6 +15,8 @@ import com.maddyhome.idea.vim.helper.TestInputModel
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.label.Tagger
+import java.awt.Dimension
+import javax.swing.JViewport
 import javax.swing.KeyStroke
 
 class AceExtensionTest : BasePlatformTestCase() {
@@ -25,7 +28,7 @@ class AceExtensionTest : BasePlatformTestCase() {
 
     fun `test bidirectional mapping`() {
         val command = parseKeysWithLeader("s")
-        myFixture.configureByText(PlainTextFileType.INSTANCE, text)
+        setupEditor()
 
         TestProcessor.handler = { _, _, _ ->
             search("found")
@@ -38,8 +41,8 @@ class AceExtensionTest : BasePlatformTestCase() {
 
     fun `test bidirectional line motion`() {
         val command = parseKeys(command("bd-jk"))
-        val before = text.indentLine(2)
-        myFixture.configureByText(PlainTextFileType.INSTANCE, before)
+        val before = text.indentLineThatStartsWith("I found")
+        setupEditor(before)
         myFixture.editor.moveCaretBefore("all")
 
         TestProcessor.handler = { _, _, _ ->
@@ -52,6 +55,31 @@ class AceExtensionTest : BasePlatformTestCase() {
         assertTestHandlerWasCalled()
     }
 
+    fun `test forward line motion`() {
+        val command = parseKeysWithLeader("j")
+        val before = text.indentLineThatStartsWith("where")
+        setupEditor(before)
+        myFixture.editor.moveCaretBefore("all")
+
+        TestProcessor.handler = { _, _, _ ->
+            val jumpLocations = Tagger.textMatches.sorted()
+
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(3, jumpLocations.size)
+            assertEquals(before.indexOf("where"), jumpLocations[1])
+        }
+
+        typeText(command)
+        assertTestHandlerWasCalled()
+    }
+
+    private fun setupEditor(before: String = text) {
+        myFixture.configureByText(PlainTextFileType.INSTANCE, before)
+        val viewPort = JViewport()
+        viewPort.size = Dimension(0, 10 * myFixture.editor.lineHeight)
+        (myFixture.editor as EditorImpl).scrollPane.viewport = viewPort
+    }
+
     private val text: String =
         """
                 A Discovery
@@ -62,11 +90,11 @@ class AceExtensionTest : BasePlatformTestCase() {
                 hard by the torrent of a mountain pass.
         """.trimIndent()
 
-    private fun String.indentLine(i: Int): String {
-        val index = ordinalIndexOf("\n", i)
+    private fun String.indentLineThatStartsWith(str: String): String {
+        val index = this.indexOf(str)
         if (index < 0) throw RuntimeException("Wrong line number")
 
-        return this.take(index + 1) + " ".repeat(4) + this.substring(index + 1)
+        return this.take(index) + " ".repeat(4) + this.substring(index)
     }
 
 
@@ -108,15 +136,6 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
         kotlin.test.fail()
     }
-
-    private fun String.ordinalIndexOf(substr: String, n: Int): Int {
-        var counter = n
-        var pos = indexOf(substr)
-        while (--counter > 0 && pos != -1)
-            pos = indexOf(substr, pos + 1)
-        return pos
-    }
-
 
     override fun tearDown() {
         myFixture.performEditorAction(IdeActions.ACTION_EDITOR_ESCAPE)
