@@ -47,6 +47,7 @@ object TestProcessor {
     var handlerWasCalled = false
 
     var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
+    var inputQuery: () -> Unit = {}
 
     class TestHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
         override fun execute(editor: Editor, context: DataContext) {
@@ -55,6 +56,8 @@ object TestProcessor {
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             processor.customization()
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+            inputQuery()
+            PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
             handler(editor.document.text, Tagger.textMatches.sorted())
             processor.onFinish()
         }

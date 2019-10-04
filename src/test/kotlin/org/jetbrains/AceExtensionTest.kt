@@ -14,7 +14,6 @@ import com.maddyhome.idea.vim.helper.TestInputModel
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
-import org.acejump.label.Tagger
 import java.awt.Dimension
 import javax.swing.JViewport
 import javax.swing.KeyStroke
@@ -29,9 +28,9 @@ class AceExtensionTest : BasePlatformTestCase() {
     fun `test bidirectional mapping`() {
         doTest(
             command = parseKeysWithLeader("s"),
-            test = { _, _ ->
-                search("found")
-                assertEquals(1, Tagger.textMatches.size)
+            searchQuery = "found",
+            test = { _, matches ->
+                assertEquals(1, matches.size)
             })
     }
 
@@ -157,6 +156,7 @@ class AceExtensionTest : BasePlatformTestCase() {
     private fun doTest(
         command: MutableList<KeyStroke>,
         editorText: String = text,
+        searchQuery: String? = null,
         putCaretAtWord: String = "",
         caretShift: Int = 0,
         test: (String, List<Int>) -> Unit
@@ -166,7 +166,11 @@ class AceExtensionTest : BasePlatformTestCase() {
             myFixture.editor.moveCaretBefore(putCaretAtWord, caretShift)
         }
 
-        TestProcessor.handler = test
+        TestProcessor.inputQuery = { searchQuery?.let { myFixture.type(it) } }
+
+        TestProcessor.handler = { str, offsets ->
+            test(str, offsets)
+        }
 
         typeText(command)
         assertTestHandlerWasCalled()
@@ -212,10 +216,6 @@ class AceExtensionTest : BasePlatformTestCase() {
             key = inputModel.nextKeyStroke()
         }
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-    }
-
-    private fun search(query: String) {
-        myFixture.type(query).also { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
     }
 
     private fun Editor.moveCaretBefore(str: String, addition: Int) {
