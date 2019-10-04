@@ -23,9 +23,13 @@ class AceExtension : VimNonDisposableExtension() {
         putAceMapping(s, BidirectionalMultiInput())
         putAceMapping(command("sn"), BidirectionalMultiInput())
         putAceMapping(command("bd-fn"), BidirectionalMultiInput())
-        putAceMapping(command("bd-jk"), BidirectionalLine(Boundary.FULL_FILE_BOUNDARY))
-        putAceMapping(j, BidirectionalLine(Boundary.AFTER_CARET_BOUNDARY))
-        putAceMapping(k, BidirectionalLine(Boundary.BEFORE_CARET_BOUNDARY))
+        putAceMapping(command("bd-jk"), BidirectionalLine(Pattern.CODE_INDENTS, Boundary.FULL_FILE_BOUNDARY))
+        putAceMapping(j, BidirectionalLine(Pattern.CODE_INDENTS, Boundary.AFTER_CARET_BOUNDARY))
+        putAceMapping(k, BidirectionalLine(Pattern.CODE_INDENTS, Boundary.BEFORE_CARET_BOUNDARY))
+        putAceMapping(command("eol-j"), BidirectionalLine(Pattern.END_OF_LINE, Boundary.AFTER_CARET_BOUNDARY))
+        putAceMapping(command("eol-k"), BidirectionalLine(Pattern.END_OF_LINE, Boundary.BEFORE_CARET_BOUNDARY))
+        putAceMapping(command("sol-j"), BidirectionalLine(Pattern.START_OF_LINE, Boundary.AFTER_CARET_BOUNDARY))
+        putAceMapping(command("sol-k"), BidirectionalLine(Pattern.START_OF_LINE, Boundary.BEFORE_CARET_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(s), true)
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}j"), parseKeys(j), true)
@@ -36,9 +40,9 @@ class AceExtension : VimNonDisposableExtension() {
 
     private class BidirectionalMultiInput : HandlerProcessor
 
-    private class BidirectionalLine(val bounds: Boundary) : HandlerProcessor {
+    private class BidirectionalLine(val pattern: Pattern, val bounds: Boundary) : HandlerProcessor {
         override fun customization() {
-            Handler.regexSearch(Pattern.CODE_INDENTS, bounds)
+            Handler.regexSearch(pattern, bounds)
         }
     }
 }
@@ -79,10 +83,10 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-repeat)         | See |<Plug>(easymotion-repeat)|
     <Plug>(easymotion-next)           | See |<Plug>(easymotion-next)|
     <Plug>(easymotion-prev)           | See |<Plug>(easymotion-prev)|
-    <Plug>(easymotion-sol-j)          | See |<Plug>(easymotion-sol-j)|
-    <Plug>(easymotion-sol-k)          | See |<Plug>(easymotion-sol-k)|
-    <Plug>(easymotion-eol-j)          | See |<Plug>(easymotion-eol-j)|
-    <Plug>(easymotion-eol-k)          | See |<Plug>(easymotion-eol-k)|
+    <Plug>(easymotion-sol-j)          | See |<Plug>(easymotion-sol-j)|     +
+    <Plug>(easymotion-sol-k)          | See |<Plug>(easymotion-sol-k)|     +
+    <Plug>(easymotion-eol-j)          | See |<Plug>(easymotion-eol-j)|     +
+    <Plug>(easymotion-eol-k)          | See |<Plug>(easymotion-eol-k)|     +
     <Plug>(easymotion-iskeyword-w)    | See |<Plug>(easymotion-iskeyword-w)|
     <Plug>(easymotion-iskeyword-b)    | See |<Plug>(easymotion-iskeyword-b)|
     <Plug>(easymotion-iskeyword-bd-w) | See |<Plug>(easymotion-iskeyword-bd-w)|
