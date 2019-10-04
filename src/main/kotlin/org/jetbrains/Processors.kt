@@ -3,8 +3,10 @@ package org.jetbrains
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.util.ui.UIUtil
+import com.intellij.testFramework.PlatformTestUtil
+import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
+import org.acejump.control.AceAction
 import org.acejump.control.Handler
 import java.awt.Toolkit
 
@@ -34,7 +36,7 @@ class StandardHandler(private val processor: HandlerProcessor) : VimExtensionHan
             }
         })
 
-        Handler.activate()
+        KeyHandler.executeAction(AceAction(), context)
         processor.customization()
         loop.enter()
     }
@@ -48,10 +50,10 @@ object TestProcessor {
     class TestHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
         override fun execute(editor: Editor, context: DataContext) {
             handlerWasCalled = true
-            Handler.activate()
-            UIUtil.dispatchAllInvocationEvents()
+            KeyHandler.executeAction(AceAction(), context)
+            PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             processor.customization()
-            UIUtil.dispatchAllInvocationEvents()
+            PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             handler(processor, editor, context)
             processor.onFinish()
         }

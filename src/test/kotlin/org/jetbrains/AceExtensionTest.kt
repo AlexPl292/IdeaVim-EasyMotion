@@ -1,8 +1,10 @@
 package org.jetbrains
 
 import com.intellij.ide.IdeEventQueue
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 import com.maddyhome.idea.vim.KeyHandler
@@ -23,15 +25,7 @@ class AceExtensionTest : BasePlatformTestCase() {
 
     fun `test bidirectional mapping`() {
         val command = parseKeysWithLeader("s")
-        val before = """
-                A Discovery
-
-                I found it in a legendary land
-                all rocks and lavender and tufted grass,
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        myFixture.configureByText(PlainTextFileType.INSTANCE, before)
+        myFixture.configureByText(PlainTextFileType.INSTANCE, text)
 
         TestProcessor.handler = { _, _, _ ->
             search("found")
@@ -44,14 +38,7 @@ class AceExtensionTest : BasePlatformTestCase() {
 
     fun `test bidirectional line motion`() {
         val command = parseKeys(command("bd-jk"))
-        val before = """
-                A Discovery
-
-                    I found it in a legendary land
-                all rocks and lavender and tufted grass,
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
+        val before = text.indentLine(2)
         myFixture.configureByText(PlainTextFileType.INSTANCE, before)
         myFixture.editor.moveCaretBefore("all")
 
@@ -64,6 +51,24 @@ class AceExtensionTest : BasePlatformTestCase() {
         typeText(command)
         assertTestHandlerWasCalled()
     }
+
+    private val text: String =
+        """
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and lavender and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent()
+
+    private fun String.indentLine(i: Int): String {
+        val index = ordinalIndexOf("\n", i)
+        if (index < 0) throw RuntimeException("Wrong line number")
+
+        return this.take(index + 1) + " ".repeat(4) + this.substring(index + 1)
+    }
+
 
     private fun parseKeysWithLeader(keys: String) = parseKeys("<leader><leader>$keys")
 
@@ -79,10 +84,11 @@ class AceExtensionTest : BasePlatformTestCase() {
             keyHandler.handleKey(editor, key, dataContext)
             key = inputModel.nextKeyStroke()
         }
+        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
 
     private fun search(query: String) {
-        myFixture.type(query).also { UIUtil.dispatchAllInvocationEvents() }
+        myFixture.type(query).also { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
     }
 
     private fun Editor.moveCaretBefore(str: String) {
@@ -101,6 +107,22 @@ class AceExtensionTest : BasePlatformTestCase() {
             if (condition()) return
         }
         kotlin.test.fail()
+    }
+
+    private fun String.ordinalIndexOf(substr: String, n: Int): Int {
+        var counter = n
+        var pos = indexOf(substr)
+        while (--counter > 0 && pos != -1)
+            pos = indexOf(substr, pos + 1)
+        return pos
+    }
+
+
+    override fun tearDown() {
+        myFixture.performEditorAction(IdeActions.ACTION_EDITOR_ESCAPE)
+        UIUtil.dispatchAllInvocationEvents()
+        assertEmpty(myFixture.editor.markupModel.allHighlighters)
+        super.tearDown()
     }
 }
 
