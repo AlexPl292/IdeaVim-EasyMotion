@@ -21,7 +21,9 @@ class AceExtension : VimNonDisposableExtension() {
 
     override fun initOnce() {
         putAceMapping(s, BidirectionalMultiInput())
+        putAceMapping(command("s2"), BidirectionalMultiInput())
         putAceMapping(command("sn"), BidirectionalMultiInput())
+        putAceMapping(command("bd-f2"), BidirectionalMultiInput())
         putAceMapping(command("bd-fn"), BidirectionalMultiInput())
         putAceMapping(command("bd-jk"), BidirectionalLine(Pattern.CODE_INDENTS, Boundary.FULL_FILE_BOUNDARY))
         putAceMapping(j, BidirectionalLine(Pattern.CODE_INDENTS, Boundary.AFTER_CARET_BOUNDARY))
@@ -117,10 +119,10 @@ class AceExtension : VimNonDisposableExtension() {
                                       |
     Multi Input Find Motion           | See |easymotion-multi-input|
     ----------------------------------|---------------------------------
-    <Plug>(easymotion-s2)             | See |<Plug>(easymotion-s2)|
+    <Plug>(easymotion-s2)             | See |<Plug>(easymotion-s2)|   +
     <Plug>(easymotion-f2)             | See |<Plug>(easymotion-f2)|
     <Plug>(easymotion-F2)             | See |<Plug>(easymotion-F2)|
-    <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|
+    <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|   +
     <Plug>(easymotion-t2)             | See |<Plug>(easymotion-t2)|
     <Plug>(easymotion-T2)             | See |<Plug>(easymotion-T2)|
     <Plug>(easymotion-bd-t2)          | See |<Plug>(easymotion-bd-t2)|
