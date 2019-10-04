@@ -17,6 +17,7 @@ class AceExtension : VimNonDisposableExtension() {
 
     private val s by command()
     private val j by command()
+    private val k by command()
 
     override fun initOnce() {
         putAceMapping(s, BidirectionalMultiInput())
@@ -24,9 +25,11 @@ class AceExtension : VimNonDisposableExtension() {
         putAceMapping(command("bd-fn"), BidirectionalMultiInput())
         putAceMapping(command("bd-jk"), BidirectionalLine(Boundary.FULL_FILE_BOUNDARY))
         putAceMapping(j, BidirectionalLine(Boundary.AFTER_CARET_BOUNDARY))
+        putAceMapping(k, BidirectionalLine(Boundary.BEFORE_CARET_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(s), true)
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}j"), parseKeys(j), true)
+        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}k"), parseKeys(k), true)
 
         putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
     }
@@ -57,7 +60,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-ge)| <Leader>ge
     <Plug>(easymotion-gE)| <Leader>gE
     <Plug>(easymotion-j) | <Leader>j      +
-    <Plug>(easymotion-k) | <Leader>k
+    <Plug>(easymotion-k) | <Leader>k      +
     <Plug>(easymotion-n) | <Leader>n
     <Plug>(easymotion-N) | <Leader>N
     <Plug>(easymotion-s) | <Leader>s      + mapped to sn

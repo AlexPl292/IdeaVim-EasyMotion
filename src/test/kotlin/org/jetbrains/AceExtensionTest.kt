@@ -73,6 +73,24 @@ class AceExtensionTest : BasePlatformTestCase() {
         assertTestHandlerWasCalled()
     }
 
+    fun `test backward line motion`() {
+        val command = parseKeysWithLeader("k")
+        val before = text.indentLineThatStartsWith("I found")
+        setupEditor(before)
+        myFixture.editor.moveCaretBefore("lavender")
+
+        TestProcessor.handler = { _, _, _ ->
+            val jumpLocations = Tagger.textMatches.sorted()
+
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(4, jumpLocations.size)
+            assertEquals(before.indexOf("I found"), jumpLocations[2])
+        }
+
+        typeText(command)
+        assertTestHandlerWasCalled()
+    }
+
     private fun setupEditor(before: String = text) {
         myFixture.configureByText(PlainTextFileType.INSTANCE, before)
         val viewPort = JViewport()
