@@ -18,6 +18,8 @@ class AceExtension : VimNonDisposableExtension() {
     private val s by command()
     private val j by command()
     private val k by command()
+    private val w by command()
+    private val b by command()
 
     override fun initOnce() {
         putAceMapping(s, BidirectionalMultiInput())
@@ -32,10 +34,15 @@ class AceExtension : VimNonDisposableExtension() {
         putAceMapping(command("eol-k"), BidirectionalLine(Pattern.END_OF_LINE, Boundary.BEFORE_CARET_BOUNDARY))
         putAceMapping(command("sol-j"), BidirectionalLine(Pattern.START_OF_LINE, Boundary.AFTER_CARET_BOUNDARY))
         putAceMapping(command("sol-k"), BidirectionalLine(Pattern.START_OF_LINE, Boundary.BEFORE_CARET_BOUNDARY))
+        putAceMapping(w, BidirectionalLine(Pattern.ALL_WORDS, Boundary.AFTER_CARET_BOUNDARY))
+        putAceMapping(b, BidirectionalLine(Pattern.ALL_WORDS, Boundary.BEFORE_CARET_BOUNDARY))
+        putAceMapping(command("bd-w"), BidirectionalLine(Pattern.ALL_WORDS, Boundary.SCREEN_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}s"), parseKeys(s), true)
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}j"), parseKeys(j), true)
         putKeyMapping(MappingMode.NVO, parseKeys("${prefix}k"), parseKeys(k), true)
+        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}w"), parseKeys(w), true)
+        putKeyMapping(MappingMode.NVO, parseKeys("${prefix}b"), parseKeys(b), true)
 
         putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
     }
@@ -57,9 +64,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-F) | <Leader>F{char}
     <Plug>(easymotion-t) | <Leader>t{char}
     <Plug>(easymotion-T) | <Leader>T{char}
-    <Plug>(easymotion-w) | <Leader>w
+    <Plug>(easymotion-w) | <Leader>w      +
     <Plug>(easymotion-W) | <Leader>W
-    <Plug>(easymotion-b) | <Leader>b
+    <Plug>(easymotion-b) | <Leader>b      +
     <Plug>(easymotion-B) | <Leader>B
     <Plug>(easymotion-e) | <Leader>e
     <Plug>(easymotion-E) | <Leader>E
@@ -75,7 +82,7 @@ class AceExtension : VimNonDisposableExtension() {
     ----------------------------------|---------------------------------
     <Plug>(easymotion-bd-f)           | See |<Plug>(easymotion-s)|
     <Plug>(easymotion-bd-t)           | See |<Plug>(easymotion-bd-t)|
-    <Plug>(easymotion-bd-w)           | See |<Plug>(easymotion-bd-w)|
+    <Plug>(easymotion-bd-w)           | See |<Plug>(easymotion-bd-w)|      +
     <Plug>(easymotion-bd-W)           | See |<Plug>(easymotion-bd-W)|
     <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|
     <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|

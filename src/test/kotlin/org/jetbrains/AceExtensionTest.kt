@@ -163,6 +163,57 @@ class AceExtensionTest : BasePlatformTestCase() {
         assertTestHandlerWasCalled()
     }
 
+    fun `test forward word motion`() {
+        val command = parseKeysWithLeader("w")
+        setupEditor()
+        myFixture.editor.moveCaretBefore("lavender", 2)
+
+        TestProcessor.handler = { _, _, _ ->
+            val jumpLocations = Tagger.textMatches.sorted()
+
+            assertEquals(19, jumpLocations.size)
+            assertTrue(text.indexOf("settled") in jumpLocations)
+            assertTrue(text.indexOf("found") !in jumpLocations)
+        }
+
+        typeText(command)
+        assertTestHandlerWasCalled()
+    }
+
+    fun `test backward word motion`() {
+        val command = parseKeysWithLeader("b")
+        setupEditor()
+        myFixture.editor.moveCaretBefore("lavender", 2)
+
+        TestProcessor.handler = { _, _, _ ->
+            val jumpLocations = Tagger.textMatches.sorted()
+
+            assertEquals(13, jumpLocations.size)
+            assertTrue(text.indexOf("settled") !in jumpLocations)
+            assertTrue(text.indexOf("found") in jumpLocations)
+        }
+
+        typeText(command)
+        assertTestHandlerWasCalled()
+    }
+
+    fun `test both directions word motion`() {
+        val command = parseKeys(command("bd-w"))
+        setupEditor()
+        myFixture.editor.moveCaretBefore("lavender", 2)
+
+        TestProcessor.handler = { _, _, _ ->
+            val jumpLocations = Tagger.textMatches.sorted()
+
+            assertEquals(13 + 19, jumpLocations.size)
+            assertTrue(text.indexOf("settled") in jumpLocations)
+            assertTrue(text.indexOf("found") in jumpLocations)
+        }
+
+        typeText(command)
+        assertTestHandlerWasCalled()
+    }
+
     private fun setupEditor(before: String = text) {
         myFixture.configureByText(PlainTextFileType.INSTANCE, before)
         val viewPort = JViewport()
@@ -209,8 +260,8 @@ class AceExtensionTest : BasePlatformTestCase() {
         myFixture.type(query).also { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
     }
 
-    private fun Editor.moveCaretBefore(str: String) {
-        this.caretModel.moveToOffset(this.document.text.indexOf(str))
+    private fun Editor.moveCaretBefore(str: String, addition: Int = 0) {
+        this.caretModel.moveToOffset(this.document.text.indexOf(str) + addition)
     }
 
     private fun assertTestHandlerWasCalled() {
