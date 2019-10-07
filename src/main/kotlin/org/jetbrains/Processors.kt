@@ -68,9 +68,9 @@ object TestProcessor {
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             inputQuery()
             PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-            handler(editor.document.text, Tagger.textMatches.sorted())
-
             finish(editor)
+
+            handler(editor.document.text, Tagger.textMatches.sorted())
         }
     }
 }

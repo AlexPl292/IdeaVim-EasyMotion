@@ -8,12 +8,18 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 import com.maddyhome.idea.vim.KeyHandler
+import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.CommandState
+import com.maddyhome.idea.vim.group.visual.VimVisualTimer
+import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorDataContext
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.TestInputModel
+import com.maddyhome.idea.vim.helper.mode
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
+import org.acejump.view.Canvas
 import org.jetbrains.AceExtension.Companion.defaultPrefix
 import java.awt.Dimension
 import javax.swing.JViewport
@@ -24,6 +30,24 @@ class AceExtensionTest : BasePlatformTestCase() {
     override fun setUp() {
         super.setUp()
         (OptionsManager.getOption("acejump") as ToggleOption).set()
+    }
+
+    fun `test save selection`() {
+        doTest(
+            command = parseKeysWithLeader("s"),
+            searchQuery = "found",
+            jumpToQuery = true,
+            afterEditorSetup = {
+                VimPlugin.getVisualMotion().enterVisualMode(it)
+                it.caretModel.currentCaret.vimSetSelection(0, 2)
+            }
+        ) { editorText, _ ->
+            assertEquals(CommandState.Mode.VISUAL, myFixture.editor.mode)
+            myFixture.editor.caretModel.currentCaret.let { caret ->
+                assertEquals(0, caret.selectionStart)
+                assertEquals(editorText.indexOf("found") + 1, caret.selectionEnd)
+            }
+        }
     }
 
     fun `test bidirectional mapping`() {
@@ -169,16 +193,31 @@ class AceExtensionTest : BasePlatformTestCase() {
         command: MutableList<KeyStroke>,
         editorText: String = text,
         searchQuery: String? = null,
+        jumpToQuery: Boolean = false,
         putCaretAtWord: String = "",
         caretShift: Int = 0,
+        afterEditorSetup: (editor: Editor) -> Unit = {},
         test: (String, List<Int>) -> Unit
     ) {
         setupEditor(editorText)
+        afterEditorSetup(myFixture.editor)
         if (putCaretAtWord.isNotEmpty()) {
             myFixture.editor.moveCaretBefore(putCaretAtWord, caretShift)
         }
 
-        TestProcessor.inputQuery = { searchQuery?.let { myFixture.type(it) } }
+        TestProcessor.inputQuery = {
+            searchQuery?.let {
+                myFixture.type(it)
+                PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+                if (jumpToQuery) {
+                    val locations = Canvas.jumpLocations
+                    if (locations.isNotEmpty()) {
+                        val tag = locations.toList()[0].tag ?: return@let
+                        myFixture.type(tag)
+                    }
+                }
+            }
+        }
 
         TestProcessor.handler = { str, offsets ->
             test(str, offsets)
@@ -253,6 +292,7 @@ class AceExtensionTest : BasePlatformTestCase() {
         UIUtil.dispatchAllInvocationEvents()
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
         TestProcessor.handlerWasCalled = false
+        VimVisualTimer.swingTimer?.stop()
         super.tearDown()
     }
 }
