@@ -58,24 +58,25 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("tn", MultiInputPreStop(AFTER_CARET_BOUNDARY))
         mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY))
+        mapToFunction("bd-tn", BiDirectionalPreStop())
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
     private class BidirectionalLine(val pattern: Pattern, val boundary: Boundary) : HandlerProcessor {
-        override fun customization() {
+        override fun customization(editor: Editor) {
             Handler.regexSearch(pattern, boundary)
         }
     }
 
     private class MultiInput(val boundary: Boundary) : HandlerProcessor {
-        override fun customization() {
+        override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
     }
 
     private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor {
-        override fun customization() {
+        override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
 
@@ -86,6 +87,33 @@ class AceExtension : VimNonDisposableExtension() {
                 val fileSize = EditorHelper.getFileSize(editor, true)
 
                 // FIXME: 07/10/2019 Well, there should be a better way to find  pure query length
+                val suffixSize =
+                    Canvas.jumpLocations.find {
+                        it.tag?.let { tag -> queryWithSiffix.endsWith(tag) } ?: false
+                    }?.tag?.length ?: 1
+
+                val newOffset =
+                    (editor.caretModel.offset + (queryWithSiffix.length - suffixSize)).coerceAtMost(fileSize)
+                editor.caretModel.moveToOffset(newOffset)
+            }
+        }
+    }
+
+    private class BiDirectionalPreStop : HandlerProcessor {
+        var caretPosition: Int? = null
+
+        override fun customization(editor: Editor) {
+            caretPosition = editor.caretModel.offset
+        }
+
+        override fun onFinish(editor: Editor, queryWithSiffix: String) {
+            val oldCaretOffset = caretPosition.also { caretPosition = null } ?: return
+            val newCaretOffset = editor.caretModel.offset
+            if (newCaretOffset > oldCaretOffset) {
+                editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
+            } else if (newCaretOffset < oldCaretOffset) {
+                val fileSize = EditorHelper.getFileSize(editor, true)
+
                 val suffixSize =
                     Canvas.jumpLocations.find {
                         it.tag?.let { tag -> queryWithSiffix.endsWith(tag) } ?: false
@@ -183,13 +211,13 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-tl2)            | See |<Plug>(easymotion-tl2)|
     <Plug>(easymotion-Tl2)            | See |<Plug>(easymotion-Tl2)|
                                       |
-    <Plug>(easymotion-sn)             | See |<Plug>(easymotion-sn)|   +
-    <Plug>(easymotion-fn)             | See |<Plug>(easymotion-fn)|   +
-    <Plug>(easymotion-Fn)             | See |<Plug>(easymotion-Fn)|   +
-    <Plug>(easymotion-bd-fn)          | See |<Plug>(easymotion-sn)|   +
-    <Plug>(easymotion-tn)             | See |<Plug>(easymotion-tn)|   +
-    <Plug>(easymotion-Tn)             | See |<Plug>(easymotion-Tn)|   +
-    <Plug>(easymotion-bd-tn)          | See |<Plug>(easymotion-bd-tn)|
+    <Plug>(easymotion-sn)             | See |<Plug>(easymotion-sn)|    +
+    <Plug>(easymotion-fn)             | See |<Plug>(easymotion-fn)|    +
+    <Plug>(easymotion-Fn)             | See |<Plug>(easymotion-Fn)|    +
+    <Plug>(easymotion-bd-fn)          | See |<Plug>(easymotion-sn)|    +
+    <Plug>(easymotion-tn)             | See |<Plug>(easymotion-tn)|    +
+    <Plug>(easymotion-Tn)             | See |<Plug>(easymotion-Tn)|    +
+    <Plug>(easymotion-bd-tn)          | See |<Plug>(easymotion-bd-tn)| +
                                       |
     <Plug>(easymotion-sln)            | See |<Plug>(easymotion-sln)|
     <Plug>(easymotion-fln)            | See |<Plug>(easymotion-fln)|

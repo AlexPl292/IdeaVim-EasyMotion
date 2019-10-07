@@ -15,7 +15,7 @@ import org.acejump.search.Finder
 import java.awt.Toolkit
 
 interface HandlerProcessor {
-    fun customization() {}
+    fun customization(editor: Editor) {}
     fun onFinish(editor: Editor, queryWithSiffix: String) {}
 }
 
@@ -43,7 +43,7 @@ class StandardHandler(processor: HandlerProcessor) : EasyHandler(processor) {
 
         KeyHandler.executeAction(AceAction(), context)
 
-        rightAfterAction()
+        rightAfterAction(editor)
 
         loop.enter()
     }
@@ -64,7 +64,7 @@ object TestProcessor {
             KeyHandler.executeAction(AceAction(), context)
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
-            rightAfterAction()
+            rightAfterAction(editor)
 
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             val query = inputQuery()
@@ -86,8 +86,8 @@ abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensi
         } else null
     }
 
-    fun rightAfterAction() {
-        processor.customization()
+    fun rightAfterAction(editor: Editor) {
+        processor.customization(editor)
     }
 
     fun finish(editor: Editor, queryWithSuffix: String) {
