@@ -185,7 +185,20 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it"
         ) { editorText, matches ->
             assertEquals(1, matches.size)
-            assertEquals(editorText.lastIndexOf("it"), matches[0])
+            assertTrue(editorText.lastIndexOf("it") in matches)
+            assertTrue(editorText.indexOf("it") !in matches)
+        }
+    }
+
+    fun `test backward mapping`() {
+        doTest(
+            command = parseKeysWithLeader("F"),
+            putCaretAtWord = "lavender",
+            searchQuery = "it"
+        ) { editorText, matches ->
+            assertEquals(1, matches.size)
+            assertTrue(editorText.lastIndexOf("it") !in matches)
+            assertTrue(editorText.indexOf("it") in matches)
         }
     }
 

@@ -23,7 +23,8 @@ class AceExtension : VimNonDisposableExtension() {
 
     override fun initOnce() {
         // -----------  Default mapping table ---------------------//
-        mapToFunctionAndProvideKeys("f", ForwardMultiInput())   // Works as `fn`
+        mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY))   // Works as `fn`
+        mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))  // Works as `Fn`
         mapToFunctionAndProvideKeys("w", BidirectionalLine(ALL_WORDS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
@@ -39,11 +40,13 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
 
         // ------------ Multi input mapping table ----------------//
-        mapToFunction("s2", BidirectionalMultiInput)         // Works as `sn`
-        mapToFunction("f2", ForwardMultiInput())             // Works as `fn`
-        mapToFunction("bd-f2", BidirectionalMultiInput)      // Works as `sn`
+        mapToFunction("s2", BidirectionalMultiInput)                              // Works as `sn`
+        mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY))             // Works as `fn`
+        mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY))            // Works as `Fn`
+        mapToFunction("bd-f2", BidirectionalMultiInput)                           // Works as `sn`
         mapToFunction("sn", BidirectionalMultiInput)
-        mapToFunction("fn", ForwardMultiInput())
+        mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
+        mapToFunction("Fn", MultiInput(BEFORE_CARET_BOUNDARY))
         mapToFunction("bd-fn", BidirectionalMultiInput)
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
@@ -57,9 +60,9 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class ForwardMultiInput : HandlerProcessor {
+    private class MultiInput(val boundary: Boundary) : HandlerProcessor {
         override fun customization() {
-            Model.boundaries = AFTER_CARET_BOUNDARY
+            Model.boundaries = boundary
         }
     }
 }
@@ -69,7 +72,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug> Mapping Table | Default
     ---------------------|----------------------------------------------
     <Plug>(easymotion-f) | <Leader>f{char} +  mapped to fn
-    <Plug>(easymotion-F) | <Leader>F{char}
+    <Plug>(easymotion-F) | <Leader>F{char} +  mapped to Fn
     <Plug>(easymotion-t) | <Leader>t{char}
     <Plug>(easymotion-T) | <Leader>T{char}
     <Plug>(easymotion-w) | <Leader>w      +
@@ -134,10 +137,10 @@ class AceExtension : VimNonDisposableExtension() {
                                       |
     Multi Input Find Motion           | See |easymotion-multi-input|
     ----------------------------------|---------------------------------
-    <Plug>(easymotion-s2)             | See |<Plug>(easymotion-s2)|   +
-    <Plug>(easymotion-f2)             | See |<Plug>(easymotion-f2)|   +
-    <Plug>(easymotion-F2)             | See |<Plug>(easymotion-F2)|
-    <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|   +
+    <Plug>(easymotion-s2)             | See |<Plug>(easymotion-s2)|   +  mapped to sn
+    <Plug>(easymotion-f2)             | See |<Plug>(easymotion-f2)|   +  mapped to fn
+    <Plug>(easymotion-F2)             | See |<Plug>(easymotion-F2)|   +  mapped to Fn
+    <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|   +  mapped to sn
     <Plug>(easymotion-t2)             | See |<Plug>(easymotion-t2)|
     <Plug>(easymotion-T2)             | See |<Plug>(easymotion-T2)|
     <Plug>(easymotion-bd-t2)          | See |<Plug>(easymotion-bd-t2)|
@@ -150,7 +153,7 @@ class AceExtension : VimNonDisposableExtension() {
                                       |
     <Plug>(easymotion-sn)             | See |<Plug>(easymotion-sn)|   +
     <Plug>(easymotion-fn)             | See |<Plug>(easymotion-fn)|   +
-    <Plug>(easymotion-Fn)             | See |<Plug>(easymotion-Fn)|
+    <Plug>(easymotion-Fn)             | See |<Plug>(easymotion-Fn)|   +
     <Plug>(easymotion-bd-fn)          | See |<Plug>(easymotion-sn)|   +
     <Plug>(easymotion-tn)             | See |<Plug>(easymotion-tn)|
     <Plug>(easymotion-Tn)             | See |<Plug>(easymotion-Tn)|
