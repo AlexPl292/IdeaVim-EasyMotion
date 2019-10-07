@@ -37,6 +37,8 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
 
         // ------------ Extended mapping table -------------------//
+        mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
+        mapToFunction("bd-t", BiDirectionalPreStop())
         mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
         mapToFunction("bd-jk", BidirectionalLine(CODE_INDENTS, FULL_FILE_BOUNDARY))
         mapToFunction("sol-j", BidirectionalLine(START_OF_LINE, AFTER_CARET_BOUNDARY))
@@ -51,6 +53,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
         mapToFunction("t2", MultiInputPreStop(AFTER_CARET_BOUNDARY))                  // Works as `tn`
         mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY))                 // Works as `Tn`
+        mapToFunction("bd-t2", BiDirectionalPreStop())
 
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
@@ -152,7 +155,7 @@ class AceExtension : VimNonDisposableExtension() {
     More <Plug> Mapping Table         | (No assignment by default)
     ----------------------------------|---------------------------------
     <Plug>(easymotion-bd-f)           | See |<Plug>(easymotion-s)|         +
-    <Plug>(easymotion-bd-t)           | See |<Plug>(easymotion-bd-t)|
+    <Plug>(easymotion-bd-t)           | See |<Plug>(easymotion-bd-t)|      +  mapped to bd-tn
     <Plug>(easymotion-bd-w)           | See |<Plug>(easymotion-bd-w)|      +
     <Plug>(easymotion-bd-W)           | See |<Plug>(easymotion-bd-W)|
     <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|
@@ -203,7 +206,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|   +  mapped to sn
     <Plug>(easymotion-t2)             | See |<Plug>(easymotion-t2)|   +  mapped to tn
     <Plug>(easymotion-T2)             | See |<Plug>(easymotion-T2)|   +  mapped to Tn
-    <Plug>(easymotion-bd-t2)          | See |<Plug>(easymotion-bd-t2)|
+    <Plug>(easymotion-bd-t2)          | See |<Plug>(easymotion-bd-t2)|  +  mapped to bd-tn
                                       |
     <Plug>(easymotion-sl2)            | See |<Plug>(easymotion-sl2)|
     <Plug>(easymotion-fl2)            | See |<Plug>(easymotion-fl2)|
