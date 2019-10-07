@@ -29,140 +29,140 @@ class AceExtensionTest : BasePlatformTestCase() {
     fun `test bidirectional mapping`() {
         doTest(
             command = parseKeysWithLeader("s"),
-            searchQuery = "found",
-            test = { _, matches ->
-                assertEquals(1, matches.size)
-            })
+            searchQuery = "found"
+        ) { _, matches ->
+            assertEquals(1, matches.size)
+        }
     }
 
     fun `test bidirectional line motion`() {
         doTest(
             command = parseKeys(command("bd-jk")),
             editorText = text.indentLineThatStartsWith("I found"),
-            putCaretAtWord = "all",
-            test = { editorText, jumpLocations ->
-                assertEquals(6, jumpLocations.size)
-                assertEquals(editorText.indexOf("I found"), jumpLocations[2])
-            })
+            putCaretAtWord = "all"
+        ) { editorText, jumpLocations ->
+            assertEquals(6, jumpLocations.size)
+            assertEquals(editorText.indexOf("I found"), jumpLocations[2])
+        }
     }
 
     fun `test forward line motion`() {
         doTest(
             command = parseKeysWithLeader("j"),
             editorText = text.indentLineThatStartsWith("where"),
-            putCaretAtWord = "all",
-            test = { editorText, jumpLocations ->
-                // It should probably be one less jump location because currently AceJump includes the current line
-                assertEquals(3, jumpLocations.size)
-                assertEquals(editorText.indexOf("where"), jumpLocations[1])
-            })
+            putCaretAtWord = "all"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(3, jumpLocations.size)
+            assertEquals(editorText.indexOf("where"), jumpLocations[1])
+        }
     }
 
     fun `test backward line motion`() {
         doTest(
             command = parseKeysWithLeader("k"),
             editorText = text.indentLineThatStartsWith("I found"),
-            putCaretAtWord = "lavender",
-            test = { editorText, jumpLocations ->
-                // It should probably be one less jump location because currently AceJump includes the current line
-                assertEquals(4, jumpLocations.size)
-                assertEquals(editorText.indexOf("I found"), jumpLocations[2])
-            })
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(4, jumpLocations.size)
+            assertEquals(editorText.indexOf("I found"), jumpLocations[2])
+        }
     }
 
     fun `test backward line motion sol`() {
         doTest(
             command = parseKeys(command("sol-k")),
             editorText = text.indentLineThatStartsWith("I found"),
-            putCaretAtWord = "lavender",
-            test = { editorText, jumpLocations ->
-                // It should probably be one less jump location because currently AceJump includes the current line
-                assertEquals(4, jumpLocations.size)
-                assertEquals(editorText.indexOf("I found") - 4, jumpLocations[2])
-            })
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(4, jumpLocations.size)
+            assertEquals(editorText.indexOf("I found") - 4, jumpLocations[2])
+        }
     }
 
     fun `test backward line motion eol`() {
         doTest(
             command = parseKeys(command("eol-k")),
             editorText = text.indentLineThatStartsWith("I found"),
-            putCaretAtWord = "lavender",
-            test = { editorText, jumpLocations ->
-                // It should probably be one less jump location because currently AceJump includes the current line
-                assertEquals(3, jumpLocations.size)
-                assertEquals(editorText.indexOf("land") + 4, jumpLocations[2])
-            })
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(3, jumpLocations.size)
+            assertEquals(editorText.indexOf("land") + 4, jumpLocations[2])
+        }
     }
 
     fun `test forward line motion sol`() {
         doTest(
             command = parseKeys(command("sol-j")),
             editorText = text.indentLineThatStartsWith("where"),
-            putCaretAtWord = "lavender",
-            test = { editorText, jumpLocations ->
-                // It should probably be one less jump location because currently AceJump includes the current line
-                assertEquals(2, jumpLocations.size)
-                assertEquals(editorText.indexOf("where") - 4, jumpLocations[0])
-            })
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(2, jumpLocations.size)
+            assertEquals(editorText.indexOf("where") - 4, jumpLocations[0])
+        }
     }
 
     fun `test forward line motion eol`() {
         doTest(
             command = parseKeys(command("eol-j")),
             editorText = text.indentLineThatStartsWith("where"),
-            putCaretAtWord = "lavender",
-            test = { editorText, jumpLocations ->
-                // Bug in AceJump. Should be 3
-                assertEquals(2, jumpLocations.size)
-                assertEquals(editorText.indexOf("sand") + 4, jumpLocations[1])
-            })
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            // Bug in AceJump. Should be 3
+            assertEquals(2, jumpLocations.size)
+            assertEquals(editorText.indexOf("sand") + 4, jumpLocations[1])
+        }
     }
 
     fun `test forward word motion`() {
         doTest(
             command = parseKeysWithLeader("w"),
             putCaretAtWord = "lavender",
-            caretShift = 2,
-            test = { _, jumpLocations ->
-                assertEquals(19, jumpLocations.size)
-                assertTrue(text.indexOf("settled") in jumpLocations)
-                assertTrue(text.indexOf("found") !in jumpLocations)
-            })
+            caretShift = 2
+        ) { _, jumpLocations ->
+            assertEquals(19, jumpLocations.size)
+            assertTrue(text.indexOf("settled") in jumpLocations)
+            assertTrue(text.indexOf("found") !in jumpLocations)
+        }
     }
 
     fun `test backward word motion`() {
         doTest(
             command = parseKeysWithLeader("b"),
             putCaretAtWord = "lavender",
-            caretShift = 2,
-            test = { _, jumpLocations ->
-                assertEquals(13, jumpLocations.size)
-                assertTrue(text.indexOf("settled") !in jumpLocations)
-                assertTrue(text.indexOf("found") in jumpLocations)
-            })
+            caretShift = 2
+        ) { _, jumpLocations ->
+            assertEquals(13, jumpLocations.size)
+            assertTrue(text.indexOf("settled") !in jumpLocations)
+            assertTrue(text.indexOf("found") in jumpLocations)
+        }
     }
 
     fun `test both directions word motion`() {
         doTest(
             command = parseKeys(command("bd-w")),
             putCaretAtWord = "lavender",
-            caretShift = 2,
-            test = { _, jumpLocations ->
-                assertEquals(13 + 19, jumpLocations.size)
-                assertTrue(text.indexOf("settled") in jumpLocations)
-                assertTrue(text.indexOf("found") in jumpLocations)
-            })
+            caretShift = 2
+        ) { _, jumpLocations ->
+            assertEquals(13 + 19, jumpLocations.size)
+            assertTrue(text.indexOf("settled") in jumpLocations)
+            assertTrue(text.indexOf("found") in jumpLocations)
+        }
     }
 
     fun `test forward mapping`() {
         doTest(
             command = parseKeysWithLeader("f"),
             putCaretAtWord = "lavender",
-            searchQuery = "it",
-            test = { editorText, matches ->
-                assertEquals(1, matches.size)
-                assertEquals(editorText.lastIndexOf("it"), matches[0])
-            })
+            searchQuery = "it"
+        ) { editorText, matches ->
+            assertEquals(1, matches.size)
+            assertEquals(editorText.lastIndexOf("it"), matches[0])
+        }
     }
 
     private fun doTest(
