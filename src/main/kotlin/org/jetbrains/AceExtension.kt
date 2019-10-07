@@ -17,31 +17,36 @@ class AceExtension : VimNonDisposableExtension() {
     override fun getName(): String = "acejump"
 
     companion object {
-        const val prefix = "<Plug>(easymotion-prefix)"
+        const val pluginPrefix = "<Plug>(easymotion-prefix)"
+        const val defaultPrefix = "<leader><leader>"
     }
 
     override fun initOnce() {
+        // -----------  Default mapping table ---------------------//
+        mapToFunctionAndProvideKeys("f", ForwardMultiInput())   // Works as `fn`
         mapToFunctionAndProvideKeys("w", BidirectionalLine(ALL_WORDS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("k", BidirectionalLine(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("s", BidirectionalMultiInput())
-        mapToFunctionAndProvideKeys("f", ForwardMultiInput())
+        mapToFunctionAndProvideKeys("s", BidirectionalMultiInput())  // Works as `sn`
 
-        mapToFunction("s2", BidirectionalMultiInput())
-        mapToFunction("sn", BidirectionalMultiInput())
-        mapToFunction("bd-f2", BidirectionalMultiInput())
-        mapToFunction("bd-fn", BidirectionalMultiInput())
-        mapToFunction("fn", ForwardMultiInput())
-        mapToFunction("f2", ForwardMultiInput())
+        // ------------ Extended mapping table -------------------//
+        mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
         mapToFunction("bd-jk", BidirectionalLine(CODE_INDENTS, FULL_FILE_BOUNDARY))
-        mapToFunction("eol-j", BidirectionalLine(END_OF_LINE, AFTER_CARET_BOUNDARY))
-        mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
         mapToFunction("sol-j", BidirectionalLine(START_OF_LINE, AFTER_CARET_BOUNDARY))
         mapToFunction("sol-k", BidirectionalLine(START_OF_LINE, BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
+        mapToFunction("eol-j", BidirectionalLine(END_OF_LINE, AFTER_CARET_BOUNDARY))
+        mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
 
-        putKeyMapping(MappingMode.NVO, parseKeys("<leader><leader>"), parseKeys(prefix), true)
+        // ------------ Multi input mapping table ----------------//
+        mapToFunction("s2", BidirectionalMultiInput())       // Works as `sn`
+        mapToFunction("f2", ForwardMultiInput())             // Works as `fn`
+        mapToFunction("bd-f2", BidirectionalMultiInput())    // Works as `sn`
+        mapToFunction("sn", BidirectionalMultiInput())
+        mapToFunction("fn", ForwardMultiInput())
+        mapToFunction("bd-fn", BidirectionalMultiInput())
+
+        putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
     private class BidirectionalMultiInput : HandlerProcessor

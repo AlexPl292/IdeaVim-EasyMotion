@@ -14,6 +14,7 @@ import com.maddyhome.idea.vim.helper.TestInputModel
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
+import org.jetbrains.AceExtension.Companion.defaultPrefix
 import java.awt.Dimension
 import javax.swing.JViewport
 import javax.swing.KeyStroke
@@ -212,7 +213,7 @@ class AceExtensionTest : BasePlatformTestCase() {
     }
 
 
-    private fun parseKeysWithLeader(keys: String) = parseKeys("<leader><leader>$keys")
+    private fun parseKeysWithLeader(keys: String) = parseKeys("$defaultPrefix$keys")
 
     private fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor

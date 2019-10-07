@@ -3,7 +3,7 @@ package org.jetbrains
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper
-import org.jetbrains.AceExtension.Companion.prefix
+import org.jetbrains.AceExtension.Companion.pluginPrefix
 
 fun mapToFunction(keys: String, handler: HandlerProcessor) {
     VimExtensionFacade.putExtensionHandlerMapping(
@@ -18,7 +18,7 @@ fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
     mapToFunction(keys, handler)
     VimExtensionFacade.putKeyMapping(
         MappingMode.NVO,
-        StringHelper.parseKeys("${prefix}$keys"),
+        StringHelper.parseKeys("${pluginPrefix}$keys"),
         StringHelper.parseKeys(command(keys)),
         true
     )
