@@ -29,7 +29,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("k", BidirectionalLine(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("s", BidirectionalMultiInput)  // Works as `sn`
+        mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
@@ -40,19 +40,17 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
 
         // ------------ Multi input mapping table ----------------//
-        mapToFunction("s2", BidirectionalMultiInput)                              // Works as `sn`
-        mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY))             // Works as `fn`
-        mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY))            // Works as `Fn`
-        mapToFunction("bd-f2", BidirectionalMultiInput)                           // Works as `sn`
-        mapToFunction("sn", BidirectionalMultiInput)
+        mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
+        mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY))                         // Works as `fn`
+        mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY))                        // Works as `Fn`
+        mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
+        mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
         mapToFunction("Fn", MultiInput(BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-fn", BidirectionalMultiInput)
+        mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
-
-    private object BidirectionalMultiInput : HandlerProcessor
 
     private class BidirectionalLine(val pattern: Pattern, val bounds: Boundary) : HandlerProcessor {
         override fun customization() {
@@ -91,7 +89,7 @@ class AceExtension : VimNonDisposableExtension() {
 
     More <Plug> Mapping Table         | (No assignment by default)
     ----------------------------------|---------------------------------
-    <Plug>(easymotion-bd-f)           | See |<Plug>(easymotion-s)|
+    <Plug>(easymotion-bd-f)           | See |<Plug>(easymotion-s)|         +
     <Plug>(easymotion-bd-t)           | See |<Plug>(easymotion-bd-t)|
     <Plug>(easymotion-bd-w)           | See |<Plug>(easymotion-bd-w)|      +
     <Plug>(easymotion-bd-W)           | See |<Plug>(easymotion-bd-W)|
