@@ -52,9 +52,9 @@ class AceExtension : VimNonDisposableExtension() {
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
-    private class BidirectionalLine(val pattern: Pattern, val bounds: Boundary) : HandlerProcessor {
+    private class BidirectionalLine(val pattern: Pattern, val boundary: Boundary) : HandlerProcessor {
         override fun customization() {
-            Handler.regexSearch(pattern, bounds)
+            Handler.regexSearch(pattern, boundary)
         }
     }
 
