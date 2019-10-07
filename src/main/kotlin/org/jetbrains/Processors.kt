@@ -26,27 +26,24 @@ fun makeHandler(processor: HandlerProcessor): VimExtensionHandler {
     }
 }
 
-class StandardHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
+class StandardHandler(processor: HandlerProcessor) : EasyHandler(processor) {
     override fun execute(editor: Editor, context: DataContext) {
         val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
         val loop = systemQueue.createSecondaryLoop()
-        val startSelection = if (editor.selectionModel.hasSelection()) {
-            editor.caretModel.currentCaret.vimSelectionStart
-        } else null
+        beforeAction(editor)
 
         Handler.addAceJumpListener(object : Handler.AceJumpListener {
             override fun finished() {
-                processor.onFinish()
-                if (startSelection != null) {
-                    editor.caretModel.currentCaret.vimSetSelection(startSelection, editor.caretModel.offset, false)
-                }
+                finish(editor)
                 Handler.removeAceJumpListener(this)
                 loop.exit()
             }
         })
 
         KeyHandler.executeAction(AceAction(), context)
-        processor.customization()
+
+        rightAfterAction()
+
         loop.enter()
     }
 }
@@ -57,23 +54,45 @@ object TestProcessor {
     var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
     var inputQuery: () -> Unit = {}
 
-    class TestHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
+    class TestHandler(processor: HandlerProcessor) : EasyHandler(processor) {
         override fun execute(editor: Editor, context: DataContext) {
             handlerWasCalled = true
-            val startSelection = if (editor.selectionModel.hasSelection()) {
-                editor.caretModel.currentCaret.vimSelectionStart
-            } else null
+
+            beforeAction(editor)
+
             KeyHandler.executeAction(AceAction(), context)
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-            processor.customization()
+
+            rightAfterAction()
+
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
             inputQuery()
             PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
             handler(editor.document.text, Tagger.textMatches.sorted())
-            processor.onFinish()
-            if (startSelection != null) {
-                editor.caretModel.currentCaret.vimSetSelection(startSelection, editor.caretModel.offset, false)
-            }
+
+            finish(editor)
+        }
+    }
+}
+
+abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
+
+    private var startSelection: Int? = null
+
+    fun beforeAction(editor: Editor) {
+        startSelection = if (editor.selectionModel.hasSelection()) {
+            editor.caretModel.currentCaret.vimSelectionStart
+        } else null
+    }
+
+    fun rightAfterAction() {
+        processor.customization()
+    }
+
+    fun finish(editor: Editor) {
+        processor.onFinish()
+        startSelection?.let {
+            editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
         }
     }
 }
