@@ -11,11 +11,12 @@ import com.maddyhome.idea.vim.helper.vimSelectionStart
 import org.acejump.control.AceAction
 import org.acejump.control.Handler
 import org.acejump.label.Tagger
+import org.acejump.search.Finder
 import java.awt.Toolkit
 
 interface HandlerProcessor {
     fun customization() {}
-    fun onFinish(editor: Editor) {}
+    fun onFinish(editor: Editor, queryWithSiffix: String) {}
 }
 
 fun makeHandler(processor: HandlerProcessor): VimExtensionHandler {
@@ -34,7 +35,7 @@ class StandardHandler(processor: HandlerProcessor) : EasyHandler(processor) {
 
         Handler.addAceJumpListener(object : Handler.AceJumpListener {
             override fun finished() {
-                finish(editor)
+                finish(editor, Finder.query)
                 Handler.removeAceJumpListener(this)
                 loop.exit()
             }
@@ -52,7 +53,7 @@ object TestProcessor {
     var handlerWasCalled = false
 
     var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
-    var inputQuery: () -> Unit = {}
+    var inputQuery: () -> String = { "" }
 
     class TestHandler(processor: HandlerProcessor) : EasyHandler(processor) {
         override fun execute(editor: Editor, context: DataContext) {
@@ -66,9 +67,9 @@ object TestProcessor {
             rightAfterAction()
 
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-            inputQuery()
+            val query = inputQuery()
             PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-            finish(editor)
+            finish(editor, query)
 
             handler(editor.document.text, Tagger.textMatches.sorted())
         }
@@ -89,8 +90,8 @@ abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensi
         processor.customization()
     }
 
-    fun finish(editor: Editor) {
-        processor.onFinish(editor)
+    fun finish(editor: Editor, queryWithSuffix: String) {
+        processor.onFinish(editor, queryWithSuffix)
         startSelection?.let {
             editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
         }

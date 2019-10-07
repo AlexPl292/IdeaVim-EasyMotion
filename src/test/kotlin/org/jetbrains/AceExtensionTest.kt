@@ -220,7 +220,7 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToQuery = true
         ) { editorText, _ ->
-            assertEquals(editorText.indexOf("it") + 1, myFixture.editor.caretModel.offset)
+            assertEquals(editorText.indexOf("it") + 2, myFixture.editor.caretModel.offset)
         }
     }
 
@@ -241,17 +241,19 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
 
         TestProcessor.inputQuery = {
-            searchQuery?.let {
+            var tag = ""
+            searchQuery?.also {
                 myFixture.type(it)
                 PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
                 if (jumpToQuery) {
                     val locations = Canvas.jumpLocations
                     if (locations.isNotEmpty()) {
-                        val tag = locations.toList()[0].tag ?: return@let
+                        tag = locations.toList()[0].tag ?: return@also
                         myFixture.type(tag)
                     }
                 }
             }
+            (searchQuery ?: "") + tag
         }
 
         TestProcessor.handler = { str, offsets ->

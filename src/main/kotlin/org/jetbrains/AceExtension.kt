@@ -6,12 +6,14 @@ import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
+import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
 import org.acejump.label.Pattern.*
 import org.acejump.view.Boundary
 import org.acejump.view.Boundary.*
+import org.acejump.view.Canvas
 import org.acejump.view.Model
 
 class AceExtension : VimNonDisposableExtension() {
@@ -77,11 +79,21 @@ class AceExtension : VimNonDisposableExtension() {
             Model.boundaries = boundary
         }
 
-        override fun onFinish(editor: Editor) {
+        override fun onFinish(editor: Editor, queryWithSiffix: String) {
             if (boundary == AFTER_CARET_BOUNDARY) {
                 editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
             } else if (boundary == BEFORE_CARET_BOUNDARY) {
-                editor.caretModel.moveToOffset(editor.caretModel.offset + 1)
+                val fileSize = EditorHelper.getFileSize(editor, true)
+
+                // FIXME: 07/10/2019 Well, there should be a better way to find  pure query length
+                val suffixSize =
+                    Canvas.jumpLocations.find {
+                        it.tag?.let { tag -> queryWithSiffix.endsWith(tag) } ?: false
+                    }?.tag?.length ?: 1
+
+                val newOffset =
+                    (editor.caretModel.offset + (queryWithSiffix.length - suffixSize)).coerceAtMost(fileSize)
+                editor.caretModel.moveToOffset(newOffset)
             }
         }
     }
