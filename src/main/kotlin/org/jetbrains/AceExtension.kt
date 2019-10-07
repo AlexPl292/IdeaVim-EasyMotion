@@ -46,15 +46,16 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
         mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY))                         // Works as `fn`
         mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY))                        // Works as `Fn`
+        mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
         mapToFunction("t2", MultiInputPreStop(AFTER_CARET_BOUNDARY))                  // Works as `tn`
         mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY))                 // Works as `Tn`
-        mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
+
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
         mapToFunction("Fn", MultiInput(BEFORE_CARET_BOUNDARY))
+        mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("tn", MultiInputPreStop(AFTER_CARET_BOUNDARY))
         mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
