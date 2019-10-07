@@ -28,7 +28,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("k", BidirectionalLine(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("s", BidirectionalMultiInput())  // Works as `sn`
+        mapToFunctionAndProvideKeys("s", BidirectionalMultiInput)  // Works as `sn`
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
@@ -39,17 +39,17 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
 
         // ------------ Multi input mapping table ----------------//
-        mapToFunction("s2", BidirectionalMultiInput())       // Works as `sn`
+        mapToFunction("s2", BidirectionalMultiInput)         // Works as `sn`
         mapToFunction("f2", ForwardMultiInput())             // Works as `fn`
-        mapToFunction("bd-f2", BidirectionalMultiInput())    // Works as `sn`
-        mapToFunction("sn", BidirectionalMultiInput())
+        mapToFunction("bd-f2", BidirectionalMultiInput)      // Works as `sn`
+        mapToFunction("sn", BidirectionalMultiInput)
         mapToFunction("fn", ForwardMultiInput())
-        mapToFunction("bd-fn", BidirectionalMultiInput())
+        mapToFunction("bd-fn", BidirectionalMultiInput)
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
-    private class BidirectionalMultiInput : HandlerProcessor
+    private object BidirectionalMultiInput : HandlerProcessor
 
     private class BidirectionalLine(val pattern: Pattern, val bounds: Boundary) : HandlerProcessor {
         override fun customization() {
