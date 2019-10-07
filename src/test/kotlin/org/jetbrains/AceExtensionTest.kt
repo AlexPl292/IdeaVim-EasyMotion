@@ -202,6 +202,17 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test till forward mapping`() {
+        doTest(
+            command = parseKeysWithLeader("t"),
+            putCaretAtWord = "lavender",
+            searchQuery = "it",
+            jumpToQuery = true
+        ) { editorText, _ ->
+            assertEquals(editorText.lastIndexOf("it") - 1, myFixture.editor.caretModel.offset)
+        }
+    }
+
     private fun doTest(
         command: MutableList<KeyStroke>,
         editorText: String = text,

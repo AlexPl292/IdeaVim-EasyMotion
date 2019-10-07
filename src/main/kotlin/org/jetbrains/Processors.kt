@@ -15,7 +15,7 @@ import java.awt.Toolkit
 
 interface HandlerProcessor {
     fun customization() {}
-    fun onFinish() {}
+    fun onFinish(editor: Editor) {}
 }
 
 fun makeHandler(processor: HandlerProcessor): VimExtensionHandler {
@@ -90,7 +90,7 @@ abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensi
     }
 
     fun finish(editor: Editor) {
-        processor.onFinish()
+        processor.onFinish(editor)
         startSelection?.let {
             editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
         }
