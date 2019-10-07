@@ -213,6 +213,17 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test till backward mapping`() {
+        doTest(
+            command = parseKeysWithLeader("T"),
+            putCaretAtWord = "lavender",
+            searchQuery = "it",
+            jumpToQuery = true
+        ) { editorText, _ ->
+            assertEquals(editorText.indexOf("it") + 1, myFixture.editor.caretModel.offset)
+        }
+    }
+
     private fun doTest(
         command: MutableList<KeyStroke>,
         editorText: String = text,

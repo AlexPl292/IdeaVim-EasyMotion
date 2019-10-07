@@ -27,6 +27,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY))          // Works as `fn`
         mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))         // Works as `Fn`
         mapToFunctionAndProvideKeys("t", MultiInputPreStop(AFTER_CARET_BOUNDARY))   // Works as `tn`
+        mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY))   // Works as `Tn`
         mapToFunctionAndProvideKeys("w", BidirectionalLine(ALL_WORDS, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
@@ -46,11 +47,13 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY))                         // Works as `fn`
         mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY))                        // Works as `Fn`
         mapToFunction("t2", MultiInputPreStop(AFTER_CARET_BOUNDARY))                  // Works as `tn`
+        mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY))                 // Works as `Tn`
         mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
         mapToFunction("Fn", MultiInput(BEFORE_CARET_BOUNDARY))
         mapToFunction("tn", MultiInputPreStop(AFTER_CARET_BOUNDARY))
+        mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY))
         mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
@@ -76,6 +79,8 @@ class AceExtension : VimNonDisposableExtension() {
         override fun onFinish(editor: Editor) {
             if (boundary == AFTER_CARET_BOUNDARY) {
                 editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
+            } else if (boundary == BEFORE_CARET_BOUNDARY) {
+                editor.caretModel.moveToOffset(editor.caretModel.offset + 1)
             }
         }
     }
@@ -88,7 +93,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-f) | <Leader>f{char} +  mapped to fn
     <Plug>(easymotion-F) | <Leader>F{char} +  mapped to Fn
     <Plug>(easymotion-t) | <Leader>t{char} +  mapped to tn
-    <Plug>(easymotion-T) | <Leader>T{char}
+    <Plug>(easymotion-T) | <Leader>T{char} +  mapped to Tn
     <Plug>(easymotion-w) | <Leader>w      +
     <Plug>(easymotion-W) | <Leader>W
     <Plug>(easymotion-b) | <Leader>b      +
@@ -156,7 +161,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-F2)             | See |<Plug>(easymotion-F2)|   +  mapped to Fn
     <Plug>(easymotion-bd-f2)          | See |<Plug>(easymotion-s2)|   +  mapped to sn
     <Plug>(easymotion-t2)             | See |<Plug>(easymotion-t2)|   +  mapped to tn
-    <Plug>(easymotion-T2)             | See |<Plug>(easymotion-T2)|
+    <Plug>(easymotion-T2)             | See |<Plug>(easymotion-T2)|   +  mapped to Tn
     <Plug>(easymotion-bd-t2)          | See |<Plug>(easymotion-bd-t2)|
                                       |
     <Plug>(easymotion-sl2)            | See |<Plug>(easymotion-sl2)|
@@ -170,7 +175,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-Fn)             | See |<Plug>(easymotion-Fn)|   +
     <Plug>(easymotion-bd-fn)          | See |<Plug>(easymotion-sn)|   +
     <Plug>(easymotion-tn)             | See |<Plug>(easymotion-tn)|   +
-    <Plug>(easymotion-Tn)             | See |<Plug>(easymotion-Tn)|
+    <Plug>(easymotion-Tn)             | See |<Plug>(easymotion-Tn)|   +
     <Plug>(easymotion-bd-tn)          | See |<Plug>(easymotion-bd-tn)|
                                       |
     <Plug>(easymotion-sln)            | See |<Plug>(easymotion-sln)|
