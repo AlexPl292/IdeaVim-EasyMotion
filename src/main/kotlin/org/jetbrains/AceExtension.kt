@@ -3,9 +3,12 @@
 package org.jetbrains
 
 import com.intellij.openapi.editor.Editor
+import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
+import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
@@ -30,21 +33,21 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))         // Works as `Fn`
         mapToFunctionAndProvideKeys("t", MultiInputPreStop(AFTER_CARET_BOUNDARY))   // Works as `tn`
         mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY))   // Works as `Tn`
-        mapToFunctionAndProvideKeys("w", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("b", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("j", BidirectionalPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("k", BidirectionalPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("w", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, false))
+        mapToFunctionAndProvideKeys("b", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, false))
+        mapToFunctionAndProvideKeys("j", BidirectionalPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
+        mapToFunctionAndProvideKeys("k", BidirectionalPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("bd-t", BiDirectionalPreStop())
-        mapToFunction("bd-w", BidirectionalPattern(ALL_WORDS, SCREEN_BOUNDARY))
-        mapToFunction("bd-jk", BidirectionalPattern(CODE_INDENTS, FULL_FILE_BOUNDARY))
-        mapToFunction("sol-j", BidirectionalPattern(START_OF_LINE, AFTER_CARET_BOUNDARY))
-        mapToFunction("sol-k", BidirectionalPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY))
-        mapToFunction("eol-j", BidirectionalPattern(END_OF_LINE, AFTER_CARET_BOUNDARY))
-        mapToFunction("eol-k", BidirectionalPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY))
+        mapToFunction("bd-w", BidirectionalPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
+        mapToFunction("bd-jk", BidirectionalPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
+        mapToFunction("sol-j", BidirectionalPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("sol-k", BidirectionalPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("eol-j", BidirectionalPattern(END_OF_LINE, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("eol-k", BidirectionalPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY, true))
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -66,9 +69,25 @@ class AceExtension : VimNonDisposableExtension() {
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
-    private class BidirectionalPattern(val pattern: Pattern, val boundary: Boundary) : HandlerProcessor {
+    private class BidirectionalPattern(
+        val pattern: Pattern,
+        val boundary: Boundary,
+        val linewise: Boolean
+    ) : HandlerProcessor {
+
+        private var initialOffset: Int? = null
+
         override fun customization(editor: Editor) {
+            initialOffset = editor.caretModel.currentCaret.offset
             Handler.regexSearch(pattern, boundary)
+        }
+
+        override fun onFinish(editor: Editor, queryWithSiffix: String) {
+            if (linewise && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
+                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
+                initialOffset?.let { editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.currentCaret.offset) }
+            }
+            initialOffset = null
         }
     }
 

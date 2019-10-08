@@ -36,7 +36,7 @@ class AceExtensionTest : BasePlatformTestCase() {
         doTest(
             command = parseKeysWithLeader("s"),
             searchQuery = "found",
-            jumpToQuery = true,
+            jumpToNthQuery = 0,
             afterEditorSetup = {
                 VimPlugin.getVisualMotion().enterVisualMode(it)
                 it.caretModel.currentCaret.vimSetSelection(0, 2)
@@ -207,7 +207,7 @@ class AceExtensionTest : BasePlatformTestCase() {
             command = parseKeysWithLeader("t"),
             putCaretAtWord = "lavender",
             searchQuery = "it",
-            jumpToQuery = true
+            jumpToNthQuery = 0
         ) { editorText, _ ->
             assertEquals(editorText.lastIndexOf("it") - 1, myFixture.editor.caretModel.offset)
         }
@@ -218,42 +218,59 @@ class AceExtensionTest : BasePlatformTestCase() {
             command = parseKeysWithLeader("T"),
             putCaretAtWord = "lavender",
             searchQuery = "it",
-            jumpToQuery = true
+            jumpToNthQuery = 0
         ) { editorText, _ ->
             assertEquals(editorText.indexOf("it") + 2, myFixture.editor.caretModel.offset)
         }
     }
 
+    fun `test line motions are linewise for op pending`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("j"),
+            editorText = text.indentLineThatStartsWith("where"),
+            putCaretAtWord = "all",
+            jumpToNthQuery = 1
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                <caret>hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     private fun doTest(
-        command: MutableList<KeyStroke>,
+        command: List<KeyStroke>,
         editorText: String = text,
         searchQuery: String? = null,
-        jumpToQuery: Boolean = false,
+        jumpToNthQuery: Int? = null,
         putCaretAtWord: String = "",
         caretShift: Int = 0,
         afterEditorSetup: (editor: Editor) -> Unit = {},
-        test: (String, List<Int>) -> Unit
+        test: (String, List<Int>) -> Unit = { _, _ -> }
     ) {
         setupEditor(editorText)
-        afterEditorSetup(myFixture.editor)
         if (putCaretAtWord.isNotEmpty()) {
             myFixture.editor.moveCaretBefore(putCaretAtWord, caretShift)
         }
+        afterEditorSetup(myFixture.editor)
 
         TestProcessor.inputQuery = {
-            var tag = ""
             searchQuery?.also {
                 myFixture.type(it)
                 PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-                if (jumpToQuery) {
-                    val locations = Canvas.jumpLocations
-                    if (locations.isNotEmpty()) {
-                        tag = locations.toList()[0].tag ?: return@also
+            }
+            var tag: String? = null
+            if (jumpToNthQuery != null) {
+                val locations = Canvas.jumpLocations
+                if (locations.isNotEmpty()) {
+                    tag = locations.toList()[jumpToNthQuery].tag
+                    if (tag != null) {
                         myFixture.type(tag)
                     }
                 }
             }
-            (searchQuery ?: "") + tag
+            (searchQuery ?: "") + (tag ?: "")
         }
 
         TestProcessor.handler = { str, offsets ->

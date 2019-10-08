@@ -7,6 +7,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
+import com.maddyhome.idea.vim.helper.inVisualMode
 import com.maddyhome.idea.vim.helper.vimSelectionStart
 import org.acejump.control.AceAction
 import org.acejump.control.Handler
@@ -81,7 +82,7 @@ abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensi
     private var startSelection: Int? = null
 
     fun beforeAction(editor: Editor) {
-        startSelection = if (editor.selectionModel.hasSelection()) {
+        startSelection = if (editor.inVisualMode && editor.selectionModel.hasSelection()) {
             editor.caretModel.currentCaret.vimSelectionStart
         } else null
     }
