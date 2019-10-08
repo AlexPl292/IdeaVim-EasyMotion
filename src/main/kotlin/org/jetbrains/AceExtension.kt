@@ -30,21 +30,21 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))         // Works as `Fn`
         mapToFunctionAndProvideKeys("t", MultiInputPreStop(AFTER_CARET_BOUNDARY))   // Works as `tn`
         mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY))   // Works as `Tn`
-        mapToFunctionAndProvideKeys("w", BidirectionalLine(ALL_WORDS, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("b", BidirectionalLine(ALL_WORDS, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("j", BidirectionalLine(CODE_INDENTS, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("k", BidirectionalLine(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("w", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("b", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("j", BidirectionalPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("k", BidirectionalPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("bd-t", BiDirectionalPreStop())
-        mapToFunction("bd-w", BidirectionalLine(ALL_WORDS, SCREEN_BOUNDARY))
-        mapToFunction("bd-jk", BidirectionalLine(CODE_INDENTS, FULL_FILE_BOUNDARY))
-        mapToFunction("sol-j", BidirectionalLine(START_OF_LINE, AFTER_CARET_BOUNDARY))
-        mapToFunction("sol-k", BidirectionalLine(START_OF_LINE, BEFORE_CARET_BOUNDARY))
-        mapToFunction("eol-j", BidirectionalLine(END_OF_LINE, AFTER_CARET_BOUNDARY))
-        mapToFunction("eol-k", BidirectionalLine(END_OF_LINE, BEFORE_CARET_BOUNDARY))
+        mapToFunction("bd-w", BidirectionalPattern(ALL_WORDS, SCREEN_BOUNDARY))
+        mapToFunction("bd-jk", BidirectionalPattern(CODE_INDENTS, FULL_FILE_BOUNDARY))
+        mapToFunction("sol-j", BidirectionalPattern(START_OF_LINE, AFTER_CARET_BOUNDARY))
+        mapToFunction("sol-k", BidirectionalPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY))
+        mapToFunction("eol-j", BidirectionalPattern(END_OF_LINE, AFTER_CARET_BOUNDARY))
+        mapToFunction("eol-k", BidirectionalPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY))
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -66,7 +66,7 @@ class AceExtension : VimNonDisposableExtension() {
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
-    private class BidirectionalLine(val pattern: Pattern, val boundary: Boundary) : HandlerProcessor {
+    private class BidirectionalPattern(val pattern: Pattern, val boundary: Boundary) : HandlerProcessor {
         override fun customization(editor: Editor) {
             Handler.regexSearch(pattern, boundary)
         }
