@@ -49,6 +49,7 @@ class AceExtension : VimNonDisposableExtension() {
         // ------------ Within Line Motion -----------------------//
         mapToFunction("sl", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
         mapToFunction("fl", MultiInput(AFTER_CARET_BOUNDARY, true))          // Works as `fln`
+        mapToFunction("Fl", MultiInput(BEFORE_CARET_BOUNDARY, true))         // Works as `Fln`
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -61,6 +62,7 @@ class AceExtension : VimNonDisposableExtension() {
 
         mapToFunction("sl2", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
         mapToFunction("fl2", MultiInput(AFTER_CARET_BOUNDARY, true))          // Works as `fln`
+        mapToFunction("Fl2", MultiInput(BEFORE_CARET_BOUNDARY, true))         // Works as `Fln`
 
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
@@ -72,6 +74,7 @@ class AceExtension : VimNonDisposableExtension() {
 
         mapToFunction("sln", MultiInput(SCREEN_BOUNDARY, true))
         mapToFunction("fln", MultiInput(AFTER_CARET_BOUNDARY, true))
+        mapToFunction("Fln", MultiInput(BEFORE_CARET_BOUNDARY, true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
@@ -197,7 +200,7 @@ class AceExtension : VimNonDisposableExtension() {
     ----------------------------------|---------------------------------
     <Plug>(easymotion-sl)             | See |<Plug>(easymotion-sl)|        +   mapped to sln
     <Plug>(easymotion-fl)             | See |<Plug>(easymotion-fl)|        +   mapped to fln
-    <Plug>(easymotion-Fl)             | See |<Plug>(easymotion-Fl)|
+    <Plug>(easymotion-Fl)             | See |<Plug>(easymotion-Fl)|        +   mapped to Fln
     <Plug>(easymotion-bd-fl)          | See |<Plug>(easymotion-sl)|
     <Plug>(easymotion-tl)             | See |<Plug>(easymotion-tl)|
     <Plug>(easymotion-Tl)             | See |<Plug>(easymotion-Tl)|
@@ -224,7 +227,7 @@ class AceExtension : VimNonDisposableExtension() {
                                       |
     <Plug>(easymotion-sl2)            | See |<Plug>(easymotion-sl2)|   +   mapped to sln
     <Plug>(easymotion-fl2)            | See |<Plug>(easymotion-fl2)|   +   mapped to fln
-    <Plug>(easymotion-Fl2)            | See |<Plug>(easymotion-Fl2)|
+    <Plug>(easymotion-Fl2)            | See |<Plug>(easymotion-Fl2)|   +   mapped to Fln
     <Plug>(easymotion-tl2)            | See |<Plug>(easymotion-tl2)|
     <Plug>(easymotion-Tl2)            | See |<Plug>(easymotion-Tl2)|
                                       |
@@ -238,7 +241,7 @@ class AceExtension : VimNonDisposableExtension() {
                                       |
     <Plug>(easymotion-sln)            | See |<Plug>(easymotion-sln)|   +
     <Plug>(easymotion-fln)            | See |<Plug>(easymotion-fln)|   +
-    <Plug>(easymotion-Fln)            | See |<Plug>(easymotion-Fln)|
+    <Plug>(easymotion-Fln)            | See |<Plug>(easymotion-Fln)|   +
     <Plug>(easymotion-bd-fln)         | See |<Plug>(easymotion-sln)|
     <Plug>(easymotion-tln)            | See |<Plug>(easymotion-tln)|
     <Plug>(easymotion-Tln)            | See |<Plug>(easymotion-Tln)|

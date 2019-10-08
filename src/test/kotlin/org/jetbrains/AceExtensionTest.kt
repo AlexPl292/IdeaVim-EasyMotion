@@ -269,6 +269,21 @@ class AceExtensionTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    fun `test linewise F motion`() {
+        doTest(
+            command = parseKeys("d") + parseKeys(command("Fl")),
+            putCaretAtWord = "lavender",
+            searchQuery = "it",
+            jumpToNthQuery = 0
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
