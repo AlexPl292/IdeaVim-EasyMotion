@@ -3,12 +3,9 @@
 package org.jetbrains
 
 import com.intellij.openapi.editor.Editor
-import com.maddyhome.idea.vim.VimPlugin
-import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
-import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
@@ -72,37 +69,25 @@ class AceExtension : VimNonDisposableExtension() {
     private class BidirectionalPattern(
         val pattern: Pattern,
         val boundary: Boundary,
-        val linewise: Boolean
-    ) : HandlerProcessor {
-
-        private var initialOffset: Int? = null
-
+        linewise: Boolean
+    ) : HandlerProcessor(linewise) {
         override fun customization(editor: Editor) {
-            initialOffset = editor.caretModel.currentCaret.offset
             Handler.regexSearch(pattern, boundary)
         }
-
-        override fun onFinish(editor: Editor, queryWithSiffix: String) {
-            if (linewise && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
-                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
-                initialOffset?.let { editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.currentCaret.offset) }
-            }
-            initialOffset = null
-        }
     }
 
-    private class MultiInput(val boundary: Boundary) : HandlerProcessor {
+    private class MultiInput(val boundary: Boundary) : HandlerProcessor(false) {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
     }
 
-    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor {
+    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor(false) {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
 
-        override fun onFinish(editor: Editor, queryWithSiffix: String) {
+        override fun onFinish(editor: Editor, queryWithSuffix: String) {
             if (boundary == AFTER_CARET_BOUNDARY) {
                 editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
             } else if (boundary == BEFORE_CARET_BOUNDARY) {
@@ -111,24 +96,24 @@ class AceExtension : VimNonDisposableExtension() {
                 // FIXME: 07/10/2019 Well, there should be a better way to find  pure query length
                 val suffixSize =
                     Canvas.jumpLocations.find {
-                        it.tag?.let { tag -> queryWithSiffix.endsWith(tag) } ?: false
+                        it.tag?.let { tag -> queryWithSuffix.endsWith(tag) } ?: false
                     }?.tag?.length ?: 1
 
                 val newOffset =
-                    (editor.caretModel.offset + (queryWithSiffix.length - suffixSize)).coerceAtMost(fileSize)
+                    (editor.caretModel.offset + (queryWithSuffix.length - suffixSize)).coerceAtMost(fileSize)
                 editor.caretModel.moveToOffset(newOffset)
             }
         }
     }
 
-    private class BiDirectionalPreStop : HandlerProcessor {
+    private class BiDirectionalPreStop : HandlerProcessor(false) {
         var caretPosition: Int? = null
 
         override fun customization(editor: Editor) {
             caretPosition = editor.caretModel.offset
         }
 
-        override fun onFinish(editor: Editor, queryWithSiffix: String) {
+        override fun onFinish(editor: Editor, queryWithSuffix: String) {
             val oldCaretOffset = caretPosition.also { caretPosition = null } ?: return
             val newCaretOffset = editor.caretModel.offset
             if (newCaretOffset > oldCaretOffset) {
@@ -138,11 +123,11 @@ class AceExtension : VimNonDisposableExtension() {
 
                 val suffixSize =
                     Canvas.jumpLocations.find {
-                        it.tag?.let { tag -> queryWithSiffix.endsWith(tag) } ?: false
+                        it.tag?.let { tag -> queryWithSuffix.endsWith(tag) } ?: false
                     }?.tag?.length ?: 1
 
                 val newOffset =
-                    (editor.caretModel.offset + (queryWithSiffix.length - suffixSize)).coerceAtMost(fileSize)
+                    (editor.caretModel.offset + (queryWithSuffix.length - suffixSize)).coerceAtMost(fileSize)
                 editor.caretModel.moveToOffset(newOffset)
             }
         }
