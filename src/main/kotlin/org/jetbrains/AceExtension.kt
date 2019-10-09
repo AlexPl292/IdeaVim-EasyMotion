@@ -31,22 +31,23 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))         // Works as `Fn`
         mapToFunctionAndProvideKeys("t", MultiInputPreStop(AFTER_CARET_BOUNDARY))   // Works as `tn`
         mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY))   // Works as `Tn`
-        mapToFunctionAndProvideKeys("w", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, false))
-        mapToFunctionAndProvideKeys("b", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, false))
-        mapToFunctionAndProvideKeys("e", CustomSearch(wordEnd, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("j", BidirectionalPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
-        mapToFunctionAndProvideKeys("k", BidirectionalPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
+        mapToFunctionAndProvideKeys("w", PredefinedPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, false))
+        mapToFunctionAndProvideKeys("b", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, false))
+        mapToFunctionAndProvideKeys("e", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("ge", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("j", PredefinedPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
+        mapToFunctionAndProvideKeys("k", PredefinedPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("bd-t", BiDirectionalPreStop())
-        mapToFunction("bd-w", BidirectionalPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
-        mapToFunction("bd-jk", BidirectionalPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
-        mapToFunction("sol-j", BidirectionalPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("sol-k", BidirectionalPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
-        mapToFunction("eol-j", BidirectionalPattern(END_OF_LINE, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("eol-k", BidirectionalPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("bd-w", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
+        mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
+        mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("eol-j", PredefinedPattern(END_OF_LINE, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("eol-k", PredefinedPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY, true))
 
         // ------------ Within Line Motion -----------------------//
         mapToFunction("sl", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
@@ -56,9 +57,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("tl", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
         mapToFunction("Tl", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))  // Works as `Tln`
         mapToFunction("bd-tl", BiDirectionalPreStop(true))                    // Works as `bd-tln`
-        mapToFunction("wl", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("bl", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, true))
-        mapToFunction("bd-wl", BidirectionalPattern(ALL_WORDS, SCREEN_BOUNDARY, true))
+        mapToFunction("wl", PredefinedPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("bl", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("bd-wl", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, true))
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -94,7 +95,7 @@ class AceExtension : VimNonDisposableExtension() {
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
 
-    private class CustomSearch(
+    private class CustomPattern(
         val pattern: String,
         val boundary: Boundary,
         linewise: Boolean = false
@@ -104,7 +105,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BidirectionalPattern(
+    private class PredefinedPattern(
         val pattern: Pattern,
         val boundary: Boundary,
         linewise: Boolean
@@ -186,7 +187,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-B) | <Leader>B
     <Plug>(easymotion-e) | <Leader>e      +
     <Plug>(easymotion-E) | <Leader>E
-    <Plug>(easymotion-ge)| <Leader>ge
+    <Plug>(easymotion-ge)| <Leader>ge     +
     <Plug>(easymotion-gE)| <Leader>gE
     <Plug>(easymotion-j) | <Leader>j      +
     <Plug>(easymotion-k) | <Leader>k      +

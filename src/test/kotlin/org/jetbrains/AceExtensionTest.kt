@@ -397,7 +397,18 @@ class AceExtensionTest : BasePlatformTestCase() {
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(20, matchResults.size)
             assertTrue(editorText.indexOf("tufted") + 5 in matchResults)
-            assertTrue(editorText.indexOf("land") + 4 !in matchResults)
+            assertTrue(editorText.indexOf("land") + 3 !in matchResults)
+        }
+    }
+
+    fun `test jump to word end backward`() {
+        doTest(
+            command = parseKeysWithLeader("ge"),
+            putCaretAtWord = "lavender"
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(12, matchResults.size)
+            assertTrue(editorText.indexOf("tufted") + 5 !in matchResults)
+            assertTrue(editorText.indexOf("land") + 3 in matchResults)
         }
     }
 
