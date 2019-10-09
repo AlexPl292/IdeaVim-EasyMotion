@@ -469,6 +469,42 @@ class AceExtensionTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    fun `test forward big word motion`() {
+        doTest(
+            command = parseKeysWithLeader("W"),
+            editorText = text.replace("tufted grass", "tufted.grass").replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2
+        ) { _, jumpLocations ->
+            assertEquals(17, jumpLocations.size)
+        }
+    }
+
+    fun `test backward big word motion`() {
+        doTest(
+            command = parseKeysWithLeader("B"),
+            editorText = text.replace("found it", "found.it").replace("legendary land", "legendary#land"),
+            putCaretAtWord = "lavender",
+            caretShift = 2
+        ) { _, jumpLocations ->
+            assertEquals(11, jumpLocations.size)
+        }
+    }
+
+    fun `test bd big word motion`() {
+        doTest(
+            command = parseKeysWithLeader(command("bd-W")),
+            editorText = text.replace("found it", "found.it")
+                .replace("legendary land", "legendary#land")
+                .replace("tufted grass", "tufted.grass")
+                .replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2
+        ) { _, jumpLocations ->
+            assertEquals(11 + 17, jumpLocations.size)
+        }
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
