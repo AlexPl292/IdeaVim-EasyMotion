@@ -22,6 +22,7 @@ class AceExtension : VimNonDisposableExtension() {
     companion object {
         const val pluginPrefix = "<Plug>(easymotion-prefix)"
         const val defaultPrefix = "<leader><leader>"
+        private const val wordEnd = "[a-zA-Z0-9_]([^a-zA-Z0-9_]|\\Z)"
     }
 
     override fun initOnce() {
@@ -32,6 +33,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY))   // Works as `Tn`
         mapToFunctionAndProvideKeys("w", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, false))
         mapToFunctionAndProvideKeys("b", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, false))
+        mapToFunctionAndProvideKeys("e", CustomSearch(wordEnd, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", BidirectionalPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("k", BidirectionalPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
@@ -90,6 +92,16 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+    }
+
+    private class CustomSearch(
+        val pattern: String,
+        val boundary: Boundary,
+        linewise: Boolean = false
+    ) : HandlerProcessor(linewise) {
+        override fun customization(editor: Editor) {
+            Handler.cutsomRegexSearch(pattern, boundary)
+        }
     }
 
     private class BidirectionalPattern(
@@ -172,7 +184,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-W) | <Leader>W
     <Plug>(easymotion-b) | <Leader>b      +
     <Plug>(easymotion-B) | <Leader>B
-    <Plug>(easymotion-e) | <Leader>e
+    <Plug>(easymotion-e) | <Leader>e      +
     <Plug>(easymotion-E) | <Leader>E
     <Plug>(easymotion-ge)| <Leader>ge
     <Plug>(easymotion-gE)| <Leader>gE

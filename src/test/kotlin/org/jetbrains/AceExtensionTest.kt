@@ -390,6 +390,17 @@ class AceExtensionTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    fun `test jump to word end`() {
+        doTest(
+            command = parseKeysWithLeader("e"),
+            putCaretAtWord = "lavender"
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(20, matchResults.size)
+            assertTrue(editorText.indexOf("tufted") + 5 in matchResults)
+            assertTrue(editorText.indexOf("land") + 4 !in matchResults)
+        }
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
