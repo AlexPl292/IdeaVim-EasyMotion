@@ -299,6 +299,21 @@ class AceExtensionTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    fun `test linewise tl motion`() {
+        doTest(
+            command = parseKeys("d") + parseKeys(command("tl")),
+            putCaretAtWord = "lavender",
+            searchQuery = "it",
+            jumpToNthQuery = 0
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,

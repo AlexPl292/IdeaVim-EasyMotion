@@ -51,6 +51,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("fl", MultiInput(AFTER_CARET_BOUNDARY, true))          // Works as `fln`
         mapToFunction("Fl", MultiInput(BEFORE_CARET_BOUNDARY, true))         // Works as `Fln`
         mapToFunction("bd-fl", MultiInput(SCREEN_BOUNDARY, true))            // Works as `sln`
+        mapToFunction("tl", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -64,6 +65,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("sl2", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
         mapToFunction("fl2", MultiInput(AFTER_CARET_BOUNDARY, true))          // Works as `fln`
         mapToFunction("Fl2", MultiInput(BEFORE_CARET_BOUNDARY, true))         // Works as `Fln`
+        mapToFunction("tl2", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
 
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
@@ -77,6 +79,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("fln", MultiInput(AFTER_CARET_BOUNDARY, true))
         mapToFunction("Fln", MultiInput(BEFORE_CARET_BOUNDARY, true))
         mapToFunction("bd-fln", MultiInput(SCREEN_BOUNDARY, true))
+        mapToFunction("tln", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
@@ -97,7 +100,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor(false) {
+    private class MultiInputPreStop(val boundary: Boundary, linewise: Boolean = false) : HandlerProcessor(linewise) {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
@@ -204,7 +207,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-fl)             | See |<Plug>(easymotion-fl)|        +   mapped to fln
     <Plug>(easymotion-Fl)             | See |<Plug>(easymotion-Fl)|        +   mapped to Fln
     <Plug>(easymotion-bd-fl)          | See |<Plug>(easymotion-sl)|        +   mapped to sln
-    <Plug>(easymotion-tl)             | See |<Plug>(easymotion-tl)|
+    <Plug>(easymotion-tl)             | See |<Plug>(easymotion-tl)|        +   mapped to tln
     <Plug>(easymotion-Tl)             | See |<Plug>(easymotion-Tl)|
     <Plug>(easymotion-bd-tl)          | See |<Plug>(easymotion-bd-tl)|
     <Plug>(easymotion-wl)             | See |<Plug>(easymotion-wl)|
@@ -230,7 +233,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-sl2)            | See |<Plug>(easymotion-sl2)|   +   mapped to sln
     <Plug>(easymotion-fl2)            | See |<Plug>(easymotion-fl2)|   +   mapped to fln
     <Plug>(easymotion-Fl2)            | See |<Plug>(easymotion-Fl2)|   +   mapped to Fln
-    <Plug>(easymotion-tl2)            | See |<Plug>(easymotion-tl2)|
+    <Plug>(easymotion-tl2)            | See |<Plug>(easymotion-tl2)|   +   mapped to tln
     <Plug>(easymotion-Tl2)            | See |<Plug>(easymotion-Tl2)|
                                       |
     <Plug>(easymotion-sn)             | See |<Plug>(easymotion-sn)|    +
@@ -245,7 +248,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-fln)            | See |<Plug>(easymotion-fln)|   +
     <Plug>(easymotion-Fln)            | See |<Plug>(easymotion-Fln)|   +
     <Plug>(easymotion-bd-fln)         | See |<Plug>(easymotion-sln)|   +
-    <Plug>(easymotion-tln)            | See |<Plug>(easymotion-tln)|
+    <Plug>(easymotion-tln)            | See |<Plug>(easymotion-tln)|   +
     <Plug>(easymotion-Tln)            | See |<Plug>(easymotion-Tln)|
     <Plug>(easymotion-bd-tln)         | See |<Plug>(easymotion-bd-tln)|
 
