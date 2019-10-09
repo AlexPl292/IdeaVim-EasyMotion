@@ -53,6 +53,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-fl", MultiInput(SCREEN_BOUNDARY, true))            // Works as `sln`
         mapToFunction("tl", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
         mapToFunction("Tl", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))  // Works as `Tln`
+        mapToFunction("bd-tl", BiDirectionalPreStop(true))                    // Works as `bd-tln`
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -83,6 +84,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-fln", MultiInput(SCREEN_BOUNDARY, true))
         mapToFunction("tln", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))
         mapToFunction("Tln", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
     }
@@ -127,7 +129,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BiDirectionalPreStop : HandlerProcessor(false) {
+    private class BiDirectionalPreStop(linewise: Boolean = true) : HandlerProcessor(linewise) {
         var caretPosition: Int? = null
 
         override fun customization(editor: Editor) {
@@ -212,7 +214,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-fl)          | See |<Plug>(easymotion-sl)|        +   mapped to sln
     <Plug>(easymotion-tl)             | See |<Plug>(easymotion-tl)|        +   mapped to tln
     <Plug>(easymotion-Tl)             | See |<Plug>(easymotion-Tl)|        +   mapped to Tln
-    <Plug>(easymotion-bd-tl)          | See |<Plug>(easymotion-bd-tl)|
+    <Plug>(easymotion-bd-tl)          | See |<Plug>(easymotion-bd-tl)|     +   mapped to bd-tln
     <Plug>(easymotion-wl)             | See |<Plug>(easymotion-wl)|
     <Plug>(easymotion-bl)             | See |<Plug>(easymotion-bl)|
     <Plug>(easymotion-bd-wl)          | See |<Plug>(easymotion-bd-wl)|
@@ -253,7 +255,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-fln)         | See |<Plug>(easymotion-sln)|   +
     <Plug>(easymotion-tln)            | See |<Plug>(easymotion-tln)|   +
     <Plug>(easymotion-Tln)            | See |<Plug>(easymotion-Tln)|   +
-    <Plug>(easymotion-bd-tln)         | See |<Plug>(easymotion-bd-tln)|
+    <Plug>(easymotion-bd-tln)         | See |<Plug>(easymotion-bd-tln)|+
 
     Over Window Motion                | (No assignment by default)
     ----------------------------------|---------------------------------
