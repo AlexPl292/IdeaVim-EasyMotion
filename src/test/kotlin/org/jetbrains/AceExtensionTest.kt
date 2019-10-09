@@ -505,6 +505,48 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test forward big word end motion`() {
+        doTest(
+            command = parseKeysWithLeader(command("E")),
+            editorText = text.replace("found it", "found.it")
+                .replace("legendary land", "legendary#land")
+                .replace("tufted grass", "tufted.grass")
+                .replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2
+        ) { _: String, matchResults: List<Int> ->
+            assertEquals(18, matchResults.size)
+        }
+    }
+
+    fun `test backward big word end motion`() {
+        doTest(
+            command = parseKeysWithLeader(command("gE")),
+            editorText = text.replace("found it", "found.it")
+                .replace("legendary land", "legendary#land")
+                .replace("tufted grass", "tufted.grass")
+                .replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2
+        ) { _: String, matchResults: List<Int> ->
+            assertEquals(10, matchResults.size)
+        }
+    }
+
+    fun `test bd big word end motion`() {
+        doTest(
+            command = parseKeys(command("bd-E")),
+            editorText = text.replace("found it", "found.it")
+                .replace("legendary land", "legendary#land")
+                .replace("tufted grass", "tufted.grass")
+                .replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2
+        ) { _: String, matchResults: List<Int> ->
+            assertEquals(10 + 18, matchResults.size)
+        }
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,

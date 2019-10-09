@@ -28,6 +28,8 @@ class AceExtension : VimNonDisposableExtension() {
         private const val wordEnd = "[a-zA-Z0-9_](?=[^a-zA-Z0-9_]|\\Z)"
         @Language("RegExp")
         private const val WORD = "(?<=\\s|\\A)[a-zA-Z0-9_]"
+        @Language("RegExp")
+        private const val WORD_END = "[^\\s](?=\\s|\\Z)"
     }
 
     override fun initOnce() {
@@ -41,7 +43,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("b", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, false))
         mapToFunctionAndProvideKeys("B", CustomPattern(WORD, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("e", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("E", CustomPattern(WORD_END, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("ge", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("gE", CustomPattern(WORD_END, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("j", PredefinedPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("k", PredefinedPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
@@ -52,6 +56,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-w", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
         mapToFunction("bd-W", CustomPattern(WORD, SCREEN_BOUNDARY))
         mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY))
+        mapToFunction("bd-E", CustomPattern(WORD_END, SCREEN_BOUNDARY))
         mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
         mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
         mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
@@ -198,9 +203,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-b) | <Leader>b      +
     <Plug>(easymotion-B) | <Leader>B      +
     <Plug>(easymotion-e) | <Leader>e      +
-    <Plug>(easymotion-E) | <Leader>E
+    <Plug>(easymotion-E) | <Leader>E      +
     <Plug>(easymotion-ge)| <Leader>ge     +
-    <Plug>(easymotion-gE)| <Leader>gE
+    <Plug>(easymotion-gE)| <Leader>gE     +
     <Plug>(easymotion-j) | <Leader>j      +
     <Plug>(easymotion-k) | <Leader>k      +
     <Plug>(easymotion-n) | <Leader>n
@@ -214,7 +219,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-w)           | See |<Plug>(easymotion-bd-w)|      +
     <Plug>(easymotion-bd-W)           | See |<Plug>(easymotion-bd-W)|      +
     <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|      +
-    <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|
+    <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|      +
     <Plug>(easymotion-bd-jk)          | See |<Plug>(easymotion-bd-jk)|     +
     <Plug>(easymotion-bd-n)           | See |<Plug>(easymotion-bd-n)|
     <Plug>(easymotion-jumptoanywhere) | See |<Plug>(easymotion-jumptoanywhere)|
