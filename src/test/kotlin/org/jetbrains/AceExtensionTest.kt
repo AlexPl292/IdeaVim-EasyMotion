@@ -344,6 +344,52 @@ class AceExtensionTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    fun `test linewise w motion`() {
+        doTest(
+            command = parseKeys("d") + parseKeys(command("wl")),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            jumpToNthQuery = 2
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
+    fun `test linewise b motion`() {
+        doTest(
+            command = parseKeys("d") + parseKeys(command("bl")),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            jumpToNthQuery = 2
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
+    fun `test linewise bd-wl motion`() {
+        doTest(
+            command = parseKeys("d") + parseKeys(command("bd-wl")),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            jumpToNthQuery = 2
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,

@@ -54,6 +54,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("tl", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
         mapToFunction("Tl", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))  // Works as `Tln`
         mapToFunction("bd-tl", BiDirectionalPreStop(true))                    // Works as `bd-tln`
+        mapToFunction("wl", BidirectionalPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("bl", BidirectionalPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("bd-wl", BidirectionalPattern(ALL_WORDS, SCREEN_BOUNDARY, true))
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -215,9 +218,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-tl)             | See |<Plug>(easymotion-tl)|        +   mapped to tln
     <Plug>(easymotion-Tl)             | See |<Plug>(easymotion-Tl)|        +   mapped to Tln
     <Plug>(easymotion-bd-tl)          | See |<Plug>(easymotion-bd-tl)|     +   mapped to bd-tln
-    <Plug>(easymotion-wl)             | See |<Plug>(easymotion-wl)|
-    <Plug>(easymotion-bl)             | See |<Plug>(easymotion-bl)|
-    <Plug>(easymotion-bd-wl)          | See |<Plug>(easymotion-bd-wl)|
+    <Plug>(easymotion-wl)             | See |<Plug>(easymotion-wl)|        +
+    <Plug>(easymotion-bl)             | See |<Plug>(easymotion-bl)|        +
+    <Plug>(easymotion-bd-wl)          | See |<Plug>(easymotion-bd-wl)|     +
     <Plug>(easymotion-el)             | See |<Plug>(easymotion-el)|
     <Plug>(easymotion-gel)            | See |<Plug>(easymotion-gel)|
     <Plug>(easymotion-bd-el)          | See |<Plug>(easymotion-bd-el)|
