@@ -43,6 +43,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("bd-t", BiDirectionalPreStop())
         mapToFunction("bd-w", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
+        mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY))
         mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
         mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
         mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
@@ -201,7 +202,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-t)           | See |<Plug>(easymotion-bd-t)|      +  mapped to bd-tn
     <Plug>(easymotion-bd-w)           | See |<Plug>(easymotion-bd-w)|      +
     <Plug>(easymotion-bd-W)           | See |<Plug>(easymotion-bd-W)|
-    <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|
+    <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|      +
     <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|
     <Plug>(easymotion-bd-jk)          | See |<Plug>(easymotion-bd-jk)|     +
     <Plug>(easymotion-bd-n)           | See |<Plug>(easymotion-bd-n)|

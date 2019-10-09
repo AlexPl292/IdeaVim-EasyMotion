@@ -412,6 +412,17 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test jump to word end bd`() {
+        doTest(
+            command = parseKeys(command("bd-e")),
+            putCaretAtWord = "lavender"
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(12 + 20, matchResults.size)
+            assertTrue(editorText.indexOf("tufted") + 5 in matchResults)
+            assertTrue(editorText.indexOf("land") + 3 in matchResults)
+        }
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
