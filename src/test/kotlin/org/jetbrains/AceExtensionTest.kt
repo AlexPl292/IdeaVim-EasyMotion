@@ -231,12 +231,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             putCaretAtWord = "all",
             jumpToNthQuery = 1
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 <caret>hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise s motion`() {
@@ -246,12 +248,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 1
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise f motion`() {
@@ -261,12 +265,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 0
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise F motion`() {
@@ -276,12 +282,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 0
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise bd-fl motion`() {
@@ -291,12 +299,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 1
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise tl motion`() {
@@ -306,12 +316,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 0
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise T motion`() {
@@ -321,12 +333,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 0
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise bd-tl motion`() {
@@ -336,12 +350,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             searchQuery = "it",
             jumpToNthQuery = 1
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise w motion`() {
@@ -351,13 +367,15 @@ class AceExtensionTest : BasePlatformTestCase() {
             caretShift = 2,
             jumpToNthQuery = 2
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise b motion`() {
@@ -367,12 +385,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             caretShift = 2,
             jumpToNthQuery = 2
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise bd-wl motion`() {
@@ -382,12 +402,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             caretShift = 2,
             jumpToNthQuery = 2
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test jump to word end`() {
@@ -430,13 +452,15 @@ class AceExtensionTest : BasePlatformTestCase() {
             caretShift = 2,
             jumpToNthQuery = 2
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 I found it in a legendary land
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise ge motion`() {
@@ -446,12 +470,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             caretShift = 2,
             jumpToNthQuery = 2
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test linewise bd-ge motion`() {
@@ -461,12 +487,14 @@ class AceExtensionTest : BasePlatformTestCase() {
             caretShift = 2,
             jumpToNthQuery = 2
         )
-        myFixture.checkResult("""
+        myFixture.checkResult(
+            """
                 A Discovery
 
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test forward big word motion`() {
