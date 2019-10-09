@@ -15,6 +15,7 @@ import org.acejump.view.Boundary
 import org.acejump.view.Boundary.*
 import org.acejump.view.Canvas
 import org.acejump.view.Model
+import org.intellij.lang.annotations.Language
 
 class AceExtension : VimNonDisposableExtension() {
     override fun getName(): String = "acejump"
@@ -22,7 +23,9 @@ class AceExtension : VimNonDisposableExtension() {
     companion object {
         const val pluginPrefix = "<Plug>(easymotion-prefix)"
         const val defaultPrefix = "<leader><leader>"
-        private const val wordEnd = "[a-zA-Z0-9_]([^a-zA-Z0-9_]|\\Z)"
+
+        @Language("RegExp")
+        private const val wordEnd = "[a-zA-Z0-9_](?=[^a-zA-Z0-9_]|\\Z)"
     }
 
     override fun initOnce() {
@@ -61,6 +64,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("wl", PredefinedPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, true))
         mapToFunction("bl", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, true))
         mapToFunction("bd-wl", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, true))
+        mapToFunction("el", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY, true))
+        mapToFunction("gel", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("bd-el", CustomPattern(wordEnd, SCREEN_BOUNDARY, true))
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -235,9 +241,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-wl)             | See |<Plug>(easymotion-wl)|        +
     <Plug>(easymotion-bl)             | See |<Plug>(easymotion-bl)|        +
     <Plug>(easymotion-bd-wl)          | See |<Plug>(easymotion-bd-wl)|     +
-    <Plug>(easymotion-el)             | See |<Plug>(easymotion-el)|
-    <Plug>(easymotion-gel)            | See |<Plug>(easymotion-gel)|
-    <Plug>(easymotion-bd-el)          | See |<Plug>(easymotion-bd-el)|
+    <Plug>(easymotion-el)             | See |<Plug>(easymotion-el)|        +
+    <Plug>(easymotion-gel)            | See |<Plug>(easymotion-gel)|       +
+    <Plug>(easymotion-bd-el)          | See |<Plug>(easymotion-bd-el)|     +
     <Plug>(easymotion-lineforward)    | See |<Plug>(easymotion-lineforward)|
     <Plug>(easymotion-linebackward)   | See |<Plug>(easymotion-linebackward)|
     <Plug>(easymotion-lineanywhere)   | See |<Plug>(easymotion-lineanywhere)|
