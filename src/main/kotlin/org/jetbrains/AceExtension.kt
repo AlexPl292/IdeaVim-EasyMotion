@@ -62,6 +62,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
         mapToFunction("eol-j", PredefinedPattern(END_OF_LINE, AFTER_CARET_BOUNDARY, true))
         mapToFunction("eol-k", PredefinedPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("iskeyword-w", KeyWordStart(AFTER_CARET_BOUNDARY))
+        mapToFunction("iskeyword-b", KeyWordStart(BEFORE_CARET_BOUNDARY))
+        mapToFunction("iskeyword-bd-w", KeyWordStart(SCREEN_BOUNDARY))
 
         // ------------ Within Line Motion -----------------------//
         mapToFunction("sl", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
@@ -110,6 +113,17 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+    }
+
+    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor(false) {
+        override fun customization(editor: Editor) {
+            val kw = keywordRegex()?.let {
+                "((?<=\\s|\\A|[^$it])[$it])|" +  // Take a char from keyword that is preceded by a not-keyword char, or
+                        "((?<=[$it])[^$it\\s])|" // non-keyword char that is preceded by a keyword char.
+            } ?: ""
+            val regex = "$kw$WORD"
+            Handler.cutsomRegexSearch(regex, boundary)
+        }
     }
 
     private class CustomPattern(
@@ -230,9 +244,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-sol-k)          | See |<Plug>(easymotion-sol-k)|     +
     <Plug>(easymotion-eol-j)          | See |<Plug>(easymotion-eol-j)|     +
     <Plug>(easymotion-eol-k)          | See |<Plug>(easymotion-eol-k)|     +
-    <Plug>(easymotion-iskeyword-w)    | See |<Plug>(easymotion-iskeyword-w)|
-    <Plug>(easymotion-iskeyword-b)    | See |<Plug>(easymotion-iskeyword-b)|
-    <Plug>(easymotion-iskeyword-bd-w) | See |<Plug>(easymotion-iskeyword-bd-w)|
+    <Plug>(easymotion-iskeyword-w)    | See |<Plug>(easymotion-iskeyword-w)|    +
+    <Plug>(easymotion-iskeyword-b)    | See |<Plug>(easymotion-iskeyword-b)|    +
+    <Plug>(easymotion-iskeyword-bd-w) | See |<Plug>(easymotion-iskeyword-bd-w)| +
     <Plug>(easymotion-iskeyword-e)    | See |<Plug>(easymotion-iskeyword-e)|
     <Plug>(easymotion-iskeyword-ge)   | See |<Plug>(easymotion-iskeyword-ge)|
     <Plug>(easymotion-iskeyword-bd-e) | See |<Plug>(easymotion-iskeyword-bd-e)|

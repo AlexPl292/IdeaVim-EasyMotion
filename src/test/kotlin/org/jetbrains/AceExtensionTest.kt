@@ -575,6 +575,57 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test iskeyword w`() {
+        doTest(
+            command = parseKeys(command("iskeyword-w")),
+            editorText = iskeywordText,
+            putCaretAtWord = "middle",
+            caretShift = 2,
+            afterEditorSetup = {
+                val value = "@,-"
+                OptionsManager.parseOptionLine(it, "iskeyword=$value", false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(9, matchResults.size)
+            assertTrue(editorText.indexOf("case-twoB") in matchResults)
+            assertTrue(editorText.indexOf("case-twoA") !in matchResults)
+        }
+    }
+
+    fun `test iskeyword b`() {
+        doTest(
+            command = parseKeys(command("iskeyword-b")),
+            editorText = iskeywordText,
+            putCaretAtWord = "middle",
+            caretShift = 2,
+            afterEditorSetup = {
+                val value = "@,-"
+                OptionsManager.parseOptionLine(it, "iskeyword=$value", false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(10, matchResults.size)
+            assertTrue(editorText.indexOf("case-twoB") !in matchResults)
+            assertTrue(editorText.indexOf("case-twoA") in matchResults)
+        }
+    }
+
+    fun `test iskeyword bd-w`() {
+        doTest(
+            command = parseKeys(command("iskeyword-bd-w")),
+            editorText = iskeywordText,
+            putCaretAtWord = "middle",
+            caretShift = 2,
+            afterEditorSetup = {
+                val value = "@,-"
+                OptionsManager.parseOptionLine(it, "iskeyword=$value", false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(10 + 9, matchResults.size)
+            assertTrue(editorText.indexOf("case-twoB") in matchResults)
+            assertTrue(editorText.indexOf("case-twoA") in matchResults)
+        }
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
@@ -633,6 +684,18 @@ class AceExtensionTest : BasePlatformTestCase() {
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
         """.trimIndent()
+
+    private val iskeywordText = """
+                    caseA oneA
+                    case-twoA
+                    case#threeA
+                    case1fourA
+                    middle
+                    caseB oneB
+                    case-twoB
+                    case#threeB
+                    case1fourB
+                """.trimIndent()
 
     private fun String.indentLineThatStartsWith(str: String): String {
         val index = this.indexOf(str)
