@@ -687,6 +687,44 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test lineforward`() {
+        doTest(
+            editorText = "This is a text for test",
+            command = parseKeys(command("lineforward")),
+            putCaretAtWord = "text",
+            caretShift = 2
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(5, matchResults.size)
+            assertTrue(editorText.indexOf("test") in matchResults)
+            assertTrue(editorText.indexOf("text") !in matchResults)
+        }
+    }
+
+    fun `test linebackward`() {
+        doTest(
+            editorText = "This is a text for test",
+            command = parseKeys(command("linebackward")),
+            putCaretAtWord = "text",
+            caretShift = 2
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(6, matchResults.size)
+            assertTrue(editorText.indexOf("test") !in matchResults)
+            assertTrue(editorText.indexOf("text") in matchResults)
+        }
+    }
+
+    fun `test lineanywhere`() {
+        doTest(
+            editorText = "This is a text for test",
+            command = parseKeys(command("lineanywhere")),
+            putCaretAtWord = "text",
+            caretShift = 2
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(6 + 5, matchResults.size)
+            assertTrue(editorText.indexOf("test") in matchResults)
+            assertTrue(editorText.indexOf("text") in matchResults)
+        }
+    }
 
     private fun doTest(
         command: List<KeyStroke>,

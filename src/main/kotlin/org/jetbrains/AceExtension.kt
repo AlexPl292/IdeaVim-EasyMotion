@@ -35,11 +35,13 @@ class AceExtension : VimNonDisposableExtension() {
         private const val WORD_END = "[^\\s](?=\\s|\\Z)"
 
         private const val jumpAnywhere = "g:EasyMotion_re_anywhere"
+        private const val lineJumpAnywhere = "g:EasyMotion_re_line_anywhere"
+        private const val defaultRe = """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
     }
 
     override fun initOnce() {
-        VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] =
-            """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
+        VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] = defaultRe
+        VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] = defaultRe
 
         // -----------  Default mapping table ---------------------//
         mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY))          // Works as `fn`
@@ -92,6 +94,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("el", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY, true))
         mapToFunction("gel", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY, true))
         mapToFunction("bd-el", CustomPattern(wordEnd, SCREEN_BOUNDARY, true))
+        mapToFunction("lineforward", JumptoanywhereInLine(0))
+        mapToFunction("linebackward", JumptoanywhereInLine(1))
+        mapToFunction("lineanywhere", JumptoanywhereInLine(2))
 
         // ------------ Multi input mapping table ----------------//
         mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
@@ -135,6 +140,25 @@ class AceExtension : VimNonDisposableExtension() {
                 .map { it.startOffset }
                 .toSortedSet()
             Finder.markResults(startOffsets)
+        }
+    }
+
+    //** Directions as in vim */
+    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor(false) {
+        override fun customization(editor: Editor) {
+            val pattern = VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] as? String ?: return
+
+            val currentLine = editor.caretModel.logicalPosition.line
+            val currentOffset = editor.caretModel.offset
+            val startOffsets = SearchGroup.findAll(editor, pattern, currentLine, currentLine, false)
+                .map { it.startOffset }
+
+            val results = when (direction) {
+                0 -> startOffsets.filter { it > currentOffset }   // forward
+                1 -> startOffsets.filter { it < currentOffset }   // backward
+                else -> startOffsets
+            }
+            Finder.markResults(results.toSortedSet())
         }
     }
 
@@ -302,9 +326,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-el)             | See |<Plug>(easymotion-el)|        +
     <Plug>(easymotion-gel)            | See |<Plug>(easymotion-gel)|       +
     <Plug>(easymotion-bd-el)          | See |<Plug>(easymotion-bd-el)|     +
-    <Plug>(easymotion-lineforward)    | See |<Plug>(easymotion-lineforward)|
-    <Plug>(easymotion-linebackward)   | See |<Plug>(easymotion-linebackward)|
-    <Plug>(easymotion-lineanywhere)   | See |<Plug>(easymotion-lineanywhere)|
+    <Plug>(easymotion-lineforward)    | See |<Plug>(easymotion-lineforward)|   +
+    <Plug>(easymotion-linebackward)   | See |<Plug>(easymotion-linebackward)|  +
+    <Plug>(easymotion-lineanywhere)   | See |<Plug>(easymotion-lineanywhere)|  +
                                       |
     Multi Input Find Motion           | See |easymotion-multi-input|
     ----------------------------------|---------------------------------
