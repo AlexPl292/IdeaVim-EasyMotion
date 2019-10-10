@@ -27,7 +27,7 @@ class AceExtension : VimNonDisposableExtension() {
         @Language("RegExp")
         private const val wordEnd = "[a-zA-Z0-9_](?=[^a-zA-Z0-9_]|\\Z)"
         @Language("RegExp")
-        private const val WORD = "(?<=\\s|\\A)[a-zA-Z0-9_]"
+        private const val WORD = "(?<=\\s|\\A)[^\\s]"
         @Language("RegExp")
         private const val WORD_END = "[^\\s](?=\\s|\\Z)"
     }
