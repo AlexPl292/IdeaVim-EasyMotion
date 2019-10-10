@@ -310,23 +310,23 @@ class AceExtension : VimNonDisposableExtension() {
 
     <Plug> Mapping Table | Default
     ---------------------|----------------------------------------------
-    <Plug>(easymotion-f) | <Leader>f{char} +  mapped to fn
-    <Plug>(easymotion-F) | <Leader>F{char} +  mapped to Fn
-    <Plug>(easymotion-t) | <Leader>t{char} +  mapped to tn
-    <Plug>(easymotion-T) | <Leader>T{char} +  mapped to Tn
-    <Plug>(easymotion-w) | <Leader>w      +
-    <Plug>(easymotion-W) | <Leader>W      +
-    <Plug>(easymotion-b) | <Leader>b      +
-    <Plug>(easymotion-B) | <Leader>B      +
-    <Plug>(easymotion-e) | <Leader>e      +
-    <Plug>(easymotion-E) | <Leader>E      +
-    <Plug>(easymotion-ge)| <Leader>ge     +
-    <Plug>(easymotion-gE)| <Leader>gE     +
-    <Plug>(easymotion-j) | <Leader>j      +
-    <Plug>(easymotion-k) | <Leader>k      +
-    <Plug>(easymotion-n) | <Leader>n      +
-    <Plug>(easymotion-N) | <Leader>N      +
-    <Plug>(easymotion-s) | <Leader>s      + mapped to sn
+    <Plug>(easymotion-f) | <leader><leader>f{char} +  mapped to fn
+    <Plug>(easymotion-F) | <leader><leader>F{char} +  mapped to Fn
+    <Plug>(easymotion-t) | <leader><leader>t{char} +  mapped to tn
+    <Plug>(easymotion-T) | <leader><leader>T{char} +  mapped to Tn
+    <Plug>(easymotion-w) | <leader><leader>w      +
+    <Plug>(easymotion-W) | <leader><leader>W      +
+    <Plug>(easymotion-b) | <leader><leader>b      +
+    <Plug>(easymotion-B) | <leader><leader>B      +
+    <Plug>(easymotion-e) | <leader><leader>e      +
+    <Plug>(easymotion-E) | <leader><leader>E      +
+    <Plug>(easymotion-ge)| <leader><leader>ge     +
+    <Plug>(easymotion-gE)| <leader><leader>gE     +
+    <Plug>(easymotion-j) | <leader><leader>j      +
+    <Plug>(easymotion-k) | <leader><leader>k      +
+    <Plug>(easymotion-n) | <leader><leader>n      +
+    <Plug>(easymotion-N) | <leader><leader>N      +
+    <Plug>(easymotion-s) | <leader><leader>s      + mapped to sn
 
     More <Plug> Mapping Table         | (No assignment by default)
     ----------------------------------|---------------------------------
