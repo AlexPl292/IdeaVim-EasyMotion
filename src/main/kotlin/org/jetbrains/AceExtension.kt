@@ -3,6 +3,7 @@
 package org.jetbrains
 
 import com.intellij.openapi.editor.Editor
+import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
@@ -59,6 +60,8 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("j", PredefinedPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("k", PredefinedPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
+        mapToFunctionAndProvideKeys("n", RepeatSearch(forward = true, respectVimDirection = false))
+        mapToFunctionAndProvideKeys("N", RepeatSearch(forward = false, respectVimDirection = false))
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
@@ -68,6 +71,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY))
         mapToFunction("bd-E", CustomPattern(WORD_END, SCREEN_BOUNDARY))
         mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
+        mapToFunction("bd-n", RepeatSearch(forward = false, respectVimDirection = false, bidirect = true))
         mapToFunction("jumptoanywhere", Jumptoanywhere())
         mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
         mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
@@ -79,6 +83,8 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("iskeyword-e", KeyWordEnd(AFTER_CARET_BOUNDARY))
         mapToFunction("iskeyword-ge", KeyWordEnd(BEFORE_CARET_BOUNDARY))
         mapToFunction("iskeyword-bd-e", KeyWordEnd(SCREEN_BOUNDARY))
+        mapToFunction("vim-n", RepeatSearch(forward = true, respectVimDirection = true))
+        mapToFunction("vim-N", RepeatSearch(forward = false, respectVimDirection = true))
 
         // ------------ Within Line Motion -----------------------//
         mapToFunction("sl", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
@@ -130,6 +136,44 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+    }
+
+    private class RepeatSearch(
+        val forward: Boolean,
+        val respectVimDirection: Boolean,
+        val bidirect: Boolean = false
+    ) : HandlerProcessor(false) {
+        override fun customization(editor: Editor) {
+            val lastSearch = VimPlugin.getSearch().lastSearch ?: run {
+                Handler.reset()
+                return
+            }
+            val lastDirection = VimPlugin.getSearch().lastDir
+
+            val currentOffset = editor.caretModel.offset
+            val currentLine = editor.caretModel.logicalPosition.line
+
+            val lineRange = if (bidirect) {
+                0 to -1
+            } else {
+                if (respectVimDirection) {
+                    if (forward) {
+                        if (lastDirection > 0) currentLine to -1 else 0 to currentLine
+                    } else {
+                        if (lastDirection > 0) 0 to currentLine else currentLine to -1
+                    }
+                } else {
+                    if (forward) currentLine to -1 else 0 to currentLine
+                }
+            }
+
+            val startOffsets = SearchGroup.findAll(editor, lastSearch, lineRange.first, lineRange.second, false)
+                .map { it.startOffset }
+                .filter { if (bidirect) true else if (lineRange.second == -1) it > currentOffset else it < currentOffset }
+                .toSortedSet()
+
+            Finder.markResults(startOffsets)
+        }
     }
 
     private class Jumptoanywhere : HandlerProcessor(false) {
@@ -280,8 +324,8 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-gE)| <Leader>gE     +
     <Plug>(easymotion-j) | <Leader>j      +
     <Plug>(easymotion-k) | <Leader>k      +
-    <Plug>(easymotion-n) | <Leader>n
-    <Plug>(easymotion-N) | <Leader>N
+    <Plug>(easymotion-n) | <Leader>n      +
+    <Plug>(easymotion-N) | <Leader>N      +
     <Plug>(easymotion-s) | <Leader>s      + mapped to sn
 
     More <Plug> Mapping Table         | (No assignment by default)
@@ -293,7 +337,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-e)           | See |<Plug>(easymotion-bd-e)|      +
     <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|      +
     <Plug>(easymotion-bd-jk)          | See |<Plug>(easymotion-bd-jk)|     +
-    <Plug>(easymotion-bd-n)           | See |<Plug>(easymotion-bd-n)|
+    <Plug>(easymotion-bd-n)           | See |<Plug>(easymotion-bd-n)|      +
     <Plug>(easymotion-jumptoanywhere) | See |<Plug>(easymotion-jumptoanywhere)| +
     <Plug>(easymotion-repeat)         | See |<Plug>(easymotion-repeat)|
     <Plug>(easymotion-next)           | See |<Plug>(easymotion-next)|
@@ -308,8 +352,8 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-iskeyword-e)    | See |<Plug>(easymotion-iskeyword-e)|    +
     <Plug>(easymotion-iskeyword-ge)   | See |<Plug>(easymotion-iskeyword-ge)|   +
     <Plug>(easymotion-iskeyword-bd-e) | See |<Plug>(easymotion-iskeyword-bd-e)| +
-    <Plug>(easymotion-vim-n)          | See |<Plug>(easymotion-vim-n)|
-    <Plug>(easymotion-vim-N)          | See |<Plug>(easymotion-vim-N)|
+    <Plug>(easymotion-vim-n)          | See |<Plug>(easymotion-vim-n)|          +
+    <Plug>(easymotion-vim-N)          | See |<Plug>(easymotion-vim-N)|          +
                                       |
     Within Line Motion                | See |easymotion-within-line|
     ----------------------------------|---------------------------------

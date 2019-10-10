@@ -9,12 +9,14 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.CommandFlags
 import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.group.visual.VimVisualTimer
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorDataContext
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.TestInputModel
+import com.maddyhome.idea.vim.helper.enumSetOf
 import com.maddyhome.idea.vim.helper.mode
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
@@ -723,6 +725,77 @@ class AceExtensionTest : BasePlatformTestCase() {
             assertEquals(6 + 5, matchResults.size)
             assertTrue(editorText.indexOf("test") in matchResults)
             assertTrue(editorText.indexOf("text") in matchResults)
+        }
+    }
+
+    fun `test repeat search forward norespect`() {
+        doTest(
+            editorText = "Hello middle Hello",
+            command = parseKeysWithLeader("n"),
+            putCaretAtWord = "middle",
+            afterEditorSetup = {
+                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(1, matchResults.size)
+            assertTrue(editorText.lastIndexOf("Hello") in matchResults)
+        }
+    }
+
+    fun `test repeat search backward norespect`() {
+        doTest(
+            editorText = "Hello middle Hello",
+            command = parseKeysWithLeader("N"),
+            putCaretAtWord = "middle",
+            afterEditorSetup = {
+                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(1, matchResults.size)
+            assertTrue(editorText.indexOf("Hello") in matchResults)
+        }
+    }
+
+    fun `test repeat search forward respect`() {
+        doTest(
+            editorText = "Hello middle Hello",
+            command = parseKeys(command("vim-n")),
+            putCaretAtWord = "middle",
+            afterEditorSetup = {
+                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(1, matchResults.size)
+            assertTrue(editorText.indexOf("Hello") in matchResults)
+        }
+    }
+
+    fun `test repeat search backward respect`() {
+        doTest(
+            editorText = "Hello middle Hello",
+            command = parseKeys(command("vim-N")),
+            putCaretAtWord = "middle",
+            afterEditorSetup = {
+                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(1, matchResults.size)
+            assertTrue(editorText.lastIndexOf("Hello") in matchResults)
+        }
+    }
+
+    fun `test repeat search bd`() {
+        doTest(
+            editorText = "Hello middle Hello",
+            command = parseKeys(command("bd-n")),
+            putCaretAtWord = "middle",
+            afterEditorSetup = {
+                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(2, matchResults.size)
+            assertTrue(editorText.lastIndexOf("Hello") in matchResults)
+            assertTrue(editorText.indexOf("Hello") in matchResults)
         }
     }
 
