@@ -626,6 +626,57 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test iskeyword e`() {
+        doTest(
+            command = parseKeys(command("iskeyword-e")),
+            editorText = iskeywordText,
+            putCaretAtWord = "middle",
+            caretShift = 2,
+            afterEditorSetup = {
+                val value = "@,-"
+                OptionsManager.parseOptionLine(it, "iskeyword=$value", false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(10, matchResults.size)
+            assertTrue(editorText.indexOf("case-twoB") + 8 in matchResults)
+            assertTrue(editorText.indexOf("case-twoA") + 8 !in matchResults)
+        }
+    }
+
+    fun `test iskeyword ge`() {
+        doTest(
+            command = parseKeys(command("iskeyword-ge")),
+            editorText = iskeywordText,
+            putCaretAtWord = "middle",
+            caretShift = 2,
+            afterEditorSetup = {
+                val value = "@,-"
+                OptionsManager.parseOptionLine(it, "iskeyword=$value", false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(9, matchResults.size)
+            assertTrue(editorText.indexOf("case-twoB") + 8 !in matchResults)
+            assertTrue(editorText.indexOf("case-twoA") + 8 in matchResults)
+        }
+    }
+
+    fun `test iskeyword bd-e`() {
+        doTest(
+            command = parseKeys(command("iskeyword-bd-e")),
+            editorText = iskeywordText,
+            putCaretAtWord = "middle",
+            caretShift = 2,
+            afterEditorSetup = {
+                val value = "@,-"
+                OptionsManager.parseOptionLine(it, "iskeyword=$value", false)
+            }
+        ) { editorText: String, matchResults: List<Int> ->
+            assertEquals(9 + 10, matchResults.size)
+            assertTrue(editorText.indexOf("case-twoB") + 8 in matchResults)
+            assertTrue(editorText.indexOf("case-twoA") + 8 in matchResults)
+        }
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,

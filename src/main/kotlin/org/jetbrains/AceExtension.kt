@@ -65,6 +65,9 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("iskeyword-w", KeyWordStart(AFTER_CARET_BOUNDARY))
         mapToFunction("iskeyword-b", KeyWordStart(BEFORE_CARET_BOUNDARY))
         mapToFunction("iskeyword-bd-w", KeyWordStart(SCREEN_BOUNDARY))
+        mapToFunction("iskeyword-e", KeyWordEnd(AFTER_CARET_BOUNDARY))
+        mapToFunction("iskeyword-ge", KeyWordEnd(BEFORE_CARET_BOUNDARY))
+        mapToFunction("iskeyword-bd-e", KeyWordEnd(SCREEN_BOUNDARY))
 
         // ------------ Within Line Motion -----------------------//
         mapToFunction("sl", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
@@ -122,6 +125,17 @@ class AceExtension : VimNonDisposableExtension() {
                         "((?<=[$it])[^$it\\s])|" // non-keyword char that is preceded by a keyword char.
             } ?: ""
             val regex = "$kw$WORD"
+            Handler.cutsomRegexSearch(regex, boundary)
+        }
+    }
+
+    private class KeyWordEnd(val boundary: Boundary) : HandlerProcessor(false) {
+        override fun customization(editor: Editor) {
+            val kw = keywordRegex()?.let {
+                "([$it](?=\\s|\\Z|[^$it]))|" +  // Take a char from keyword that is preceded by a not-keyword char, or
+                        "([^$it\\s](?=[$it]))|" // non-keyword char that is preceded by a keyword char.
+            } ?: ""
+            val regex = "$kw$WORD_END"
             Handler.cutsomRegexSearch(regex, boundary)
         }
     }
@@ -247,9 +261,9 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-iskeyword-w)    | See |<Plug>(easymotion-iskeyword-w)|    +
     <Plug>(easymotion-iskeyword-b)    | See |<Plug>(easymotion-iskeyword-b)|    +
     <Plug>(easymotion-iskeyword-bd-w) | See |<Plug>(easymotion-iskeyword-bd-w)| +
-    <Plug>(easymotion-iskeyword-e)    | See |<Plug>(easymotion-iskeyword-e)|
-    <Plug>(easymotion-iskeyword-ge)   | See |<Plug>(easymotion-iskeyword-ge)|
-    <Plug>(easymotion-iskeyword-bd-e) | See |<Plug>(easymotion-iskeyword-bd-e)|
+    <Plug>(easymotion-iskeyword-e)    | See |<Plug>(easymotion-iskeyword-e)|    +
+    <Plug>(easymotion-iskeyword-ge)   | See |<Plug>(easymotion-iskeyword-ge)|   +
+    <Plug>(easymotion-iskeyword-bd-e) | See |<Plug>(easymotion-iskeyword-bd-e)| +
     <Plug>(easymotion-vim-n)          | See |<Plug>(easymotion-vim-n)|
     <Plug>(easymotion-vim-N)          | See |<Plug>(easymotion-vim-N)|
                                       |
