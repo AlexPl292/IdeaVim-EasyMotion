@@ -4,13 +4,16 @@ package org.jetbrains
 
 import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.command.MappingMode
+import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
+import com.maddyhome.idea.vim.group.SearchGroup
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
 import org.acejump.label.Pattern.*
+import org.acejump.search.Finder
 import org.acejump.view.Boundary
 import org.acejump.view.Boundary.*
 import org.acejump.view.Canvas
@@ -30,9 +33,14 @@ class AceExtension : VimNonDisposableExtension() {
         private const val WORD = "(?<=\\s|\\A)[^\\s]"
         @Language("RegExp")
         private const val WORD_END = "[^\\s](?=\\s|\\Z)"
+
+        private const val jumpAnywhere = "g:EasyMotion_re_anywhere"
     }
 
     override fun initOnce() {
+        VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] =
+            """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
+
         // -----------  Default mapping table ---------------------//
         mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY))          // Works as `fn`
         mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))         // Works as `Fn`
@@ -58,6 +66,7 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY))
         mapToFunction("bd-E", CustomPattern(WORD_END, SCREEN_BOUNDARY))
         mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
+        mapToFunction("jumptoanywhere", Jumptoanywhere())
         mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
         mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
         mapToFunction("eol-j", PredefinedPattern(END_OF_LINE, AFTER_CARET_BOUNDARY, true))
@@ -116,6 +125,17 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+    }
+
+    private class Jumptoanywhere : HandlerProcessor(false) {
+        override fun customization(editor: Editor) {
+            val pattern = VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] as? String ?: return
+
+            val startOffsets = SearchGroup.findAll(editor, pattern, 0, -1, false)
+                .map { it.startOffset }
+                .toSortedSet()
+            Finder.markResults(startOffsets)
+        }
     }
 
     private class KeyWordStart(val boundary: Boundary) : HandlerProcessor(false) {
@@ -250,7 +270,7 @@ class AceExtension : VimNonDisposableExtension() {
     <Plug>(easymotion-bd-E)           | See |<Plug>(easymotion-bd-E)|      +
     <Plug>(easymotion-bd-jk)          | See |<Plug>(easymotion-bd-jk)|     +
     <Plug>(easymotion-bd-n)           | See |<Plug>(easymotion-bd-n)|
-    <Plug>(easymotion-jumptoanywhere) | See |<Plug>(easymotion-jumptoanywhere)|
+    <Plug>(easymotion-jumptoanywhere) | See |<Plug>(easymotion-jumptoanywhere)| +
     <Plug>(easymotion-repeat)         | See |<Plug>(easymotion-repeat)|
     <Plug>(easymotion-next)           | See |<Plug>(easymotion-next)|
     <Plug>(easymotion-prev)           | See |<Plug>(easymotion-prev)|

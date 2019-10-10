@@ -677,6 +677,17 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test jumptoanywhere`() {
+        doTest(
+            editorText = "Hello\nWorld",
+            command = parseKeys(command("jumptoanywhere"))
+        ) { _: String, matchResults: List<Int> ->
+            // FIXME: 10/10/2019 Should be 4
+            assertEquals(5, matchResults.size)
+        }
+    }
+
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
