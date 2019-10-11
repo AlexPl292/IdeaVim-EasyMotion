@@ -243,175 +243,139 @@ class AceExtensionTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test linewise s motion`() {
+    fun `test within line s motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("sl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
+            command = parseKeys(command("sl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd"
+        ) { editorText, matches ->
+            assertEquals(3, matches.size)
+            assertTrue(editorText.lastIndexOf("land") + 2 in matches)
+            assertTrue(editorText.indexOf("found") + 3 in matches)
+        }
+    }
+
+    fun `test within line f motion`() {
+        doTest(
+            command = parseKeys(command("fl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd"
+        ) { editorText, matches ->
+            assertEquals(2, matches.size)
+            assertTrue(editorText.lastIndexOf("land") + 2 in matches)
+            assertTrue(editorText.indexOf("found") + 3 !in matches)
+        }
+    }
+
+    fun `test within line big f motion`() {
+        doTest(
+            command = parseKeys(command("Fl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd"
+        ) { editorText, matches ->
+            assertEquals(1, matches.size)
+            assertTrue(editorText.lastIndexOf("land") + 2 !in matches)
+            assertTrue(editorText.indexOf("found") + 3 in matches)
+        }
+    }
+
+    fun `test within line bd-fl motion`() {
+        doTest(
+            command = parseKeys(command("bd-fl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd"
+        ) { editorText, matches ->
+            assertEquals(3, matches.size)
+            assertTrue(editorText.lastIndexOf("land") + 2 in matches)
+            assertTrue(editorText.indexOf("found") + 3 in matches)
+        }
+    }
+
+    fun `test within line tl motion`() {
+        doTest(
+            command = parseKeys(command("tl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd",
             jumpToNthQuery = 1
         )
-        myFixture.checkResult(
-            """
+        myFixture.checkResult("""
                 A Discovery
 
-                I found it in a legendary land
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
-    }
-
-    fun `test linewise f motion`() {
-        doTest(
-            command = parseKeys("d") + parseKeys(command("fl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
-            jumpToNthQuery = 0
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                I found it in a legendary land
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
-    }
-
-    fun `test linewise F motion`() {
-        doTest(
-            command = parseKeys("d") + parseKeys(command("Fl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
-            jumpToNthQuery = 0
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
+                I found it in a legendary l<caret>and
+                all rocks and lavender and tufted grass,
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+        """.trimIndent())
     }
 
-    fun `test linewise bd-fl motion`() {
+    fun `test within line big T motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("bd-fl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
-            jumpToNthQuery = 1
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                I found it in a legendary land
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
-    }
-
-    fun `test linewise tl motion`() {
-        doTest(
-            command = parseKeys("d") + parseKeys(command("tl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
+            command = parseKeys(command("Tl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd",
             jumpToNthQuery = 0
         )
-        myFixture.checkResult(
-            """
+        myFixture.checkResult("""
                 A Discovery
 
-                I found it in a legendary land
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
-    }
-
-    fun `test linewise T motion`() {
-        doTest(
-            command = parseKeys("d") + parseKeys(command("Tl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
-            jumpToNthQuery = 0
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
+                I found<caret> it in a legendary land
+                all rocks and lavender and tufted grass,
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+        """.trimIndent())
     }
 
-    fun `test linewise bd-tl motion`() {
+    fun `test within line bd-tl motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("bd-tl")),
-            putCaretAtWord = "lavender",
-            searchQuery = "it",
-            jumpToNthQuery = 1
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                I found it in a legendary land
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
-    }
-
-    fun `test linewise w motion`() {
-        doTest(
-            command = parseKeys("d") + parseKeys(command("wl")),
-            putCaretAtWord = "lavender",
-            caretShift = 2,
+            command = parseKeys(command("bd-tl")),
+            putCaretAtWord = "in",
+            searchQuery = "nd",
             jumpToNthQuery = 2
         )
-        myFixture.checkResult(
-            """
+        myFixture.checkResult("""
                 A Discovery
 
-                I found it in a legendary land
+                I found it in a legendary l<caret>and
+                all rocks and lavender and tufted grass,
                 where it was settled on some sodden sand
                 hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+        """.trimIndent())
     }
 
-    fun `test linewise b motion`() {
+    fun `test within line w motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("bl")),
-            putCaretAtWord = "lavender",
-            caretShift = 2,
-            jumpToNthQuery = 2
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+            command = parseKeys(command("wl")),
+            putCaretAtWord = "in",
+            caretShift = 1
+        ) { editorText, matches ->
+            assertEquals(3, matches.size)
+            assertTrue(editorText.indexOf("land") in matches)
+            assertTrue(editorText.indexOf("found") !in matches)
+        }
     }
 
-    fun `test linewise bd-wl motion`() {
+    fun `test within line b motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("bd-wl")),
-            putCaretAtWord = "lavender",
-            caretShift = 2,
-            jumpToNthQuery = 2
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
+            command = parseKeys(command("bl")),
+            putCaretAtWord = "in",
+            caretShift = 1
+        ) { editorText, matches ->
+            assertEquals(4, matches.size)
+            assertTrue(editorText.indexOf("land") !in matches)
+            assertTrue(editorText.indexOf("found") in matches)
+        }
+    }
 
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+    fun `test within line bd-wl motion`() {
+        doTest(
+            command = parseKeys(command("bd-wl")),
+            putCaretAtWord = "in",
+            caretShift = 1
+        ) { editorText, matches ->
+            assertEquals(7, matches.size)
+            assertTrue(editorText.indexOf("land") in matches)
+            assertTrue(editorText.indexOf("found") in matches)
+        }
     }
 
     fun `test jump to word end`() {
@@ -447,56 +411,40 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
-    fun `test linewise e motion`() {
+    fun `test within line e motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("el")),
-            putCaretAtWord = "lavender",
-            caretShift = 2,
-            jumpToNthQuery = 2
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                I found it in a legendary land
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+            command = parseKeys(command("el")),
+            putCaretAtWord = "in",
+            caretShift = 1
+        ) { editorText, matches ->
+            assertEquals(4, matches.size)
+            assertTrue(editorText.indexOf("land") + 3 in matches)
+            assertTrue(editorText.indexOf("found") + 4 !in matches)
+        }
     }
 
-    fun `test linewise ge motion`() {
+    fun `test within line ge motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("gel")),
-            putCaretAtWord = "lavender",
-            caretShift = 2,
-            jumpToNthQuery = 2
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+            command = parseKeys(command("gel")),
+            putCaretAtWord = "in",
+            caretShift = 1
+        ) { editorText, matches ->
+            assertEquals(4, matches.size)
+            assertTrue(editorText.indexOf("land") + 3 !in matches)
+            assertTrue(editorText.indexOf("found") + 4 in matches)
+        }
     }
 
-    fun `test linewise bd-ge motion`() {
+    fun `test within line bd-ge motion`() {
         doTest(
-            command = parseKeys("d") + parseKeys(command("bd-el")),
-            putCaretAtWord = "lavender",
-            caretShift = 2,
-            jumpToNthQuery = 2
-        )
-        myFixture.checkResult(
-            """
-                A Discovery
-
-                where it was settled on some sodden sand
-                hard by the torrent of a mountain pass.
-        """.trimIndent()
-        )
+            command = parseKeys(command("bd-el")),
+            putCaretAtWord = "in",
+            caretShift = 1
+        ) { editorText, matches ->
+            assertEquals(7, matches.size)
+            assertTrue(editorText.indexOf("land") + 3 in matches)
+            assertTrue(editorText.indexOf("found") + 4 in matches)
+        }
     }
 
     fun `test forward big word motion`() {

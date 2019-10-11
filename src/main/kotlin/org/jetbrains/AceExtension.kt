@@ -65,7 +65,7 @@ class AceExtension : VimNonDisposableExtension() {
 
         // ------------ Extended mapping table -------------------//
         mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
-        mapToFunction("bd-t", BiDirectionalPreStop())
+        mapToFunction("bd-t", BiDirectionalPreStop(false))
         mapToFunction("bd-w", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
         mapToFunction("bd-W", CustomPattern(WORD, SCREEN_BOUNDARY))
         mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY))
@@ -87,19 +87,19 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("vim-N", RepeatSearch(forward = false, respectVimDirection = true))
 
         // ------------ Within Line Motion -----------------------//
-        mapToFunction("sl", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
-        mapToFunction("fl", MultiInput(AFTER_CARET_BOUNDARY, true))          // Works as `fln`
-        mapToFunction("Fl", MultiInput(BEFORE_CARET_BOUNDARY, true))         // Works as `Fln`
-        mapToFunction("bd-fl", MultiInput(SCREEN_BOUNDARY, true))            // Works as `sln`
-        mapToFunction("tl", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
-        mapToFunction("Tl", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))  // Works as `Tln`
-        mapToFunction("bd-tl", BiDirectionalPreStop(true))                    // Works as `bd-tln`
-        mapToFunction("wl", PredefinedPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("bl", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, true))
-        mapToFunction("bd-wl", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, true))
-        mapToFunction("el", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("gel", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY, true))
-        mapToFunction("bd-el", CustomPattern(wordEnd, SCREEN_BOUNDARY, true))
+        mapToFunction("sl", MultiInput(CURRENT_LINE_BOUNDARY))             // Works as `sln`
+        mapToFunction("fl", MultiInput(CURRENT_LINE_AFTER_CARET))          // Works as `fln`
+        mapToFunction("Fl", MultiInput(CURRENT_LINE_BEFORE_CARET))         // Works as `Fln`
+        mapToFunction("bd-fl", MultiInput(CURRENT_LINE_BOUNDARY))          // Works as `sln`
+        mapToFunction("tl", MultiInputPreStop(CURRENT_LINE_AFTER_CARET))   // Works as `tln`
+        mapToFunction("Tl", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET))  // Works as `Tln`
+        mapToFunction("bd-tl", BiDirectionalPreStop(true))            // Works as `bd-tln`
+        mapToFunction("wl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_AFTER_CARET))
+        mapToFunction("bl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_BEFORE_CARET))
+        mapToFunction("bd-wl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_BOUNDARY))
+        mapToFunction("el", CustomPattern(wordEnd, CURRENT_LINE_AFTER_CARET))
+        mapToFunction("gel", CustomPattern(wordEnd, CURRENT_LINE_BEFORE_CARET))
+        mapToFunction("bd-el", CustomPattern(wordEnd, CURRENT_LINE_BOUNDARY))
         mapToFunction("lineforward", JumptoanywhereInLine(0))
         mapToFunction("linebackward", JumptoanywhereInLine(1))
         mapToFunction("lineanywhere", JumptoanywhereInLine(2))
@@ -111,13 +111,13 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
         mapToFunction("t2", MultiInputPreStop(AFTER_CARET_BOUNDARY))                  // Works as `tn`
         mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY))                 // Works as `Tn`
-        mapToFunction("bd-t2", BiDirectionalPreStop())
+        mapToFunction("bd-t2", BiDirectionalPreStop(false))
 
-        mapToFunction("sl2", MultiInput(SCREEN_BOUNDARY, true))               // Works as `sln`
-        mapToFunction("fl2", MultiInput(AFTER_CARET_BOUNDARY, true))          // Works as `fln`
-        mapToFunction("Fl2", MultiInput(BEFORE_CARET_BOUNDARY, true))         // Works as `Fln`
-        mapToFunction("tl2", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))   // Works as `tln`
-        mapToFunction("Tl2", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))  // Works as `Tln`
+        mapToFunction("sl2", MultiInput(CURRENT_LINE_BOUNDARY, true))             // Works as `sln`
+        mapToFunction("fl2", MultiInput(CURRENT_LINE_AFTER_CARET, true))          // Works as `fln`
+        mapToFunction("Fl2", MultiInput(CURRENT_LINE_BEFORE_CARET, true))         // Works as `Fln`
+        mapToFunction("tl2", MultiInputPreStop(CURRENT_LINE_AFTER_CARET, true))   // Works as `tln`
+        mapToFunction("Tl2", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET, true))  // Works as `Tln`
 
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
@@ -125,14 +125,14 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("tn", MultiInputPreStop(AFTER_CARET_BOUNDARY))
         mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-tn", BiDirectionalPreStop())
+        mapToFunction("bd-tn", BiDirectionalPreStop(false))
 
-        mapToFunction("sln", MultiInput(SCREEN_BOUNDARY, true))
-        mapToFunction("fln", MultiInput(AFTER_CARET_BOUNDARY, true))
-        mapToFunction("Fln", MultiInput(BEFORE_CARET_BOUNDARY, true))
-        mapToFunction("bd-fln", MultiInput(SCREEN_BOUNDARY, true))
-        mapToFunction("tln", MultiInputPreStop(AFTER_CARET_BOUNDARY, true))
-        mapToFunction("Tln", MultiInputPreStop(BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("sln", MultiInput(CURRENT_LINE_BOUNDARY, true))
+        mapToFunction("fln", MultiInput(CURRENT_LINE_AFTER_CARET, true))
+        mapToFunction("Fln", MultiInput(CURRENT_LINE_BEFORE_CARET, true))
+        mapToFunction("bd-fln", MultiInput(CURRENT_LINE_BOUNDARY, true))
+        mapToFunction("tln", MultiInputPreStop(CURRENT_LINE_AFTER_CARET, true))
+        mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET, true))
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
@@ -191,18 +191,19 @@ class AceExtension : VimNonDisposableExtension() {
     private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor(false) {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] as? String ?: return
+            val boundary = when (direction) {
+                0 -> CURRENT_LINE_AFTER_CARET
+                1 -> CURRENT_LINE_BEFORE_CARET
+                else -> CURRENT_LINE_BOUNDARY
+            }
 
             val currentLine = editor.caretModel.logicalPosition.line
             val currentOffset = editor.caretModel.offset
             val startOffsets = SearchGroup.findAll(editor, pattern, currentLine, currentLine, false)
                 .map { it.startOffset }
-
-            val results = when (direction) {
-                0 -> startOffsets.filter { it > currentOffset }   // forward
-                1 -> startOffsets.filter { it < currentOffset }   // backward
-                else -> startOffsets
-            }
-            Finder.markResults(results.toSortedSet())
+                .filter { it in boundary }
+                .toSortedSet()
+            Finder.markResults(startOffsets)
         }
     }
 
@@ -241,7 +242,7 @@ class AceExtension : VimNonDisposableExtension() {
     private class PredefinedPattern(
         val pattern: Pattern,
         val boundary: Boundary,
-        linewise: Boolean
+        linewise: Boolean = false
     ) : HandlerProcessor(linewise) {
         override fun customization(editor: Editor) {
             Handler.regexSearch(pattern, boundary)
@@ -260,9 +261,9 @@ class AceExtension : VimNonDisposableExtension() {
         }
 
         override fun onFinish(editor: Editor, queryWithSuffix: String) {
-            if (boundary == AFTER_CARET_BOUNDARY) {
+            if (boundary == AFTER_CARET_BOUNDARY || boundary == CURRENT_LINE_AFTER_CARET) {
                 editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
-            } else if (boundary == BEFORE_CARET_BOUNDARY) {
+            } else if (boundary == BEFORE_CARET_BOUNDARY || boundary == CURRENT_LINE_BEFORE_CARET) {
                 val fileSize = EditorHelper.getFileSize(editor, true)
 
                 // FIXME: 07/10/2019 Well, there should be a better way to find  pure query length
@@ -278,10 +279,11 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BiDirectionalPreStop(linewise: Boolean = true) : HandlerProcessor(linewise) {
+    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor(false) {
         var caretPosition: Int? = null
 
         override fun customization(editor: Editor) {
+            Model.boundaries = if (inLine) CURRENT_LINE_BOUNDARY else SCREEN_BOUNDARY
             caretPosition = editor.caretModel.offset
         }
 
