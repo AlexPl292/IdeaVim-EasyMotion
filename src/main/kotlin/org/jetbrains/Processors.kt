@@ -86,9 +86,7 @@ abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensi
     private var initialOffset: Int? = null
 
     fun beforeAction(editor: Editor) {
-        startSelection = if (editor.inVisualMode && editor.selectionModel.hasSelection()) {
-            editor.caretModel.currentCaret.vimSelectionStart
-        } else null
+        startSelection = if (editor.inVisualMode) editor.caretModel.currentCaret.vimSelectionStart else null
         initialOffset = editor.caretModel.currentCaret.offset
     }
 

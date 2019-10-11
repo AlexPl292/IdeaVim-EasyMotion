@@ -799,6 +799,41 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test delete till word`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("w"),
+            putCaretAtWord = "lavender",
+            jumpToNthQuery = 2
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
+    fun `test move visual`() {
+        doTest(
+            command = parseKeysWithLeader("w"),
+            putCaretAtWord = "lavender",
+            jumpToNthQuery = 2,
+            afterEditorSetup = {
+                VimPlugin.getVisualMotion().enterVisualMode(it)
+            }
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and <selection>lavender and t</selection>ufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     private fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
