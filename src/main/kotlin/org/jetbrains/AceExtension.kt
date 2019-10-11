@@ -4,11 +4,13 @@ package org.jetbrains
 
 import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.group.SearchGroup
+import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import org.acejump.control.Handler
@@ -113,11 +115,11 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY))                 // Works as `Tn`
         mapToFunction("bd-t2", BiDirectionalPreStop(false))
 
-        mapToFunction("sl2", MultiInput(CURRENT_LINE_BOUNDARY, true))             // Works as `sln`
-        mapToFunction("fl2", MultiInput(CURRENT_LINE_AFTER_CARET, true))          // Works as `fln`
-        mapToFunction("Fl2", MultiInput(CURRENT_LINE_BEFORE_CARET, true))         // Works as `Fln`
-        mapToFunction("tl2", MultiInputPreStop(CURRENT_LINE_AFTER_CARET, true))   // Works as `tln`
-        mapToFunction("Tl2", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET, true))  // Works as `Tln`
+        mapToFunction("sl2", MultiInput(CURRENT_LINE_BOUNDARY))             // Works as `sln`
+        mapToFunction("fl2", MultiInput(CURRENT_LINE_AFTER_CARET))          // Works as `fln`
+        mapToFunction("Fl2", MultiInput(CURRENT_LINE_BEFORE_CARET))         // Works as `Fln`
+        mapToFunction("tl2", MultiInputPreStop(CURRENT_LINE_AFTER_CARET))   // Works as `tln`
+        mapToFunction("Tl2", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET))  // Works as `Tln`
 
         mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
         mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
@@ -127,12 +129,12 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY))
         mapToFunction("bd-tn", BiDirectionalPreStop(false))
 
-        mapToFunction("sln", MultiInput(CURRENT_LINE_BOUNDARY, true))
-        mapToFunction("fln", MultiInput(CURRENT_LINE_AFTER_CARET, true))
-        mapToFunction("Fln", MultiInput(CURRENT_LINE_BEFORE_CARET, true))
-        mapToFunction("bd-fln", MultiInput(CURRENT_LINE_BOUNDARY, true))
-        mapToFunction("tln", MultiInputPreStop(CURRENT_LINE_AFTER_CARET, true))
-        mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET, true))
+        mapToFunction("sln", MultiInput(CURRENT_LINE_BOUNDARY))
+        mapToFunction("fln", MultiInput(CURRENT_LINE_AFTER_CARET))
+        mapToFunction("Fln", MultiInput(CURRENT_LINE_BEFORE_CARET))
+        mapToFunction("bd-fln", MultiInput(CURRENT_LINE_BOUNDARY))
+        mapToFunction("tln", MultiInputPreStop(CURRENT_LINE_AFTER_CARET))
+        mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET))
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
@@ -142,7 +144,7 @@ class AceExtension : VimNonDisposableExtension() {
         val forward: Boolean,
         val respectVimDirection: Boolean,
         val bidirect: Boolean = false
-    ) : HandlerProcessor(false) {
+    ) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             val lastSearch = VimPlugin.getSearch().lastSearch ?: run {
                 Handler.reset()
@@ -176,7 +178,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class Jumptoanywhere : HandlerProcessor(false) {
+    private class Jumptoanywhere : HandlerProcessor() {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] as? String ?: return
 
@@ -188,7 +190,7 @@ class AceExtension : VimNonDisposableExtension() {
     }
 
     //** Directions as in vim */
-    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor(false) {
+    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] as? String ?: return
             val boundary = when (direction) {
@@ -207,7 +209,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor(false) {
+    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             val kw = keywordRegex()?.let {
                 "((?<=\\s|\\A|[^$it])[$it])|" +  // Take a char from keyword that is preceded by a not-keyword char, or
@@ -218,7 +220,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class KeyWordEnd(val boundary: Boundary) : HandlerProcessor(false) {
+    private class KeyWordEnd(val boundary: Boundary) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             val kw = keywordRegex()?.let {
                 "([$it](?=\\s|\\Z|[^$it]))|" +  // Take a char from keyword that is preceded by a not-keyword char, or
@@ -231,9 +233,8 @@ class AceExtension : VimNonDisposableExtension() {
 
     private class CustomPattern(
         val pattern: String,
-        val boundary: Boundary,
-        linewise: Boolean = false
-    ) : HandlerProcessor(linewise) {
+        val boundary: Boundary
+    ) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             Handler.cutsomRegexSearch(pattern, boundary)
         }
@@ -242,20 +243,33 @@ class AceExtension : VimNonDisposableExtension() {
     private class PredefinedPattern(
         val pattern: Pattern,
         val boundary: Boundary,
-        linewise: Boolean = false
-    ) : HandlerProcessor(linewise) {
+        val linewise: Boolean = false
+    ) : HandlerProcessor() {
+
+        private var initialOffset: Int? = null
+
         override fun customization(editor: Editor) {
+            initialOffset = editor.caretModel.currentCaret.offset
             Handler.regexSearch(pattern, boundary)
+        }
+
+        override fun onFinish(editor: Editor, queryWithSuffix: String) {
+            val myInitialOffset = initialOffset
+            if (myInitialOffset != null && linewise && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
+                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
+                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
+            }
+            initialOffset = null
         }
     }
 
-    private class MultiInput(val boundary: Boundary, linewise: Boolean = false) : HandlerProcessor(linewise) {
+    private class MultiInput(val boundary: Boundary) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
     }
 
-    private class MultiInputPreStop(val boundary: Boundary, linewise: Boolean = false) : HandlerProcessor(linewise) {
+    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
@@ -279,7 +293,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor(false) {
+    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor() {
         var caretPosition: Int? = null
 
         override fun customization(editor: Editor) {

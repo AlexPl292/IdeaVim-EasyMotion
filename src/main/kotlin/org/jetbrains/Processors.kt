@@ -5,9 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.testFramework.PlatformTestUtil
 import com.maddyhome.idea.vim.KeyHandler
-import com.maddyhome.idea.vim.VimPlugin
-import com.maddyhome.idea.vim.command.CommandState
-import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.inVisualMode
@@ -18,7 +15,7 @@ import org.acejump.label.Tagger
 import org.acejump.search.Finder
 import java.awt.Toolkit
 
-abstract class HandlerProcessor(val linewise: Boolean) {
+abstract class HandlerProcessor {
     open fun customization(editor: Editor) {}
     open fun onFinish(editor: Editor, queryWithSuffix: String) {}
 }
@@ -83,11 +80,9 @@ object TestProcessor {
 abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
 
     private var startSelection: Int? = null
-    private var initialOffset: Int? = null
 
     fun beforeAction(editor: Editor) {
         startSelection = if (editor.inVisualMode) editor.caretModel.currentCaret.vimSelectionStart else null
-        initialOffset = editor.caretModel.currentCaret.offset
     }
 
     fun rightAfterAction(editor: Editor) {
@@ -99,12 +94,5 @@ abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensi
         startSelection?.let {
             editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
         }
-        if (processor.linewise && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
-            VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
-            initialOffset?.let {
-                editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.currentCaret.offset)
-            }
-        }
-        initialOffset = null
     }
 }
