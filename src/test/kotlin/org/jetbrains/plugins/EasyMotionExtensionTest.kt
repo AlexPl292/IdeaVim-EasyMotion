@@ -33,7 +33,7 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
-        (OptionsManager.getOption("acejump") as ToggleOption).set()
+        (OptionsManager.getOption("easymotion") as ToggleOption).set()
     }
 
     fun `test save selection`() {
