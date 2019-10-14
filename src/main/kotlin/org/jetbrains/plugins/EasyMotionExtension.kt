@@ -39,6 +39,8 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         private const val WORD = "(?<=\\s|\\A)[^\\s]"
         @Language("RegExp")
         private const val WORD_END = "[^\\s](?=\\s|\\Z)"
+        @Language("RegExp")
+        private const val LINE_END_NO_NEWLINE = "(.(?=\\n|\\Z))|(^$)"
 
         private const val jumpAnywhere = "g:EasyMotion_re_anywhere"
         private const val lineJumpAnywhere = "g:EasyMotion_re_line_anywhere"
@@ -87,8 +89,8 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         mapToFunction("jumptoanywhere", Jumptoanywhere())
         mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
         mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
-        mapToFunction("eol-j", PredefinedPattern(END_OF_LINE, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("eol-k", PredefinedPattern(END_OF_LINE, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("eol-j", EndOfLinePattern(AFTER_CARET_BOUNDARY))
+        mapToFunction("eol-k",EndOfLinePattern (BEFORE_CARET_BOUNDARY))
         mapToFunction("iskeyword-w", KeyWordStart(AFTER_CARET_BOUNDARY))
         mapToFunction("iskeyword-b", KeyWordStart(BEFORE_CARET_BOUNDARY))
         mapToFunction("iskeyword-bd-w", KeyWordStart(SCREEN_BOUNDARY))
@@ -304,6 +306,29 @@ class EasyMotionExtension : VimNonDisposableExtension() {
                 }
             }
             return res
+        }
+    }
+
+    private class EndOfLinePattern(val boundary: Boundary) : HandlerProcessor {
+
+        private var initialOffset: Int? = null
+
+        override fun customization(editor: Editor) {
+            initialOffset = editor.caretModel.currentCaret.offset
+            if (editor.mode.isEndAllowed) {
+                Handler.regexSearch(END_OF_LINE, boundary)
+            } else {
+                Handler.cutsomRegexSearch(LINE_END_NO_NEWLINE, boundary)
+            }
+        }
+
+        override fun onFinish(editor: Editor, queryWithSuffix: String) {
+            val myInitialOffset = initialOffset
+            if (myInitialOffset != null && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
+                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
+                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
+            }
+            initialOffset = null
         }
     }
 

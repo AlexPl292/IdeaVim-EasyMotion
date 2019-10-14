@@ -154,6 +154,19 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         ) { editorText, jumpLocations ->
             // It should probably be one less jump location because currently AceJump includes the current line
             assertEquals(3, jumpLocations.size)
+            assertEquals(editorText.indexOf("land") + 3, jumpLocations[2])
+        }
+    }
+
+    fun `test backward line motion eol visual mode`() {
+        doTest(
+            command = parseKeys(command("eol-k")),
+            editorText = text.indentLineThatStartsWith("I found"),
+            afterEditorSetup = { VimPlugin.getVisualMotion().enterVisualMode(it) },
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(3, jumpLocations.size)
             assertEquals(editorText.indexOf("land") + 4, jumpLocations[2])
         }
     }
@@ -174,6 +187,18 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         doTest(
             command = parseKeys(command("eol-j")),
             editorText = text.indentLineThatStartsWith("where"),
+            putCaretAtWord = "lavender"
+        ) { editorText, jumpLocations ->
+            assertEquals(3, jumpLocations.size)
+            assertEquals(editorText.indexOf("sand") + 3, jumpLocations[1])
+        }
+    }
+
+    fun `test forward line motion eol visual mode`() {
+        doTest(
+            command = parseKeys(command("eol-j")),
+            editorText = text.indentLineThatStartsWith("where"),
+            afterEditorSetup = { VimPlugin.getVisualMotion().enterVisualMode(it) },
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
             // Bug in AceJump. Should be 3
