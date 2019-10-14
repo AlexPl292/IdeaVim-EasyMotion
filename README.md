@@ -1,5 +1,8 @@
 # IdeaVim-EasyMotion
 
+[![][jetbrains-team-svg]][jetbrains-team-page]
+[![][apache-license-svg]](LICENSE)
+
 Created for [IdeaVim](https://plugins.jetbrains.com/plugin/164-ideavim)  
 Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 
@@ -124,3 +127,8 @@ Unsupported commands are marked with `-`
     <Plug>(easymotion-overwin-w)      | See |<Plug>(easymotion-overwin-w)|      -
 ```
 
+<!-- Badges -->
+[jetbrains-team-page]: https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub
+[jetbrains-team-svg]: http://jb.gg/badges/team.svg
+[plugin-download-svg]: https://img.shields.io/jetbrains/plugin/d/7086-acejump.svg
+[apache-license-svg]: https://img.shields.io/badge/License-GPL%20v3-blue.svg
