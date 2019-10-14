@@ -3,6 +3,7 @@
 package org.jetbrains
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.VisualPosition
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.command.MappingMode
@@ -13,6 +14,8 @@ import com.maddyhome.idea.vim.group.SearchGroup
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
+import com.maddyhome.idea.vim.helper.isEndAllowed
+import com.maddyhome.idea.vim.helper.mode
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
 import org.acejump.label.Pattern.*
@@ -40,6 +43,7 @@ class AceExtension : VimNonDisposableExtension() {
         private const val jumpAnywhere = "g:EasyMotion_re_anywhere"
         private const val lineJumpAnywhere = "g:EasyMotion_re_line_anywhere"
         const val doMapping = "g:EasyMotion_do_mapping"
+        const val startOfLine = "g:EasyMotion_startofline"
 
         private const val defaultRe = """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
     }
@@ -49,6 +53,7 @@ class AceExtension : VimNonDisposableExtension() {
             vars[jumpAnywhere] = defaultRe
             vars[lineJumpAnywhere] = defaultRe
             if (doMapping !in vars) vars[doMapping] = 1
+            if (startOfLine !in vars) vars[startOfLine] = 1
         }
 
         // -----------  Default mapping table ---------------------//
@@ -64,8 +69,8 @@ class AceExtension : VimNonDisposableExtension() {
         mapToFunctionAndProvideKeys("E", CustomPattern(WORD_END, AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("ge", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("gE", CustomPattern(WORD_END, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("j", PredefinedPattern(CODE_INDENTS, AFTER_CARET_BOUNDARY, true))
-        mapToFunctionAndProvideKeys("k", PredefinedPattern(CODE_INDENTS, BEFORE_CARET_BOUNDARY, true))
+        mapToFunctionAndProvideKeys("j", JkMotion(AFTER_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("k", JkMotion(BEFORE_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
         mapToFunctionAndProvideKeys("n", RepeatSearch(forward = true, respectVimDirection = false))
         mapToFunctionAndProvideKeys("N", RepeatSearch(forward = false, respectVimDirection = false))
@@ -242,6 +247,63 @@ class AceExtension : VimNonDisposableExtension() {
     ) : HandlerProcessor() {
         override fun customization(editor: Editor) {
             Handler.cutsomRegexSearch(pattern, boundary)
+        }
+    }
+
+    private class JkMotion(val boundary: Boundary) : HandlerProcessor() {
+        private var initialOffset: Int? = null
+
+        override fun customization(editor: Editor) {
+            initialOffset = editor.caretModel.currentCaret.offset
+            if (VimScriptGlobalEnvironment.getInstance().variables[startOfLine] != 0) {
+                Handler.regexSearch(CODE_INDENTS, boundary)
+            } else {
+                val vp = editor.caretModel.visualPosition
+                val res = when (boundary) {
+                    AFTER_CARET_BOUNDARY -> generateLineOffsets(editor, vp, true)
+                    BEFORE_CARET_BOUNDARY -> generateLineOffsets(editor, vp, false)
+                    else -> throw UnsupportedOperationException("This boundary is not supported: $boundary")
+                }
+                Finder.markResults(res.toSortedSet())
+            }
+        }
+
+        override fun onFinish(editor: Editor, queryWithSuffix: String) {
+            val myInitialOffset = initialOffset
+            if (myInitialOffset != null && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
+                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
+                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
+            }
+            initialOffset = null
+        }
+
+        private fun generateLineOffsets(
+            editor: Editor,
+            vp: VisualPosition,
+            direction: Boolean
+        ): MutableSet<Int> {
+            val dir = if (direction) 1 else -1
+            var counter = 0
+            val res = mutableSetOf<Int>()
+            val lastLine = EditorHelper.getVisualLineCount(editor)
+            while (counter >= 0) {
+                counter++
+                val nextLine = vp.line + dir * counter
+                if (nextLine > lastLine || nextLine < 0) break
+                var offset =
+                    EditorHelper.visualPositionToOffset(editor, VisualPosition(nextLine, vp.column))
+                if (editor.offsetToVisualPosition(offset).column < vp.column) {
+                    if (!EditorHelper.isLineEmpty(editor, editor.offsetToVisualPosition(offset).line, false)) {
+                        if (!editor.mode.isEndAllowed) offset--
+                    }
+                }
+                if (offset in boundary) {
+                    res += offset
+                } else {
+                    counter = -1
+                }
+            }
+            return res
         }
     }
 

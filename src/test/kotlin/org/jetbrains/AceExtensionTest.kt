@@ -11,6 +11,7 @@ import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.CommandFlags
 import com.maddyhome.idea.vim.command.CommandState
+import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.group.visual.VimVisualTimer
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorDataContext
@@ -23,6 +24,7 @@ import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
 import org.acejump.view.Canvas
 import org.jetbrains.AceExtension.Companion.defaultPrefix
+import org.jetbrains.AceExtension.Companion.startOfLine
 import java.awt.Dimension
 import javax.swing.JViewport
 import javax.swing.KeyStroke
@@ -84,6 +86,24 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test forward line motion with offset save`() {
+        doTest(
+            command = parseKeysWithLeader("j"),
+            editorText = """
+                First long line
+                
+                sh
+                Second long line
+            """.trimIndent(),
+            afterEditorSetup = { VimScriptGlobalEnvironment.getInstance().variables[startOfLine] = 0 },
+            putCaretAtWord = "long"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(3, jumpLocations.size)
+            assertEquals(editorText.lastIndexOf("long") - 1, jumpLocations[2])
+        }
+    }
+
     fun `test backward line motion`() {
         doTest(
             command = parseKeysWithLeader("k"),
@@ -93,6 +113,24 @@ class AceExtensionTest : BasePlatformTestCase() {
             // It should probably be one less jump location because currently AceJump includes the current line
             assertEquals(4, jumpLocations.size)
             assertEquals(editorText.indexOf("I found"), jumpLocations[2])
+        }
+    }
+
+    fun `test backward line motion with offset save`() {
+        doTest(
+            command = parseKeysWithLeader("k"),
+            editorText = """
+                First long line
+                
+                sh
+                Second very long line
+            """.trimIndent(),
+            afterEditorSetup = { VimScriptGlobalEnvironment.getInstance().variables[startOfLine] = 0 },
+            putCaretAtWord = "very"
+        ) { editorText, jumpLocations ->
+            // It should probably be one less jump location because currently AceJump includes the current line
+            assertEquals(3, jumpLocations.size)
+            assertEquals(editorText.indexOf("long") + 1, jumpLocations[0])
         }
     }
 
@@ -902,6 +940,7 @@ class AceExtensionTest : BasePlatformTestCase() {
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
         TestProcessor.handlerWasCalled = false
         VimVisualTimer.swingTimer?.stop()
+        VimScriptGlobalEnvironment.getInstance().variables[startOfLine] = 1
         super.tearDown()
     }
 }
