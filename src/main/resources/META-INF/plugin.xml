@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>org.jetbrains.AceVim</id>
-    <name>AceVim</name>
-    <vendor email="M@yourcompany.com">Me</vendor>
+    <id>org.jetbrains.IdeaVim-EasyMotion</id>
+    <name>IdeaVim-EasyMotion</name>
+    <vendor email="alexpl292@gmail.com" url="https://feedforward.dev/">Alex Plate</vendor>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>IdeaVIM</depends>
