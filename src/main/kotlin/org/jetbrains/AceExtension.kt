@@ -39,12 +39,17 @@ class AceExtension : VimNonDisposableExtension() {
 
         private const val jumpAnywhere = "g:EasyMotion_re_anywhere"
         private const val lineJumpAnywhere = "g:EasyMotion_re_line_anywhere"
+        const val doMapping = "g:EasyMotion_do_mapping"
+
         private const val defaultRe = """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
     }
 
     override fun initOnce() {
-        VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] = defaultRe
-        VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] = defaultRe
+        VimScriptGlobalEnvironment.getInstance().variables.let { vars ->
+            vars[jumpAnywhere] = defaultRe
+            vars[lineJumpAnywhere] = defaultRe
+            if (doMapping !in vars) vars[doMapping] = 1
+        }
 
         // -----------  Default mapping table ---------------------//
         mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY))          // Works as `fn`

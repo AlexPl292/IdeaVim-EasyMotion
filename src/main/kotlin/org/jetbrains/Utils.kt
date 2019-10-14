@@ -1,9 +1,11 @@
 package org.jetbrains
 
 import com.maddyhome.idea.vim.command.MappingMode
+import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.option.OptionsManager
+import org.jetbrains.AceExtension.Companion.doMapping
 import org.jetbrains.AceExtension.Companion.pluginPrefix
 
 fun mapToFunction(keys: String, handler: HandlerProcessor) {
@@ -17,12 +19,14 @@ fun mapToFunction(keys: String, handler: HandlerProcessor) {
 
 fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
     mapToFunction(keys, handler)
-    VimExtensionFacade.putKeyMapping(
-        MappingMode.NVO,
-        StringHelper.parseKeys("${pluginPrefix}$keys"),
-        StringHelper.parseKeys(command(keys)),
-        true
-    )
+    if (VimScriptGlobalEnvironment.getInstance().variables[doMapping] == 1) {
+        VimExtensionFacade.putKeyMapping(
+            MappingMode.NVO,
+            StringHelper.parseKeys("${pluginPrefix}$keys"),
+            StringHelper.parseKeys(command(keys)),
+            true
+        )
+    }
 }
 
 fun command(keys: String) = "<Plug>(easymotion-$keys)"
