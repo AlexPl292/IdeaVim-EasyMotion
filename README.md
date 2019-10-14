@@ -13,7 +13,7 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 - `g:EasyMotion_startofline`
 
 #### Supported commands:
-Here is a list of commands from EasyMotion documentation.  
+Here is a list of commands from the easymotion documentation.  
 Supported commands are marked with `+`  
 Unsupported commands are marked with `-`  
 
