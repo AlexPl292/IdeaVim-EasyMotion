@@ -23,13 +23,13 @@ import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
 import org.acejump.view.Canvas
-import org.jetbrains.plugins.AceExtension.Companion.defaultPrefix
-import org.jetbrains.plugins.AceExtension.Companion.startOfLine
+import org.jetbrains.plugins.EasyMotionExtension.Companion.defaultPrefix
+import org.jetbrains.plugins.EasyMotionExtension.Companion.startOfLine
 import java.awt.Dimension
 import javax.swing.JViewport
 import javax.swing.KeyStroke
 
-class AceExtensionTest : BasePlatformTestCase() {
+class EasyMotionExtensionTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()

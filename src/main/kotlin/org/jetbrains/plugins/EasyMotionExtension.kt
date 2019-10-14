@@ -26,8 +26,8 @@ import org.acejump.view.Canvas
 import org.acejump.view.Model
 import org.intellij.lang.annotations.Language
 
-class AceExtension : VimNonDisposableExtension() {
-    override fun getName(): String = "acejump"
+class EasyMotionExtension : VimNonDisposableExtension() {
+    override fun getName(): String = "easymotion"
 
     companion object {
         const val pluginPrefix = "<Plug>(easymotion-prefix)"

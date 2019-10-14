@@ -6,8 +6,8 @@ import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.option.OptionsManager
-import org.jetbrains.plugins.AceExtension.Companion.doMapping
-import org.jetbrains.plugins.AceExtension.Companion.pluginPrefix
+import org.jetbrains.plugins.EasyMotionExtension.Companion.doMapping
+import org.jetbrains.plugins.EasyMotionExtension.Companion.pluginPrefix
 
 /** Map some <Plug>(easymotion-[keys]) command to given handler */
 fun mapToFunction(keys: String, handler: HandlerProcessor) {

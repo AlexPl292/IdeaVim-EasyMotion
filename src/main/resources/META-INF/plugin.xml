@@ -8,6 +8,6 @@
     <depends>AceJump</depends>
 
     <extensions defaultExtensionNs="IdeaVIM">
-        <vimExtension implementation="org.jetbrains.plugins.AceExtension"/>
+        <vimExtension implementation="org.jetbrains.plugins.EasyMotionExtension"/>
     </extensions>
 </idea-plugin>
