@@ -154,7 +154,7 @@ class AceExtension : VimNonDisposableExtension() {
         val forward: Boolean,
         val respectVimDirection: Boolean,
         val bidirect: Boolean = false
-    ) : HandlerProcessor() {
+    ) : HandlerProcessor {
         override fun customization(editor: Editor) {
             val lastSearch = VimPlugin.getSearch().lastSearch ?: run {
                 Handler.reset()
@@ -188,7 +188,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class Jumptoanywhere : HandlerProcessor() {
+    private class Jumptoanywhere : HandlerProcessor {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] as? String ?: return
 
@@ -199,8 +199,8 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    //** Directions as in vim */
-    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor() {
+    /** Directions as in vim */
+    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] as? String ?: return
             val boundary = when (direction) {
@@ -219,7 +219,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor() {
+    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor {
         override fun customization(editor: Editor) {
             val kw = keywordRegex()?.let {
                 "((?<=\\s|\\A|[^$it])[$it])|" +  // Take a char from keyword that is preceded by a not-keyword char, or
@@ -230,7 +230,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class KeyWordEnd(val boundary: Boundary) : HandlerProcessor() {
+    private class KeyWordEnd(val boundary: Boundary) : HandlerProcessor {
         override fun customization(editor: Editor) {
             val kw = keywordRegex()?.let {
                 "([$it](?=\\s|\\Z|[^$it]))|" +  // Take a char from keyword that is preceded by a not-keyword char, or
@@ -244,13 +244,13 @@ class AceExtension : VimNonDisposableExtension() {
     private class CustomPattern(
         val pattern: String,
         val boundary: Boundary
-    ) : HandlerProcessor() {
+    ) : HandlerProcessor {
         override fun customization(editor: Editor) {
             Handler.cutsomRegexSearch(pattern, boundary)
         }
     }
 
-    private class JkMotion(val boundary: Boundary) : HandlerProcessor() {
+    private class JkMotion(val boundary: Boundary) : HandlerProcessor {
         private var initialOffset: Int? = null
 
         override fun customization(editor: Editor) {
@@ -311,7 +311,7 @@ class AceExtension : VimNonDisposableExtension() {
         val pattern: Pattern,
         val boundary: Boundary,
         val linewise: Boolean = false
-    ) : HandlerProcessor() {
+    ) : HandlerProcessor {
 
         private var initialOffset: Int? = null
 
@@ -330,13 +330,13 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class MultiInput(val boundary: Boundary) : HandlerProcessor() {
+    private class MultiInput(val boundary: Boundary) : HandlerProcessor {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
     }
 
-    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor() {
+    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
@@ -360,7 +360,7 @@ class AceExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor() {
+    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor {
         var caretPosition: Int? = null
 
         override fun customization(editor: Editor) {

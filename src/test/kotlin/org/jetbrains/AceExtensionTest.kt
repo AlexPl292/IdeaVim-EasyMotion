@@ -836,7 +836,7 @@ class AceExtensionTest : BasePlatformTestCase() {
         }
         afterEditorSetup(myFixture.editor)
 
-        TestProcessor.inputQuery = {
+        TestObject.inputQuery = {
             searchQuery?.also {
                 myFixture.type(it)
                 PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
@@ -854,7 +854,7 @@ class AceExtensionTest : BasePlatformTestCase() {
             (searchQuery ?: "") + (tag ?: "")
         }
 
-        TestProcessor.handler = { str, offsets ->
+        TestObject.handler = { str, offsets ->
             test(str, offsets)
         }
 
@@ -921,7 +921,7 @@ class AceExtensionTest : BasePlatformTestCase() {
     }
 
     private fun assertTestHandlerWasCalled() {
-        waitAndAssert(message = "Command was not executed") { TestProcessor.handlerWasCalled }
+        waitAndAssert(message = "Command was not executed") { TestObject.handlerWasCalled }
     }
 
     private inline fun waitAndAssert(timeInMillis: Int = 1000, message: String = "", condition: () -> Boolean) {
@@ -938,7 +938,7 @@ class AceExtensionTest : BasePlatformTestCase() {
         Handler.reset()
         UIUtil.dispatchAllInvocationEvents()
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
-        TestProcessor.handlerWasCalled = false
+        TestObject.handlerWasCalled = false
         VimVisualTimer.swingTimer?.stop()
         VimScriptGlobalEnvironment.getInstance().variables[startOfLine] = 1
         super.tearDown()

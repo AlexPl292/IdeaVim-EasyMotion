@@ -1,5 +1,6 @@
 package org.jetbrains
 
+import com.intellij.openapi.application.ApplicationManager
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
@@ -8,15 +9,26 @@ import com.maddyhome.idea.vim.option.OptionsManager
 import org.jetbrains.AceExtension.Companion.doMapping
 import org.jetbrains.AceExtension.Companion.pluginPrefix
 
+/** Map some <Plug>(easymotion-[keys]) command to given handler */
 fun mapToFunction(keys: String, handler: HandlerProcessor) {
     VimExtensionFacade.putExtensionHandlerMapping(
         MappingMode.NVO,
         StringHelper.parseKeys(command(keys)),
-        makeHandler(handler),
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            TestObject.TestHandler(handler)
+        } else {
+            StandardHandler(handler)
+        },
         false
     )
 }
 
+/**
+ * Map some <Plug>(easymotion-[keys]) command to given handler
+ *  and create mapping to <Plug>(easymotion-prefix)[keys]
+ *
+ *  The mapping will not be created if g:EasyMotion_do_mapping variable is 0
+ */
 fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
     mapToFunction(keys, handler)
     if (VimScriptGlobalEnvironment.getInstance().variables[doMapping] == 1) {
@@ -31,6 +43,7 @@ fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
 
 fun command(keys: String) = "<Plug>(easymotion-$keys)"
 
+/** Create regex representation of isKeyword option */
 fun keywordRegex(): String? {
     val regex = OptionsManager.iskeyword.toRegex()
     if (regex.isEmpty()) return null

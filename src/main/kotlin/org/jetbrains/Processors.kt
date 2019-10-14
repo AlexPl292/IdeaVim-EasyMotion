@@ -1,7 +1,6 @@
 package org.jetbrains
 
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.testFramework.PlatformTestUtil
 import com.maddyhome.idea.vim.KeyHandler
@@ -15,20 +14,20 @@ import org.acejump.label.Tagger
 import org.acejump.search.Finder
 import java.awt.Toolkit
 
-abstract class HandlerProcessor {
-    open fun customization(editor: Editor) {}
-    open fun onFinish(editor: Editor, queryWithSuffix: String) {}
+/**
+ * In order to implement an easymotion command you should implement [HandlerProcessor] and pass it to one of
+ *   implementations of [EasyHandlerBase]
+ */
+interface HandlerProcessor {
+    /** This function is called right after [AceAction] execution */
+    fun customization(editor: Editor) {}
+
+    /** This function is called right after user finished to work with AceJump/EasyMotion */
+    fun onFinish(editor: Editor, queryWithSuffix: String) {}
 }
 
-fun makeHandler(processor: HandlerProcessor): VimExtensionHandler {
-    return if (ApplicationManager.getApplication().isUnitTestMode) {
-        TestProcessor.TestHandler(processor)
-    } else {
-        StandardHandler(processor)
-    }
-}
-
-class StandardHandler(processor: HandlerProcessor) : EasyHandler(processor) {
+/** Standard handled that is used in real work. For tests [TestObject.TestHandler] is used */
+class StandardHandler(processor: HandlerProcessor) : EasyHandlerBase(processor) {
     override fun execute(editor: Editor, context: DataContext) {
         val systemQueue = Toolkit.getDefaultToolkit().systemEventQueue
         val loop = systemQueue.createSecondaryLoop()
@@ -50,13 +49,15 @@ class StandardHandler(processor: HandlerProcessor) : EasyHandler(processor) {
     }
 }
 
-object TestProcessor {
+/** Object that contains test related staff */
+object TestObject {
     var handlerWasCalled = false
 
     var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
     var inputQuery: () -> String = { "" }
 
-    class TestHandler(processor: HandlerProcessor) : EasyHandler(processor) {
+    /** Handler that is used during unit tests */
+    class TestHandler(processor: HandlerProcessor) : EasyHandlerBase(processor) {
         override fun execute(editor: Editor, context: DataContext) {
             handlerWasCalled = true
 
@@ -77,19 +78,19 @@ object TestProcessor {
     }
 }
 
-abstract class EasyHandler(private val processor: HandlerProcessor) : VimExtensionHandler {
+abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExtensionHandler {
 
     private var startSelection: Int? = null
 
-    fun beforeAction(editor: Editor) {
+    protected fun beforeAction(editor: Editor) {
         startSelection = if (editor.inVisualMode) editor.caretModel.currentCaret.vimSelectionStart else null
     }
 
-    fun rightAfterAction(editor: Editor) {
+    protected fun rightAfterAction(editor: Editor) {
         processor.customization(editor)
     }
 
-    fun finish(editor: Editor, queryWithSuffix: String) {
+    protected fun finish(editor: Editor, queryWithSuffix: String) {
         processor.onFinish(editor, queryWithSuffix)
         startSelection?.let {
             editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
