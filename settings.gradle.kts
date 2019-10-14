@@ -1,4 +1,3 @@
-rootProject.name = "AceVim"
+rootProject.name = "IdeaVim-EasyMotion"
 
 include("acejump", "IdeaVIM")
-
