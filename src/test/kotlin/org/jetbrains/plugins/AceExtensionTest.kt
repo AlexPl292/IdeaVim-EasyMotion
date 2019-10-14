@@ -1,4 +1,4 @@
-package org.jetbrains
+package org.jetbrains.plugins
 
 import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.editor.Editor
@@ -23,8 +23,8 @@ import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
 import org.acejump.view.Canvas
-import org.jetbrains.AceExtension.Companion.defaultPrefix
-import org.jetbrains.AceExtension.Companion.startOfLine
+import org.jetbrains.plugins.AceExtension.Companion.defaultPrefix
+import org.jetbrains.plugins.AceExtension.Companion.startOfLine
 import java.awt.Dimension
 import javax.swing.JViewport
 import javax.swing.KeyStroke

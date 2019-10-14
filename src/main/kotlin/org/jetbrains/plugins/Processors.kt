@@ -1,4 +1,4 @@
-package org.jetbrains
+package org.jetbrains.plugins
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor

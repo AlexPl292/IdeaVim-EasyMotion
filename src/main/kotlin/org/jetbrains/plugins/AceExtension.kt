@@ -1,6 +1,6 @@
 @file:Suppress("PrivatePropertyName")
 
-package org.jetbrains
+package org.jetbrains.plugins
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
