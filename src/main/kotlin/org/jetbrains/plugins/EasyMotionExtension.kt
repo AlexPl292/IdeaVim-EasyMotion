@@ -228,7 +228,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
                         "((?<=[$it])[^$it\\s])|" // non-keyword char that is preceded by a keyword char.
             } ?: ""
             val regex = "$kw$WORD"
-            Handler.cutsomRegexSearch(regex, boundary)
+            Handler.customRegexSearch(regex, boundary)
         }
     }
 
@@ -239,7 +239,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
                         "([^$it\\s](?=[$it]))|" // non-keyword char that is preceded by a keyword char.
             } ?: ""
             val regex = "$kw$WORD_END"
-            Handler.cutsomRegexSearch(regex, boundary)
+            Handler.customRegexSearch(regex, boundary)
         }
     }
 
@@ -248,7 +248,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         val boundary: Boundary
     ) : HandlerProcessor {
         override fun customization(editor: Editor) {
-            Handler.cutsomRegexSearch(pattern, boundary)
+            Handler.customRegexSearch(pattern, boundary)
         }
     }
 
@@ -318,7 +318,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
             if (editor.mode.isEndAllowed) {
                 Handler.regexSearch(END_OF_LINE, boundary)
             } else {
-                Handler.cutsomRegexSearch(LINE_END_NO_NEWLINE, boundary)
+                Handler.customRegexSearch(LINE_END_NO_NEWLINE, boundary)
             }
         }
 
