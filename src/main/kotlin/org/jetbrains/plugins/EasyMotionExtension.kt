@@ -46,6 +46,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         private const val lineJumpAnywhere = "g:EasyMotion_re_line_anywhere"
         const val doMapping = "g:EasyMotion_do_mapping"
         const val startOfLine = "g:EasyMotion_startofline"
+        const val overrideAcejump = "g:EasyMotion_override_acejump"
 
         private const val defaultRe = """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
     }
@@ -56,6 +57,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
             vars[lineJumpAnywhere] = defaultRe
             if (doMapping !in vars) vars[doMapping] = 1
             if (startOfLine !in vars) vars[startOfLine] = 1
+            if (overrideAcejump !in vars) vars[overrideAcejump] = 1
         }
 
         // -----------  Default mapping table ---------------------//
@@ -152,6 +154,10 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         mapToFunction("linemarks", LineMarks)
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+
+        if (VimScriptGlobalEnvironment.getInstance().variables[overrideAcejump] == 1) {
+            MappingConfigurator.configureMappings()
+        }
     }
 
     private object LineMarks : HandlerProcessor {
