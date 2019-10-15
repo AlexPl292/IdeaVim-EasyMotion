@@ -149,7 +149,22 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY))
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
+        mapToFunction("linemarks", LineMarks)
+
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+    }
+
+    private object LineMarks : HandlerProcessor {
+        override fun customization(editor: Editor) {
+            if (editor.mode.isEndAllowed) {
+                Handler.regexSearch(LINE_MARK, SCREEN_BOUNDARY)
+            } else {
+                Handler.customRegexSearch(
+                    "$LINE_END_NO_NEWLINE|${START_OF_LINE.string}",
+                    SCREEN_BOUNDARY
+                )
+            }
+        }
     }
 
     private class RepeatSearch(

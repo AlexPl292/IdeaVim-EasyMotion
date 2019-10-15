@@ -125,6 +125,10 @@ Unsupported commands are marked with `-`
     <Plug>(easymotion-overwin-f2)     | See |<Plug>(easymotion-overwin-f2)|     -
     <Plug>(easymotion-overwin-line)   | See |<Plug>(easymotion-overwin-line)|   -
     <Plug>(easymotion-overwin-w)      | See |<Plug>(easymotion-overwin-w)|      -
+
+    Doesn't exist in EasyMotion       | Description
+    ----------------------------------|----------------------------------
+    <Plug>(easymotion-linemark)       | Analog of Line Motion in AceJump   +
 ```
 
 <!-- Badges -->
