@@ -1,4 +1,4 @@
-# IdeaVim-EasyMotion
+# IdeaVim-EasyMotion [In Progress]
 
 [![][jetbrains-team-svg]][jetbrains-team-page]
 [![][apache-license-svg]](LICENSE)
