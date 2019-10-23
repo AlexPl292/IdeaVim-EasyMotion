@@ -11,7 +11,7 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 
 #### AceJump mapping
 
-For the proper work, the mappings of IdeaVim-EasyMotion should be
+For it to work properly, the mappings of IdeaVim-EasyMotion should be
 executed instead of AceJump mappings. This plugin maps the shortcuts
 of AceJump to the corresponding actions in IdeaVim-EasyMotion to
 improve the experience of AceJump users. You can disable this feature by
@@ -26,7 +26,7 @@ adding `let g:EasyMotion_override_acejump = 0` to your `~/.ideavimrc`.
 
 #### Supported commands:
 Here is a list of commands from the easymotion documentation.  
-80 of 87 original vim-easymotion commands are supported.  
+80 of the original 87 vim-easymotion commands are supported.
 - Supported commands are marked with `+`  
 - Unsupported commands are marked with `-`  
 
