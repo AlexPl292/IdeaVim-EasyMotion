@@ -19,7 +19,7 @@ dependencies {
 intellij {
     version = "2019.2.3"
 
-    plugins += project(":acejump")
+    plugins += "AceJump:3.5.9"
     plugins += project(":IdeaVIM")
 }
 

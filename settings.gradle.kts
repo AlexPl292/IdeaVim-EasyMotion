@@ -1,3 +1,3 @@
 rootProject.name = "IdeaVim-EasyMotion"
 
-include("acejump", "IdeaVIM")
+include("IdeaVIM")
