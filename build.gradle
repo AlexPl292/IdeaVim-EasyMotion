@@ -21,6 +21,9 @@ intellij {
 
     plugins += "AceJump:3.5.9"
     plugins += project(":IdeaVIM")
+
+    updateSinceUntilBuild false
+    buildSearchableOptions.enabled false
 }
 
 compileKotlin.kotlinOptions {
