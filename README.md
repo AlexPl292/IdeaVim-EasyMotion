@@ -9,6 +9,10 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 [EasyMotion](https://github.com/easymotion/vim-easymotion) plugin emulation for IdeaVim.
 
 
+#### Available for EAP users of IdeaVim
+
+https://youtrack.jetbrains.com/issue/VIM-820#focus=streamItem-27-3774944.0-0
+
 #### AceJump mapping
 
 For it to work properly, the mappings of IdeaVim-EasyMotion should be
