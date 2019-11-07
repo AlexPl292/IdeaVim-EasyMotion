@@ -239,7 +239,6 @@ class EasyMotionExtension : VimNonDisposableExtension() {
             }
 
             val currentLine = editor.caretModel.logicalPosition.line
-            val currentOffset = editor.caretModel.offset
             val startOffsets = SearchGroup.findAll(editor, pattern, currentLine, currentLine, false)
                 .map { it.startOffset }
                 .filter { it in boundary }
