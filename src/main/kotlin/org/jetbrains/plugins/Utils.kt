@@ -14,13 +14,17 @@ fun mapToFunction(keys: String, handler: HandlerProcessor) {
     VimExtensionFacade.putExtensionHandlerMapping(
         MappingMode.NVO,
         StringHelper.parseKeys(command(keys)),
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            TestObject.TestHandler(handler)
-        } else {
-            StandardHandler(handler)
-        },
+        getHandler(handler),
         false
     )
+}
+
+fun getHandler(handler: HandlerProcessor): EasyHandlerBase {
+    return if (ApplicationManager.getApplication().isUnitTestMode) {
+        TestObject.TestHandler(handler)
+    } else {
+        StandardHandler(handler)
+    }
 }
 
 /**

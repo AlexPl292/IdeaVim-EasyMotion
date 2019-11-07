@@ -8,6 +8,7 @@ import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
+import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.group.SearchGroup
@@ -151,7 +152,12 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY))
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
-        mapToFunction("linemarks", LineMarks)
+        VimExtensionFacade.putExtensionHandlerMapping(
+            MappingMode.NVO,
+            parseKeys("<Plug>(acejump-linemarks)"),
+            getHandler(LineMarks),
+            false
+        )
 
         putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
 

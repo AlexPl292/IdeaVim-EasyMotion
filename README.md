@@ -142,7 +142,7 @@ Here is a list of commands from the easymotion documentation.
 
     Doesn't exist in EasyMotion       | Description
     ----------------------------------|----------------------------------
-    <Plug>(easymotion-linemark)       | Analog of Line Motion in AceJump   +
+    <Plug>(acejump-linemarks)         | Analog of Line Motion in AceJump   +
 ```
 
 <!-- Badges -->
