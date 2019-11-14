@@ -20,7 +20,11 @@ intellij {
     version = "2019.2.3"
 
     plugins += "AceJump:3.5.9"
-    plugins += project(":IdeaVIM")
+    if (Boolean.valueOf(ideaVimFromMarketplace)) {
+        plugins += "IdeaVIM:0.53.2@eap"
+    } else {
+        plugins += project(":IdeaVIM")
+    }
 
     updateSinceUntilBuild false
     buildSearchableOptions.enabled false
