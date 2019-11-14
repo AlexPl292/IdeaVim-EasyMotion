@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="License_scope" pattern="file[IdeaVim-EasyMotion]:*/&amp;&amp;!file[IdeaVim-EasyMotion.IdeaVIM]:*/" />
+</component>
