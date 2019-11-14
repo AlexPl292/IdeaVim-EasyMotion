@@ -1,13 +1,17 @@
 <idea-plugin>
     <id>org.jetbrains.IdeaVim-EasyMotion</id>
     <name>IdeaVim-EasyMotion</name>
-    <vendor email="alexpl292@gmail.com" url="https://feedforward.dev/">Alex Plate</vendor>
+    <vendor>JetBrains</vendor>
+    <description><![CDATA[
+      EasyMotion plugin emulation for IdeaVim.<br/>
+      See <a href="https://github.com/AlexPl292/IdeaVim-EasyMotion">GitHub</a> for the list of supported commands.
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>IdeaVIM</depends>
     <depends>AceJump</depends>
     
-    <idea-version since-build="183.4284.148" until-build="193.*"/>
+    <idea-version since-build="183.4284.148"/>
 
     <extensions defaultExtensionNs="IdeaVIM">
         <vimExtension implementation="org.jetbrains.plugins.EasyMotionExtension"/>
