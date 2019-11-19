@@ -23,14 +23,12 @@ package org.jetbrains.plugins
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
 import com.maddyhome.idea.vim.VimPlugin
-import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.group.SearchGroup
-import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.isEndAllowed
@@ -44,6 +42,7 @@ import org.acejump.view.Boundary.*
 import org.acejump.view.Canvas
 import org.acejump.view.Model
 import org.intellij.lang.annotations.Language
+import org.jetbrains.plugins.MotionType.*
 
 class EasyMotionExtension : VimNonDisposableExtension() {
     override fun getName(): String = "easymotion"
@@ -80,94 +79,94 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
 
         // -----------  Default mapping table ---------------------//
-        mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY))          // Works as `fn`
-        mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY))         // Works as `Fn`
-        mapToFunctionAndProvideKeys("t", MultiInputPreStop(AFTER_CARET_BOUNDARY))   // Works as `tn`
-        mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY))   // Works as `Tn`
-        mapToFunctionAndProvideKeys("w", PredefinedPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, false))
-        mapToFunctionAndProvideKeys("W", CustomPattern(WORD, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("b", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, false))
-        mapToFunctionAndProvideKeys("B", CustomPattern(WORD, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("e", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("E", CustomPattern(WORD_END, AFTER_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("ge", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("gE", CustomPattern(WORD_END, BEFORE_CARET_BOUNDARY))
+        mapToFunctionAndProvideKeys("f", MultiInput(AFTER_CARET_BOUNDARY, INCLUSIVE))         // Works as `fn`
+        mapToFunctionAndProvideKeys("F", MultiInput(BEFORE_CARET_BOUNDARY, EXCLUSIVE))        // Works as `Fn`
+        mapToFunctionAndProvideKeys("t", MultiInputPreStop(AFTER_CARET_BOUNDARY, INCLUSIVE))  // Works as `tn`
+        mapToFunctionAndProvideKeys("T", MultiInputPreStop(BEFORE_CARET_BOUNDARY, EXCLUSIVE)) // Works as `Tn`
+        mapToFunctionAndProvideKeys("w", PredefinedPattern(ALL_WORDS, AFTER_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunctionAndProvideKeys("W", CustomPattern(WORD, AFTER_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunctionAndProvideKeys("b", PredefinedPattern(ALL_WORDS, BEFORE_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunctionAndProvideKeys("B", CustomPattern(WORD, BEFORE_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunctionAndProvideKeys("e", CustomPattern(wordEnd, AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunctionAndProvideKeys("E", CustomPattern(WORD_END, AFTER_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunctionAndProvideKeys("ge", CustomPattern(wordEnd, BEFORE_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunctionAndProvideKeys("gE", CustomPattern(WORD_END, BEFORE_CARET_BOUNDARY, EXCLUSIVE))
         mapToFunctionAndProvideKeys("j", JkMotion(AFTER_CARET_BOUNDARY))
         mapToFunctionAndProvideKeys("k", JkMotion(BEFORE_CARET_BOUNDARY))
-        mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY))  // Works as `sn`
+        mapToFunctionAndProvideKeys("s", MultiInput(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))  // Works as `sn`
         mapToFunctionAndProvideKeys("n", RepeatSearch(forward = true, respectVimDirection = false))
         mapToFunctionAndProvideKeys("N", RepeatSearch(forward = false, respectVimDirection = false))
 
         // ------------ Extended mapping table -------------------//
-        mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY))
+        mapToFunction("bd-f", MultiInput(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
         mapToFunction("bd-t", BiDirectionalPreStop(false))
-        mapToFunction("bd-w", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, false))
-        mapToFunction("bd-W", CustomPattern(WORD, SCREEN_BOUNDARY))
-        mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY))
-        mapToFunction("bd-E", CustomPattern(WORD_END, SCREEN_BOUNDARY))
-        mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, true))
+        mapToFunction("bd-w", PredefinedPattern(ALL_WORDS, SCREEN_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bd-W", CustomPattern(WORD, SCREEN_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bd-e", CustomPattern(wordEnd, SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
+        mapToFunction("bd-E", CustomPattern(WORD_END, SCREEN_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bd-jk", PredefinedPattern(CODE_INDENTS, FULL_FILE_BOUNDARY, LINE))
         mapToFunction("bd-n", RepeatSearch(forward = false, respectVimDirection = false, bidirect = true))
         mapToFunction("jumptoanywhere", Jumptoanywhere())
-        mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, true))
-        mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, true))
+        mapToFunction("sol-j", PredefinedPattern(START_OF_LINE, AFTER_CARET_BOUNDARY, LINE))
+        mapToFunction("sol-k", PredefinedPattern(START_OF_LINE, BEFORE_CARET_BOUNDARY, LINE))
         mapToFunction("eol-j", EndOfLinePattern(AFTER_CARET_BOUNDARY))
-        mapToFunction("eol-k",EndOfLinePattern (BEFORE_CARET_BOUNDARY))
+        mapToFunction("eol-k", EndOfLinePattern(BEFORE_CARET_BOUNDARY))
         mapToFunction("iskeyword-w", KeyWordStart(AFTER_CARET_BOUNDARY))
         mapToFunction("iskeyword-b", KeyWordStart(BEFORE_CARET_BOUNDARY))
         mapToFunction("iskeyword-bd-w", KeyWordStart(SCREEN_BOUNDARY))
-        mapToFunction("iskeyword-e", KeyWordEnd(AFTER_CARET_BOUNDARY))
-        mapToFunction("iskeyword-ge", KeyWordEnd(BEFORE_CARET_BOUNDARY))
-        mapToFunction("iskeyword-bd-e", KeyWordEnd(SCREEN_BOUNDARY))
+        mapToFunction("iskeyword-e", KeyWordEnd(AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("iskeyword-ge", KeyWordEnd(BEFORE_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("iskeyword-bd-e", KeyWordEnd(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
         mapToFunction("vim-n", RepeatSearch(forward = true, respectVimDirection = true))
         mapToFunction("vim-N", RepeatSearch(forward = false, respectVimDirection = true))
 
         // ------------ Within Line Motion -----------------------//
-        mapToFunction("sl", MultiInput(CURRENT_LINE_BOUNDARY))             // Works as `sln`
-        mapToFunction("fl", MultiInput(CURRENT_LINE_AFTER_CARET_BOUNDARY))          // Works as `fln`
-        mapToFunction("Fl", MultiInput(CURRENT_LINE_BEFORE_CARET_BOUNDARY))         // Works as `Fln`
-        mapToFunction("bd-fl", MultiInput(CURRENT_LINE_BOUNDARY))          // Works as `sln`
-        mapToFunction("tl", MultiInputPreStop(CURRENT_LINE_AFTER_CARET_BOUNDARY))   // Works as `tln`
-        mapToFunction("Tl", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY))  // Works as `Tln`
-        mapToFunction("bd-tl", BiDirectionalPreStop(true))            // Works as `bd-tln`
-        mapToFunction("wl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_AFTER_CARET_BOUNDARY))
-        mapToFunction("bl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-wl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_BOUNDARY))
-        mapToFunction("el", CustomPattern(wordEnd, CURRENT_LINE_AFTER_CARET_BOUNDARY))
-        mapToFunction("gel", CustomPattern(wordEnd, CURRENT_LINE_BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-el", CustomPattern(wordEnd, CURRENT_LINE_BOUNDARY))
+        mapToFunction("sl", MultiInput(CURRENT_LINE_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))        // Works as `sln`
+        mapToFunction("fl", MultiInput(CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))          // Works as `fln`
+        mapToFunction("Fl", MultiInput(CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))         // Works as `Fln`
+        mapToFunction("bd-fl", MultiInput(CURRENT_LINE_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))     // Works as `sln`
+        mapToFunction("tl", MultiInputPreStop(CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))   // Works as `tln`
+        mapToFunction("Tl", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))  // Works as `Tln`
+        mapToFunction("bd-tl", BiDirectionalPreStop(true))                              // Works as `bd-tln`
+        mapToFunction("wl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_AFTER_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bd-wl", PredefinedPattern(ALL_WORDS, CURRENT_LINE_BOUNDARY, EXCLUSIVE))
+        mapToFunction("el", CustomPattern(wordEnd, CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("gel", CustomPattern(wordEnd, CURRENT_LINE_BEFORE_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("bd-el", CustomPattern(wordEnd, CURRENT_LINE_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
         mapToFunction("lineforward", JumptoanywhereInLine(0))
         mapToFunction("linebackward", JumptoanywhereInLine(1))
         mapToFunction("lineanywhere", JumptoanywhereInLine(2))
 
         // ------------ Multi input mapping table ----------------//
-        mapToFunction("s2", MultiInput(SCREEN_BOUNDARY))                              // Works as `sn`
-        mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY))                         // Works as `fn`
-        mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY))                        // Works as `Fn`
-        mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY))                           // Works as `sn`
-        mapToFunction("t2", MultiInputPreStop(AFTER_CARET_BOUNDARY))                  // Works as `tn`
-        mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY))                 // Works as `Tn`
+        mapToFunction("s2", MultiInput(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))                // Works as `sn`
+        mapToFunction("f2", MultiInput(AFTER_CARET_BOUNDARY, INCLUSIVE))                         // Works as `fn`
+        mapToFunction("F2", MultiInput(BEFORE_CARET_BOUNDARY, EXCLUSIVE))                        // Works as `Fn`
+        mapToFunction("bd-f2", MultiInput(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))             // Works as `sn`
+        mapToFunction("t2", MultiInputPreStop(AFTER_CARET_BOUNDARY, INCLUSIVE))                  // Works as `tn`
+        mapToFunction("T2", MultiInputPreStop(BEFORE_CARET_BOUNDARY, EXCLUSIVE))                 // Works as `Tn`
         mapToFunction("bd-t2", BiDirectionalPreStop(false))
 
-        mapToFunction("sl2", MultiInput(CURRENT_LINE_BOUNDARY))             // Works as `sln`
-        mapToFunction("fl2", MultiInput(CURRENT_LINE_AFTER_CARET_BOUNDARY))          // Works as `fln`
-        mapToFunction("Fl2", MultiInput(CURRENT_LINE_BEFORE_CARET_BOUNDARY))         // Works as `Fln`
-        mapToFunction("tl2", MultiInputPreStop(CURRENT_LINE_AFTER_CARET_BOUNDARY))   // Works as `tln`
-        mapToFunction("Tl2", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY))  // Works as `Tln`
+        mapToFunction("sl2", MultiInput(CURRENT_LINE_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))        // Works as `sln`
+        mapToFunction("fl2", MultiInput(CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))          // Works as `fln`
+        mapToFunction("Fl2", MultiInput(CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))         // Works as `Fln`
+        mapToFunction("tl2", MultiInputPreStop(CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))   // Works as `tln`
+        mapToFunction("Tl2", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))  // Works as `Tln`
 
-        mapToFunction("sn", MultiInput(SCREEN_BOUNDARY))
-        mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY))
-        mapToFunction("Fn", MultiInput(BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY))
-        mapToFunction("tn", MultiInputPreStop(AFTER_CARET_BOUNDARY))
-        mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY))
+        mapToFunction("sn", MultiInput(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
+        mapToFunction("fn", MultiInput(AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("Fn", MultiInput(BEFORE_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bd-fn", MultiInput(SCREEN_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
+        mapToFunction("tn", MultiInputPreStop(AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("Tn", MultiInputPreStop(BEFORE_CARET_BOUNDARY, EXCLUSIVE))
         mapToFunction("bd-tn", BiDirectionalPreStop(false))
 
-        mapToFunction("sln", MultiInput(CURRENT_LINE_BOUNDARY))
-        mapToFunction("fln", MultiInput(CURRENT_LINE_AFTER_CARET_BOUNDARY))
-        mapToFunction("Fln", MultiInput(CURRENT_LINE_BEFORE_CARET_BOUNDARY))
-        mapToFunction("bd-fln", MultiInput(CURRENT_LINE_BOUNDARY))
-        mapToFunction("tln", MultiInputPreStop(CURRENT_LINE_AFTER_CARET_BOUNDARY))
-        mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY))
+        mapToFunction("sln", MultiInput(CURRENT_LINE_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
+        mapToFunction("fln", MultiInput(CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("Fln", MultiInput(CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))
+        mapToFunction("bd-fln", MultiInput(CURRENT_LINE_BOUNDARY, BIDIRECTIONAL_INCLUSIVE))
+        mapToFunction("tln", MultiInputPreStop(CURRENT_LINE_AFTER_CARET_BOUNDARY, INCLUSIVE))
+        mapToFunction("Tln", MultiInputPreStop(CURRENT_LINE_BEFORE_CARET_BOUNDARY, EXCLUSIVE))
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
         VimExtensionFacade.putExtensionHandlerMapping(
@@ -184,7 +183,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
     }
 
-    private object LineMarks : HandlerProcessor {
+    private object LineMarks : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor) {
             if (editor.mode.isEndAllowed) {
                 Handler.regexSearch(LINE_MARK, SCREEN_BOUNDARY)
@@ -201,7 +200,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         val forward: Boolean,
         val respectVimDirection: Boolean,
         val bidirect: Boolean = false
-    ) : HandlerProcessor {
+    ) : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor) {
             val lastSearch = VimPlugin.getSearch().lastSearch ?: run {
                 Handler.reset()
@@ -235,7 +234,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class Jumptoanywhere : HandlerProcessor {
+    private class Jumptoanywhere : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] as? String ?: return
 
@@ -247,7 +246,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
     }
 
     /** Directions as in vim */
-    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor {
+    private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] as? String ?: return
             val boundary = when (direction) {
@@ -265,7 +264,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor {
+    private class KeyWordStart(val boundary: Boundary) : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor) {
             val kw = keywordRegex()?.let {
                 "((?<=\\s|\\A|[^$it])[$it])|" +  // Take a char from keyword that is preceded by a not-keyword char, or
@@ -276,7 +275,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class KeyWordEnd(val boundary: Boundary) : HandlerProcessor {
+    private class KeyWordEnd(val boundary: Boundary, motionType: MotionType) : HandlerProcessor(motionType) {
         override fun customization(editor: Editor) {
             val kw = keywordRegex()?.let {
                 "([$it](?=\\s|\\Z|[^$it]))|" +  // Take a char from keyword that is preceded by a not-keyword char, or
@@ -289,18 +288,16 @@ class EasyMotionExtension : VimNonDisposableExtension() {
 
     private class CustomPattern(
         val pattern: String,
-        val boundary: Boundary
-    ) : HandlerProcessor {
+        val boundary: Boundary,
+        motionType: MotionType
+    ) : HandlerProcessor(motionType) {
         override fun customization(editor: Editor) {
             Handler.customRegexSearch(pattern, boundary)
         }
     }
 
-    private class JkMotion(val boundary: Boundary) : HandlerProcessor {
-        private var initialOffset: Int? = null
-
+    private class JkMotion(val boundary: Boundary) : HandlerProcessor(LINE) {
         override fun customization(editor: Editor) {
-            initialOffset = editor.caretModel.currentCaret.offset
             if (VimScriptGlobalEnvironment.getInstance().variables[startOfLine] != 0) {
                 Handler.regexSearch(CODE_INDENTS, boundary)
             } else {
@@ -312,15 +309,6 @@ class EasyMotionExtension : VimNonDisposableExtension() {
                 }
                 Finder.markResults(res.toSortedSet())
             }
-        }
-
-        override fun onFinish(editor: Editor, queryWithSuffix: String) {
-            val myInitialOffset = initialOffset
-            if (myInitialOffset != null && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
-                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
-                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
-            }
-            initialOffset = null
         }
 
         private fun generateLineOffsets(
@@ -353,59 +341,39 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class EndOfLinePattern(val boundary: Boundary) : HandlerProcessor {
-
-        private var initialOffset: Int? = null
-
+    private class EndOfLinePattern(val boundary: Boundary) : HandlerProcessor(LINE) {
         override fun customization(editor: Editor) {
-            initialOffset = editor.caretModel.currentCaret.offset
             if (editor.mode.isEndAllowed) {
                 Handler.regexSearch(END_OF_LINE, boundary)
             } else {
                 Handler.customRegexSearch(LINE_END_NO_NEWLINE, boundary)
             }
         }
-
-        override fun onFinish(editor: Editor, queryWithSuffix: String) {
-            val myInitialOffset = initialOffset
-            if (myInitialOffset != null && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
-                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
-                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
-            }
-            initialOffset = null
-        }
     }
 
     private class PredefinedPattern(
         val pattern: Pattern,
         val boundary: Boundary,
-        val linewise: Boolean = false
-    ) : HandlerProcessor {
-
-        private var initialOffset: Int? = null
-
+        motionType: MotionType
+    ) : HandlerProcessor(motionType) {
         override fun customization(editor: Editor) {
-            initialOffset = editor.caretModel.currentCaret.offset
             Handler.regexSearch(pattern, boundary)
-        }
-
-        override fun onFinish(editor: Editor, queryWithSuffix: String) {
-            val myInitialOffset = initialOffset
-            if (myInitialOffset != null && linewise && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
-                VimPlugin.getVisualMotion().enterVisualMode(editor, CommandState.SubMode.VISUAL_LINE)
-                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
-            }
-            initialOffset = null
         }
     }
 
-    private class MultiInput(val boundary: Boundary) : HandlerProcessor {
+    private class MultiInput(
+        val boundary: Boundary,
+        motionType: MotionType
+    ) : HandlerProcessor(motionType) {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
     }
 
-    private class MultiInputPreStop(val boundary: Boundary) : HandlerProcessor {
+    private class MultiInputPreStop(
+        val boundary: Boundary,
+        motionType: MotionType
+    ) : HandlerProcessor(motionType) {
         override fun customization(editor: Editor) {
             Model.boundaries = boundary
         }
@@ -429,7 +397,7 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         }
     }
 
-    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor {
+    private class BiDirectionalPreStop(val inLine: Boolean) : HandlerProcessor(BIDIRECTIONAL_INCLUSIVE) {
         var caretPosition: Int? = null
 
         override fun customization(editor: Editor) {

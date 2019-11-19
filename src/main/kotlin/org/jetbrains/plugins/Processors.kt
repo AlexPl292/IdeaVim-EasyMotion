@@ -22,6 +22,11 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.testFramework.PlatformTestUtil
 import com.maddyhome.idea.vim.KeyHandler
+import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.CommandState
+import com.maddyhome.idea.vim.command.CommandState.SubMode.VISUAL_CHARACTER
+import com.maddyhome.idea.vim.command.CommandState.SubMode.VISUAL_LINE
+import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.inVisualMode
@@ -36,12 +41,12 @@ import java.awt.Toolkit
  * In order to implement an easymotion command you should implement [HandlerProcessor] and pass it to one of
  *   implementations of [EasyHandlerBase]
  */
-interface HandlerProcessor {
+abstract class HandlerProcessor(val motionType: MotionType) {
     /** This function is called right after [AceAction] execution */
-    fun customization(editor: Editor) {}
+    open fun customization(editor: Editor) {}
 
     /** This function is called right after user finished to work with AceJump/EasyMotion */
-    fun onFinish(editor: Editor, queryWithSuffix: String) {}
+    open fun onFinish(editor: Editor, queryWithSuffix: String) {}
 }
 
 /** Standard handled that is used in real work. For tests [TestObject.TestHandler] is used */
@@ -99,9 +104,11 @@ object TestObject {
 abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExtensionHandler {
 
     private var startSelection: Int? = null
+    private var initialOffset: Int? = null
 
     protected fun beforeAction(editor: Editor) {
         startSelection = if (editor.inVisualMode) editor.caretModel.currentCaret.vimSelectionStart else null
+        initialOffset = editor.caretModel.currentCaret.offset
     }
 
     protected fun rightAfterAction(editor: Editor) {
@@ -113,5 +120,30 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
         startSelection?.let {
             editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
         }
+
+        // Inclusive / Exclusive / Linewise for op mode
+        val myInitialOffset = initialOffset
+        if (myInitialOffset != null && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
+            val selectionType = when (processor.motionType) {
+                MotionType.LINE -> VISUAL_LINE
+                MotionType.INCLUSIVE -> VISUAL_CHARACTER
+                MotionType.BIDIRECTIONAL_INCLUSIVE -> {
+                    if (myInitialOffset < editor.caretModel.currentCaret.offset) VISUAL_CHARACTER else null
+                }
+                else -> null
+            }
+            if (selectionType != null) {
+                VimPlugin.getVisualMotion().enterVisualMode(editor, selectionType)
+                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
+            }
+        }
+        initialOffset = null
     }
+}
+
+enum class MotionType {
+    INCLUSIVE,
+    EXCLUSIVE,
+    BIDIRECTIONAL_INCLUSIVE,
+    LINE
 }

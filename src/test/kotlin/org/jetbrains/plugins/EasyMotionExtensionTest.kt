@@ -81,6 +81,41 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    // Inclusive motion
+    fun `test delete bidirectional forward`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("s"),
+            putCaretAtWord = "lavender",
+            searchQuery = "tufted",
+            jumpToNthQuery = 0
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and <caret>ufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
+    // Exclusive motion
+    fun `test delete bidirectional backward`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("s"),
+            putCaretAtWord = "lavender",
+            searchQuery = "found",
+            jumpToNthQuery = 0
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I <caret>lavender and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     fun `test bidirectional line motion`() {
         doTest(
             command = parseKeys(command("bd-jk")),
@@ -249,6 +284,7 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    // Exclusive motion
     fun `test delete till word backward`() {
         doTest(
             command = parseKeys("d") + parseKeysWithLeader("b"),
@@ -289,6 +325,24 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    // Inclusive motion
+    fun `test delete found`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("f"),
+            putCaretAtWord = "lavender",
+            searchQuery = "and",
+            jumpToNthQuery = 0
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and <caret>nd tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     fun `test backward mapping`() {
         doTest(
             command = parseKeysWithLeader("F"),
@@ -299,6 +353,24 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
             assertTrue(editorText.lastIndexOf("it") !in matches)
             assertTrue(editorText.indexOf("it") in matches)
         }
+    }
+
+    // Exclusive motion
+    fun `test delete found backward`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("F"),
+            putCaretAtWord = "lavender",
+            searchQuery = "and",
+            jumpToNthQuery = 1
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks <caret>lavender and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
     }
 
     fun `test till forward mapping`() {
@@ -312,6 +384,24 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    // Inclusive motion
+    fun `test delete till found`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("t"),
+            putCaretAtWord = "lavender",
+            searchQuery = "and",
+            jumpToNthQuery = 0
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and <caret>and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     fun `test till backward mapping`() {
         doTest(
             command = parseKeysWithLeader("T"),
@@ -321,6 +411,24 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         ) { editorText, _ ->
             assertEquals(editorText.indexOf("it") + 2, myFixture.editor.caretModel.offset)
         }
+    }
+
+    // Exclusive motion
+    fun `test delete till found backward`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("T"),
+            putCaretAtWord = "lavender",
+            searchQuery = "and",
+            jumpToNthQuery = 1
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and<caret>lavender and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
     }
 
     fun `test line motions are linewise for op pending`() {
@@ -486,6 +594,23 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    // Inclusive motion
+    fun `test delete word end`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("e"),
+            putCaretAtWord = "lavender",
+            jumpToNthQuery = 1
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and <caret> tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     fun `test jump to word end backward`() {
         doTest(
             command = parseKeysWithLeader("ge"),
@@ -555,6 +680,25 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    // Exclusive motion
+    fun `test delete big word`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("W"),
+            editorText = text.replace("tufted grass", "tufted.grass").replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            jumpToNthQuery = 1
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks and la<caret>tufted.grass,
+                where it was#settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     fun `test backward big word motion`() {
         doTest(
             command = parseKeysWithLeader("B"),
@@ -564,6 +708,25 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         ) { _, jumpLocations ->
             assertEquals(11, jumpLocations.size)
         }
+    }
+
+    // Exclusive motion
+    fun `test delete big word backward`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("B"),
+            editorText = text.replace("tufted grass", "tufted.grass").replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            jumpToNthQuery = 10
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all <caret>vender and tufted.grass,
+                where it was#settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
     }
 
     fun `test bd big word motion`() {
@@ -592,6 +755,28 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         ) { _: String, matchResults: List<Int> ->
             assertEquals(18, matchResults.size)
         }
+    }
+
+    // NB: This is strange that `e` is inclusive and `E` is exclusive, but this is how easymotion works.
+    // Exclusive motion
+    fun `test end of big word`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("E"),
+            editorText = text.replace("found it", "found.it")
+                .replace("legendary land", "legendary#land")
+                .replace("tufted grass", "tufted.grass")
+                .replace("was settled", "was#settled"),
+            putCaretAtWord = "lavender",
+            caretShift = 2,
+            jumpToNthQuery = 5
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found.it in a legendary#land
+                all rocks and la<caret>d on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
     }
 
     fun `test backward big word end motion`() {
