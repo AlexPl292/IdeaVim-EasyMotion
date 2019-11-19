@@ -249,6 +249,22 @@ class EasyMotionExtensionTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test delete till word backward`() {
+        doTest(
+            command = parseKeys("d") + parseKeysWithLeader("b"),
+            putCaretAtWord = "lavender",
+            jumpToNthQuery = 11
+        )
+        myFixture.checkResult("""
+                A Discovery
+
+                I found it in a legendary land
+                all rocks <caret>lavender and tufted grass,
+                where it was settled on some sodden sand
+                hard by the torrent of a mountain pass.
+        """.trimIndent())
+    }
+
     fun `test both directions word motion`() {
         doTest(
             command = parseKeys(command("bd-w")),
