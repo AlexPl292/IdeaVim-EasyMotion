@@ -1,4 +1,4 @@
-# IdeaVim-EasyMotion [In Progress]
+# IdeaVim-EasyMotion
 
 [![][jetbrains-team-svg]][jetbrains-team-page]
 [![][apache-license-svg]](LICENSE)
@@ -9,9 +9,12 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 [EasyMotion](https://github.com/easymotion/vim-easymotion) plugin emulation for IdeaVim.
 
 
-#### Available for EAP users of IdeaVim
+#### Setup
 
-https://youtrack.jetbrains.com/issue/VIM-820#focus=streamItem-27-3774944.0-0
+- Install [IdeaVim](https://plugins.jetbrains.com/plugin/164-ideavim),
+[AceJump](https://plugins.jetbrains.com/plugin/7086-acejump) and
+[IdeaVim-EasyMotion](https://plugins.jetbrains.com/plugin/13360-ideavim-easymotion/) plugins.
+- Add `set easymotion` to your `~/.ideavimrc`
 
 #### AceJump mapping
 
