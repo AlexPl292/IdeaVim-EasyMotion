@@ -21,7 +21,7 @@ intellij {
 
     plugins += "AceJump:3.5.9"
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins += "IdeaVIM:0.53.2@eap"
+        plugins += "IdeaVIM:0.54"
     } else {
         plugins += project(":IdeaVIM")
     }
