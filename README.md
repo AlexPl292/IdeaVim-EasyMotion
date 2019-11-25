@@ -16,6 +16,10 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 [IdeaVim-EasyMotion](https://plugins.jetbrains.com/plugin/13360-ideavim-easymotion/) plugins.
 - Add `set easymotion` to your `~/.ideavimrc`
 
+#### How does it work?
+
+Please check the docs of the [vim-easymotion](https://github.com/easymotion/vim-easymotion#usage-example-for-the-base-features) plugin.
+
 #### What are the features of this new plugin and how does this plugin differ from AceJump?
 
 - With IdeaVim-EasyMotion, you get good integration with IdeaVim.
