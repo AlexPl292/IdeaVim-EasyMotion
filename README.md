@@ -16,6 +16,18 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 [IdeaVim-EasyMotion](https://plugins.jetbrains.com/plugin/13360-ideavim-easymotion/) plugins.
 - Add `set easymotion` to your `~/.ideavimrc`
 
+#### What are the features of this new plugin and how does this plugin differ from AceJump?
+
+- With IdeaVim-EasyMotion, you get good integration with IdeaVim.
+    - Now you can use EasyMotion commands as an argument for `d`, `c`, or any other command that takes motion as an argument.
+    - Use your existing EasyMotion mappings or create new mappings that will work both in Vim and IdeaVim.
+    - If you use the `iskeyword` option, check out the ` <Plug>(easymotion-iskeyword-*)` commands.
+- There is now an additional set of commands. Use `<Plug>(easymotion-e)` to jump to a word and, or `<Plug>(easymotion-sl)` for jumping within the line. See the [full list of supported commands](#supported-commands).
+
+#### Keep typing
+
+You don’t have to limit yourself to using only one char of the target word. Type as many chars as you need.
+
 #### AceJump mapping
 
 For it to work properly, the mappings of IdeaVim-EasyMotion should be
