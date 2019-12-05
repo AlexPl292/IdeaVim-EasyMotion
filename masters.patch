@@ -1,7 +1,7 @@
-diff --git a/ideavim/build.gradle b/ideavim/build.gradle
+diff --git a/IdeaVIM/build.gradle b/IdeaVIM/build.gradle
 index 80310f93..def8f834 100644
---- a/ideavim/build.gradle
-+++ b/ideavim/build.gradle
+--- a/IdeaVIM/build.gradle
++++ b/IdeaVIM/build.gradle
 @@ -9,7 +9,7 @@ buildscript {
  }
 
