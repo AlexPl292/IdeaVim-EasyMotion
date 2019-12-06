@@ -162,3 +162,6 @@ Temporary Items
 /ideavim/
 /.idea/$PRODUCT_WORKSPACE_FILE$
 /.idea/StickySelectionHighlights.xml
+/.idea/vcs.xml
+/.idea/jarRepositories.xml
+/.idea/modules.xml
