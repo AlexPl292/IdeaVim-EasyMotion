@@ -12,17 +12,10 @@ index 80310f93..def8f834 100644
 
  apply plugin: 'java'
 diff --git a/AceJump/build.gradle.kts b/AceJump/build.gradle.kts
-index 6c6f693..2f07c41 100755
+index b751836..92ec6df 100755
 --- a/AceJump/build.gradle.kts
 +++ b/AceJump/build.gradle.kts
-@@ -1,4 +1,5 @@
--import org.jetbrains.intellij.tasks.*
-+import org.jetbrains.intellij.tasks.PublishTask
-+import org.jetbrains.intellij.tasks.RunIdeTask
- import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
- tasks {
-@@ -24,8 +25,8 @@ tasks {
+@@ -4,8 +4,8 @@ import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 
  plugins {
    idea apply true
@@ -32,4 +25,4 @@ index 6c6f693..2f07c41 100755
 +  id("org.jetbrains.intellij")
  }
 
- dependencies {
+ fun fetchChangeNotes() = File("CHANGES.md").readLines().drop(4).takeWhile { !it.startsWith("###") }.let { notes ->
