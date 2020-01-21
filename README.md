@@ -40,6 +40,14 @@ of AceJump to the corresponding actions in IdeaVim-EasyMotion to
 improve the experience of AceJump users. You can disable this feature by
 adding `let g:EasyMotion_override_acejump = 0` to your `~/.ideavimrc`.
 
+#### `mapleader` mapping
+
+If you want to change your leader key, please make sure the `mapleader` command appears before the `set easymotion` command in your `~/.ideavimrc`:
+```
+let mapleader=","
+set easymotion
+```
+
 #### Supported options:
 
 - `g:EasyMotion_re_anywhere`
