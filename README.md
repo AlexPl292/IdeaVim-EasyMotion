@@ -172,22 +172,6 @@ Here is a list of commands from the easymotion documentation.
     <Plug>(acejump-linemarks)         | Analog of Line Motion in AceJump   +
 ```
 
-#### Contribution
-
-Due to some issues with used version of kotlin, `IdeaVim` plugin should be used as a submodule of `IdeaVim-EasyMotion`
-project during the development:
-
-1) Clone `IdeaVim` repository to `IdeaVim-EasyMotion` folder: `git clone git@github.com:JetBrains/ideavim.git`
-2) Open `build.gradle` file of `IdeaVim` project and replace the line:
-```
-id 'org.jetbrains.intellij' version '0.4.9'
-```
-
-with the following one:
-```
-id 'org.jetbrains.intellij'
-```
-
 <!-- Badges -->
 [jetbrains-team-page]: https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub
 [jetbrains-team-svg]: http://jb.gg/badges/team.svg
