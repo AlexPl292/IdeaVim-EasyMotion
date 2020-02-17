@@ -6,7 +6,7 @@ index 80310f93..def8f834 100644
  }
 
  plugins {
--  id 'org.jetbrains.intellij' version '0.4.9'
+-  id 'org.jetbrains.intellij' version '0.4.16'
 +  id 'org.jetbrains.intellij'
  }
 
