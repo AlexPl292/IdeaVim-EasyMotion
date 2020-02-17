@@ -18,7 +18,7 @@
 
 @file:Suppress("PrivatePropertyName")
 
-package org.jetbrains.plugins
+package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
@@ -42,7 +42,7 @@ import org.acejump.view.Boundary.*
 import org.acejump.view.Canvas
 import org.acejump.view.Model
 import org.intellij.lang.annotations.Language
-import org.jetbrains.plugins.MotionType.*
+import org.jetbrains.plugins.extension.easymotion.MotionType.*
 
 class EasyMotionExtension : VimNonDisposableExtension() {
     override fun getName(): String = "easymotion"

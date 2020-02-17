@@ -14,6 +14,6 @@
     <idea-version since-build="183.4284.148"/>
 
     <extensions defaultExtensionNs="IdeaVIM">
-        <vimExtension implementation="org.jetbrains.plugins.EasyMotionExtension"/>
+        <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension"/>
     </extensions>
 </idea-plugin>

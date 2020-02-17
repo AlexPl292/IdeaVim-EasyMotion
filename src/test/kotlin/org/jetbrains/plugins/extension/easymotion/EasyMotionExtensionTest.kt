@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jetbrains.plugins
+package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.editor.Editor
@@ -41,8 +41,8 @@ import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
 import org.acejump.view.Canvas
-import org.jetbrains.plugins.EasyMotionExtension.Companion.defaultPrefix
-import org.jetbrains.plugins.EasyMotionExtension.Companion.startOfLine
+import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.defaultPrefix
+import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.startOfLine
 import java.awt.Dimension
 import javax.swing.JViewport
 import javax.swing.KeyStroke
