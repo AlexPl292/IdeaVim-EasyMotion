@@ -112,6 +112,7 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
     }
 
     protected fun rightAfterAction(editor: Editor) {
+        // Add position to jump list
         VimPlugin.getMark().saveJumpLocation(editor)
         processor.customization(editor)
     }
@@ -138,6 +139,12 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
                 editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
             }
         }
+
+        // Remove position from jumps list if caret haven't moved
+        if (myInitialOffset == editor.caretModel.offset) {
+            VimPlugin.getMark().jumps.dropLast(1)
+        }
+
         initialOffset = null
     }
 }
