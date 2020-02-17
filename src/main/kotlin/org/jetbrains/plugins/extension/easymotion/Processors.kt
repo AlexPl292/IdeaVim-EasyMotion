@@ -112,6 +112,7 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
     }
 
     protected fun rightAfterAction(editor: Editor) {
+        VimPlugin.getMark().saveJumpLocation(editor)
         processor.customization(editor)
     }
 
