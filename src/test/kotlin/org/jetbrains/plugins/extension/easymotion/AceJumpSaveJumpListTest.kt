@@ -21,7 +21,6 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.KeyboardShortcut
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.ui.playback.commands.ActionCommand
 import com.intellij.testFramework.PlatformTestUtil
 import com.maddyhome.idea.vim.VimPlugin
 import junit.framework.TestCase
@@ -85,6 +84,19 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
         }
     }
 
+    private fun jumpCancel(word: String) {
+        val actionManager = ActionManager.getInstance()
+        val action = actionManager.getAction("AceAction") ?: error("")
+        actionManager.tryToExecute(action, getInputEvent(), null, null, true)
+
+        myFixture.type(word)
+        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+        val locations = Canvas.jumpLocations
+        if (locations.isNotEmpty()) {
+            myFixture.performEditorAction("EditorEscape")
+        }
+    }
+
     private fun getInputEvent(): InputEvent {
         val shortcuts = KeymapUtil.getActiveKeymapShortcuts("AceAction").shortcuts
         val keyStroke = shortcuts.filterIsInstance<KeyboardShortcut>().first().firstKeyStroke
@@ -98,18 +110,5 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
             keyStroke.keyChar,
             KeyEvent.KEY_LOCATION_STANDARD
         )
-    }
-
-    private fun jumpCancel(word: String) {
-        val actionManager = ActionManager.getInstance()
-        val action = actionManager.getAction("AceAction") ?: error("")
-        actionManager.tryToExecute(action, ActionCommand.getInputEvent("AceAction"), null, null, true)
-
-        myFixture.type(word)
-        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-        val locations = Canvas.jumpLocations
-        if (locations.isNotEmpty()) {
-            myFixture.performEditorAction("EditorEscape")
-        }
     }
 }
