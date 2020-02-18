@@ -26,6 +26,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 import com.maddyhome.idea.vim.KeyHandler
+import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.group.visual.VimVisualTimer
 import com.maddyhome.idea.vim.helper.EditorDataContext
@@ -159,6 +160,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         TestObject.handlerWasCalled = false
         VimVisualTimer.swingTimer?.stop()
         VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.startOfLine] = 1
+        VimPlugin.getMark().jumps.clear()
         super.tearDown()
     }
 }
