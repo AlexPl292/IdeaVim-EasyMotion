@@ -32,6 +32,11 @@ intellij {
 
     updateSinceUntilBuild false
     buildSearchableOptions.enabled false
+
+    publishPlugin {
+        username publishUsername
+        token publishToken
+    }
 }
 
 compileKotlin.kotlinOptions {
