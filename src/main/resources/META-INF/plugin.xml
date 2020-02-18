@@ -6,6 +6,9 @@
       EasyMotion plugin emulation for IdeaVim.<br/>
       See <a href="https://github.com/AlexPl292/IdeaVim-EasyMotion">GitHub</a> for the list of supported commands.
     ]]></description>
+    <change-notes><![CDATA[
+      Integration with <C-I> and <C-O> commands of IdeaVim.
+    ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>IdeaVIM</depends>
