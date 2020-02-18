@@ -27,9 +27,16 @@ import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.enumSetOf
 import com.maddyhome.idea.vim.helper.mode
 import com.maddyhome.idea.vim.option.OptionsManager
+import com.maddyhome.idea.vim.option.ToggleOption
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.startOfLine
 
 class EasyMotionExtensionTest : EasyMotionTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        (OptionsManager.getOption("easymotion") as ToggleOption).set()
+    }
+
     fun `test save selection`() {
         doTest(
             command = parseKeysWithLeader("s"),

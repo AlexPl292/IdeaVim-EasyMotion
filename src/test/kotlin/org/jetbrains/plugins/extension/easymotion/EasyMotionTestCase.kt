@@ -31,8 +31,6 @@ import com.maddyhome.idea.vim.group.visual.VimVisualTimer
 import com.maddyhome.idea.vim.helper.EditorDataContext
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.TestInputModel
-import com.maddyhome.idea.vim.option.OptionsManager
-import com.maddyhome.idea.vim.option.ToggleOption
 import org.acejump.control.Handler
 import org.acejump.view.Canvas
 import java.awt.Dimension
@@ -40,11 +38,6 @@ import javax.swing.JViewport
 import javax.swing.KeyStroke
 
 abstract class EasyMotionTestCase : BasePlatformTestCase() {
-    override fun setUp() {
-        super.setUp()
-        (OptionsManager.getOption("easymotion") as ToggleOption).set()
-    }
-
     protected fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
@@ -87,7 +80,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         assertTestHandlerWasCalled()
     }
 
-    private fun setupEditor(before: String = text) {
+    protected fun setupEditor(before: String = text) {
         myFixture.configureByText(PlainTextFileType.INSTANCE, before)
         val viewPort = JViewport()
         viewPort.size = Dimension(0, 10 * myFixture.editor.lineHeight)

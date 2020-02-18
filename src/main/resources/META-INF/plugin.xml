@@ -16,4 +16,7 @@
     <extensions defaultExtensionNs="IdeaVIM">
         <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension"/>
     </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="org.jetbrains.plugins.extension.easymotion.AceJumpToJumpList"/>
+    </extensions>
 </idea-plugin>

@@ -28,7 +28,7 @@ import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.key.ShortcutOwner
 
 object MappingConfigurator {
-    private val aceJumpAlternatives = mapOf(
+    val aceJumpAlternatives = mapOf(
         "AceAction" to "sn",
         "AceLineAction" to "linemarks",
         "AceWordAction" to "bd-w",
