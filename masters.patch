@@ -27,7 +27,7 @@ index b751836..808ee19 100755
  }
 
  fun fetchChangeNotes() = File("CHANGES.md").readLines().drop(4).takeWhile { !it.startsWith("###") }.let { notes ->
-@@ -35,7 +35,7 @@ tasks {
+@@ -36,7 +36,7 @@ tasks {
 
    withType<PatchPluginXmlTask> {
      sinceBuild("183.*")
