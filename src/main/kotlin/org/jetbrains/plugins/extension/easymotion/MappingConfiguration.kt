@@ -38,21 +38,23 @@ object MappingConfigurator {
 
     fun configureMappings() {
         ApplicationManager.getApplication().invokeLater {
-            for ((actionId, alternative) in aceJumpAlternatives) {
-                val action = ActionManager.getInstance().getAction(actionId) ?: continue
-                val shortcuts = action.shortcutSet.shortcuts
-                for (shortcut in shortcuts) {
-                    if (!shortcut.isKeyboard || shortcut !is KeyboardShortcut) continue
-                    val keyStroke = shortcut.firstKeyStroke
+            ApplicationManager.getApplication().executeOnPooledThread {
+                for ((actionId, alternative) in aceJumpAlternatives) {
+                    val action = ActionManager.getInstance().getAction(actionId) ?: continue
+                    val shortcuts = action.shortcutSet.shortcuts
+                    for (shortcut in shortcuts) {
+                        if (!shortcut.isKeyboard || shortcut !is KeyboardShortcut) continue
+                        val keyStroke = shortcut.firstKeyStroke
 
-                    VimExtensionFacade.putKeyMapping(
-                        MappingMode.NVO,
-                        listOf(keyStroke),
-                        EasyMotionExtension.mappingOwner,
-                        StringHelper.parseKeys(command(alternative)),
-                        true
-                    )
-                    VimPlugin.getKey().savedShortcutConflicts[keyStroke] = ShortcutOwner.VIM
+                        VimExtensionFacade.putKeyMapping(
+                            MappingMode.NVO,
+                            listOf(keyStroke),
+                            EasyMotionExtension.mappingOwner,
+                            StringHelper.parseKeys(command(alternative)),
+                            true
+                        )
+                        VimPlugin.getKey().savedShortcutConflicts[keyStroke] = ShortcutOwner.VIM
+                    }
                 }
             }
         }
