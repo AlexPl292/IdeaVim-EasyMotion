@@ -48,6 +48,7 @@ object MappingConfigurator {
                     VimExtensionFacade.putKeyMapping(
                         MappingMode.NVO,
                         listOf(keyStroke),
+                        EasyMotionExtension.mappingOwner,
                         StringHelper.parseKeys(command(alternative)),
                         true
                     )

@@ -25,14 +25,15 @@ import com.intellij.openapi.editor.VisualPosition
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
+import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
-import com.maddyhome.idea.vim.extension.VimNonDisposableExtension
 import com.maddyhome.idea.vim.group.SearchGroup
 import com.maddyhome.idea.vim.helper.EditorHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.isEndAllowed
 import com.maddyhome.idea.vim.helper.mode
+import com.maddyhome.idea.vim.key.MappingOwner
 import org.acejump.control.Handler
 import org.acejump.label.Pattern
 import org.acejump.label.Pattern.*
@@ -44,8 +45,10 @@ import org.acejump.view.Model
 import org.intellij.lang.annotations.Language
 import org.jetbrains.plugins.extension.easymotion.MotionType.*
 
-class EasyMotionExtension : VimNonDisposableExtension() {
-    override fun getName(): String = "easymotion"
+class EasyMotionExtension : VimExtension {
+    override fun getName(): String = pluginName
+
+    override fun getOwner() = mappingOwner
 
     companion object {
         const val pluginPrefix = "<Plug>(easymotion-prefix)"
@@ -67,9 +70,12 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         const val overrideAcejump = "g:EasyMotion_override_acejump"
 
         private const val defaultRe = """\v(<.|^${'$'})|(.>|^${'$'})|(\l)\zs(\u)|(_\zs.)|(#\zs.)"""
+
+        private const val pluginName = "easymotion"
+        val mappingOwner = MappingOwner.Plugin.get(pluginName)
     }
 
-    override fun initOnce() {
+    override fun init() {
         VimScriptGlobalEnvironment.getInstance().variables.let { vars ->
             vars[jumpAnywhere] = defaultRe
             vars[lineJumpAnywhere] = defaultRe
@@ -172,11 +178,12 @@ class EasyMotionExtension : VimNonDisposableExtension() {
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.NVO,
             parseKeys("<Plug>(acejump-linemarks)"),
+            owner,
             getHandler(LineMarks),
             false
         )
 
-        putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), parseKeys(pluginPrefix), true)
+        putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), owner, parseKeys(pluginPrefix), true)
 
         if (VimScriptGlobalEnvironment.getInstance().variables[overrideAcejump] == 1) {
             MappingConfigurator.configureMappings()

@@ -32,6 +32,7 @@ fun mapToFunction(keys: String, handler: HandlerProcessor) {
     VimExtensionFacade.putExtensionHandlerMapping(
         MappingMode.NVO,
         StringHelper.parseKeys(command(keys)),
+        EasyMotionExtension.mappingOwner,
         getHandler(handler),
         false
     )
@@ -57,6 +58,7 @@ fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
         VimExtensionFacade.putKeyMapping(
             MappingMode.NVO,
             StringHelper.parseKeys("${pluginPrefix}$keys"),
+            EasyMotionExtension.mappingOwner,
             StringHelper.parseKeys(command(keys)),
             true
         )

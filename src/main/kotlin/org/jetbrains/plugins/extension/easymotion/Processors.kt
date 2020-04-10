@@ -125,7 +125,7 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
 
         // Inclusive / Exclusive / Linewise for op mode
         val myInitialOffset = initialOffset
-        if (myInitialOffset != null && CommandState.getInstance(editor).mappingMode == MappingMode.OP_PENDING) {
+        if (myInitialOffset != null && CommandState.getInstance(editor).isOperatorPending) {
             val selectionType = when (processor.motionType) {
                 MotionType.LINE -> VISUAL_LINE
                 MotionType.INCLUSIVE -> VISUAL_CHARACTER

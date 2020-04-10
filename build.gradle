@@ -17,7 +17,7 @@ dependencies {
 }
 
 intellij {
-    version = "2019.2.3"
+    version = "2020.1"
 
     if (Boolean.valueOf(aceJumpFromMarketplace)) {
         plugins += "AceJump:3.5.9"
@@ -25,7 +25,7 @@ intellij {
         plugins += project(":AceJump")
     }
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins += "IdeaVIM:0.55"
+        plugins += "IdeaVIM:0.56"
     } else {
         plugins += project(":IdeaVIM")
     }
