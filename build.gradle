@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "org.jetbrains.intellij" version "0.4.18"
-    id "org.jetbrains.kotlin.jvm" version "1.3.71"
+    id "org.jetbrains.kotlin.jvm" version "1.3.72"
 }
 
 group "org.jetbrains"
@@ -20,7 +20,7 @@ intellij {
     version = "2020.1"
 
     if (Boolean.valueOf(aceJumpFromMarketplace)) {
-        plugins += "AceJump:3.5.9"
+        plugins += "AceJump:3.6.1"
     } else {
         plugins += project(":AceJump")
     }
