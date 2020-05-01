@@ -14,12 +14,14 @@
     <depends>IdeaVIM</depends>
     <depends>AceJump</depends>
     
-    <idea-version since-build="183.4284.148"/>
+    <idea-version since-build="201.5985"/>
 
     <extensions defaultExtensionNs="IdeaVIM">
         <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension"/>
     </extensions>
-    <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="org.jetbrains.plugins.extension.easymotion.AceJumpToJumpList"/>
-    </extensions>
+
+    <projectListeners>
+        <listener class="org.jetbrains.plugins.extension.easymotion.EasyMotionActionListener"
+                  topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>
+    </projectListeners>
 </idea-plugin>

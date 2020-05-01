@@ -25,30 +25,24 @@ import com.intellij.openapi.startup.StartupActivity
 import com.maddyhome.idea.vim.VimPlugin
 import org.acejump.control.Handler
 
-// TODO: 17.02.2020 Not sure how would it work with dynamic plugins logic
-class AceJumpToJumpList : StartupActivity {
-    override fun runActivity(project: Project) {
-        val connection = project.messageBus.connect()
-        connection.subscribe(AnActionListener.TOPIC, object : AnActionListener {
-            override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-                val editor = dataContext.getData(CommonDataKeys.EDITOR) ?: return
-                val actionId = ActionManager.getInstance().getId(action)
-                if (actionId !in MappingConfigurator.aceJumpAlternatives.keys) return
+class EasyMotionActionListener : AnActionListener {
+    override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+        val editor = dataContext.getData(CommonDataKeys.EDITOR) ?: return
+        val actionId = ActionManager.getInstance().getId(action)
+        if (actionId !in MappingConfigurator.aceJumpAlternatives.keys) return
 
-                // Add position to jump list
-                VimPlugin.getMark().saveJumpLocation(editor)
-                val offsetBeforeJump = editor.caretModel.offset
+        // Add position to jump list
+        VimPlugin.getMark().saveJumpLocation(editor)
+        val offsetBeforeJump = editor.caretModel.offset
 
-                Handler.addAceJumpListener(object : Handler.AceJumpListener {
-                    override fun finished() {
-                        // Remove position from jumps list if caret haven't moved
-                        if (offsetBeforeJump == editor.caretModel.offset) {
-                            VimPlugin.getMark().jumps.dropLast(1)
-                        }
+        Handler.addAceJumpListener(object : Handler.AceJumpListener {
+            override fun finished() {
+                // Remove position from jumps list if caret haven't moved
+                if (offsetBeforeJump == editor.caretModel.offset) {
+                    VimPlugin.getMark().jumps.dropLast(1)
+                }
 
-                        Handler.removeAceJumpListener(this)
-                    }
-                })
+                Handler.removeAceJumpListener(this)
             }
         })
     }
