@@ -52,18 +52,25 @@ set easymotion
 
 #### Supported options:
 
-- `g:EasyMotion_re_anywhere`
-- `g:EasyMotion_re_line_anywhere`
-- `g:EasyMotion_do_mapping`
-- `g:EasyMotion_startofline`
+- `g:EasyMotion_re_anywhere` - Regex for `<Plug>(easymotion-jumptoanywhere)`.
+- `g:EasyMotion_re_line_anywhere` - Regex for `<Plug>(easymotion-lineanywhere)`.
+- `g:EasyMotion_do_mapping` - Set this option to 0 if you want to disable the default mappings.
+- `g:EasyMotion_startofline` - The default behavior of the |j| and |k| is to move your cursor to the
+                                     start of the line. Set this option to 0 to force the cursor to stay in
+                                     the same column.
 
 #### Supported commands:
 80 of the original 87 vim-easymotion commands are supported.  
 [Here](https://github.com/easymotion/vim-easymotion/blob/master/doc/easymotion.txt) you can get
 the description of each `<Plug>` command.
 
-  `<ll>` means that you have to prefix the command with `<leader><leader>`.
+> :warning:
+> - `<ll>` means that you have to prefix the command with `<leader><leader>`.
   So, type `<leader><leader>w` to execute `<ll>w` command.
+> - The default `<leader>` key is `\`. Use `\\w` to perform word motion if you don't have any overrides.
+> - You can change the default prefix using mapping to `<Plug>(easymotion-prefix)`.
+E.g. use `map <Leader> <Plug>(easymotion-prefix)` to change the prefix to a single leader - `\w`.
+>
 ```
 
    Default Mapping |  <Plug> command       |
