@@ -18,9 +18,12 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
+import junit.framework.Assert
 import junit.framework.TestCase
 
 class EasyMotionJumpTest : EasyMotionTestCase() {
@@ -90,4 +93,48 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
         TestCase.assertEquals(4, jumps[2].col)
         TestCase.assertEquals(3, jumps[2].logicalLine)
     }
+
+    // TODO: 25.05.2020 These tests should be enabled when there would be a possibility to send a key event to queue
+/*
+    fun `test cancel search by esc`() {
+        doTest(
+            command = parseKeysWithLeader("s<ESC>"),
+            afterEditorSetup = {
+                Assert.assertFalse(enabled())
+                Assert.assertFalse(ResetAction.registered(it))
+            }
+        )
+        Assert.assertFalse(enabled())
+        Assert.assertFalse(ResetAction.registered(myFixture.editor))
+    }
+
+    fun `test cancel search by c-bracket`() {
+        doTest(
+            command = parseKeysWithLeader("s<C-[>"),
+            afterEditorSetup = {
+                Assert.assertFalse(enabled())
+                Assert.assertFalse(ResetAction.registered(it))
+            }
+        )
+        Assert.assertFalse(enabled())
+        Assert.assertFalse(ResetAction.registered(myFixture.editor))
+    }
+
+    fun `test cancel search by c-c`() {
+        doTest(
+            command = parseKeysWithLeader("s<C-c>"),
+            afterEditorSetup = {
+                Assert.assertFalse(enabled())
+                Assert.assertFalse(ResetAction.registered(it))
+            }
+        )
+        Assert.assertFalse(enabled())
+        Assert.assertFalse(ResetAction.registered(myFixture.editor))
+    }
+
+    private fun enabled(): Boolean {
+        return "acejump" in EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ESCAPE)
+            .toString()
+    }
+*/
 }

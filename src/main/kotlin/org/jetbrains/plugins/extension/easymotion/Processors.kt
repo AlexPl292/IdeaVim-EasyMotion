@@ -115,6 +115,7 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
         // Add position to jump list
         VimPlugin.getMark().saveJumpLocation(editor)
         processor.customization(editor)
+        ResetAction.register(editor)
     }
 
     protected fun finish(editor: Editor, queryWithSuffix: String) {
@@ -144,6 +145,8 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
         if (myInitialOffset == editor.caretModel.offset) {
             VimPlugin.getMark().jumps.dropLast(1)
         }
+
+        ResetAction.unregister(editor)
 
         initialOffset = null
     }

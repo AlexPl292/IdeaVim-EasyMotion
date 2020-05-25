@@ -18,14 +18,18 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.KeyboardShortcut
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.ui.ComponentUtil
+import com.maddyhome.idea.vim.EventFacade
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper
+import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.ShortcutOwner
+import org.acejump.control.Handler
 
 object MappingConfigurator {
     val aceJumpAlternatives = mapOf(
@@ -57,6 +61,33 @@ object MappingConfigurator {
                     }
                 }
             }
+        }
+    }
+}
+
+class ResetAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        Handler.reset()
+    }
+
+    companion object {
+        private val INSTANCE = ResetAction()
+
+        private val customShortcutSet = parseKeys("<C-[>", "<C-c>")
+            .map { KeyboardShortcut(it, null) }.toTypedArray()
+            .let { CustomShortcutSet(*it) }
+
+        fun register(editor: Editor) {
+            EventFacade.getInstance().registerCustomShortcutSet(INSTANCE, customShortcutSet, editor.component)
+        }
+
+        fun unregister(editor: Editor) {
+            EventFacade.getInstance().unregisterCustomShortcutSet(INSTANCE, editor.component)
+        }
+
+        fun registered(editor: Editor): Boolean {
+            val actionList: List<AnAction> = ComponentUtil.getClientProperty(editor.component, ACTIONS_KEY)
+            return INSTANCE in actionList
         }
     }
 }
