@@ -64,7 +64,6 @@ set easymotion
 [Here](https://github.com/easymotion/vim-easymotion/blob/master/doc/easymotion.txt) you can get
 the description of each `<Plug>` command.
 
-> :warning:
 > - `<ll>` means that you have to prefix the command with `<leader><leader>`.
   So, type `<leader><leader>w` to execute `<ll>w` command.
 > - The default `<leader>` key is `\`. Use `\\w` to perform word motion if you don't have any overrides.
