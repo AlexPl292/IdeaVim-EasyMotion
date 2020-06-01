@@ -7,7 +7,10 @@
       See <a href="https://github.com/AlexPl292/IdeaVim-EasyMotion">GitHub</a> for the list of supported commands.
     ]]></description>
     <change-notes><![CDATA[
-      Integration with Ctrl-I and Ctrl-O commands of IdeaVim.
+      <ul>
+          <li>Now you can exit AceJump mode using `<C-[>`.</li>
+          <li>Updated documentation for IdeaVim-EasyMotion.</li>
+      </ul>
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
