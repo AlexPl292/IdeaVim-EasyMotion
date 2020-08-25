@@ -20,6 +20,8 @@ Powered by [AceJump](https://plugins.jetbrains.com/plugin/7086-acejump)
 
 Please check the docs of the [vim-easymotion](https://github.com/easymotion/vim-easymotion#usage-example-for-the-base-features) plugin.
 
+Keep in mind that labels should be typed in lower case. 
+
 #### What are the features of this new plugin and how does this plugin differ from AceJump?
 
 - With IdeaVim-EasyMotion, you get good integration with IdeaVim.
