@@ -8,8 +8,7 @@
     ]]></description>
     <change-notes><![CDATA[
       <ul>
-          <li>Now you can exit AceJump mode using `<C-[>`.</li>
-          <li>Updated documentation for IdeaVim-EasyMotion.</li>
+          <li>Support alternative vim-plugin/vundle syntax to enable plugin</li>
       </ul>
     ]]></change-notes>
 
