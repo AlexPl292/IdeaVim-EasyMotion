@@ -26,7 +26,7 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2020.1"
+version = "2020.2"
 
 project {
 
@@ -50,6 +50,7 @@ object Build : BuildType({
     steps {
         gradle {
             tasks = "clean :test"
+            buildFile = "build.gradle"
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
         }
     }
@@ -92,13 +93,13 @@ object BuildMaster : BuildType({
         }
         gradle {
             tasks = "clean :test -x patchPluginXml --scan"
+            buildFile = "build.gradle"
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
         }
     }
 
     triggers {
         schedule {
-            enabled = false
             branchFilter = ""
             triggerBuild = always()
             withPendingChangesOnly = false
@@ -123,6 +124,7 @@ object Publish : BuildType({
     steps {
         gradle {
             tasks = "clean publishPlugin"
+            buildFile = "build.gradle"
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
         }
     }
