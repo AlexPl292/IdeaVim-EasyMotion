@@ -9,6 +9,9 @@ version "1.3"
 
 repositories {
     mavenCentral()
+
+    // This is for tinypinyin from AceJump
+    jcenter()
 }
 
 dependencies {
