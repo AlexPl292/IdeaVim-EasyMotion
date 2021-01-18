@@ -18,12 +18,9 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
-import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
-import junit.framework.Assert
 import junit.framework.TestCase
 
 class EasyMotionJumpTest : EasyMotionTestCase() {

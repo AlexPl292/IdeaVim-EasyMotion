@@ -20,8 +20,6 @@ package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.AnActionListener
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
 import com.maddyhome.idea.vim.VimPlugin
 import org.acejump.control.Handler
 

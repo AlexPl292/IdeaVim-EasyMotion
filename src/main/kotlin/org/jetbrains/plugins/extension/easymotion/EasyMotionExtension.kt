@@ -389,7 +389,7 @@ class EasyMotionExtension : VimExtension {
             if (boundary == AFTER_CARET_BOUNDARY || boundary == CURRENT_LINE_AFTER_CARET_BOUNDARY) {
                 editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
             } else if (boundary == BEFORE_CARET_BOUNDARY || boundary == CURRENT_LINE_BEFORE_CARET_BOUNDARY) {
-                val fileSize = EditorHelper.getFileSize(editor, true)
+                val fileSize = editor.document.textLength
 
                 // FIXME: 07/10/2019 Well, there should be a better way to find  pure query length
                 val suffixSize =
@@ -418,7 +418,7 @@ class EasyMotionExtension : VimExtension {
             if (newCaretOffset > oldCaretOffset) {
                 editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
             } else if (newCaretOffset < oldCaretOffset) {
-                val fileSize = EditorHelper.getFileSize(editor, true)
+                val fileSize = editor.document.textLength
 
                 val suffixSize =
                     Canvas.jumpLocations.find {

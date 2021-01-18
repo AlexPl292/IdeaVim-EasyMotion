@@ -17,10 +17,16 @@
     <depends>IdeaVIM</depends>
     <depends>AceJump</depends>
     
-    <idea-version since-build="201.5985"/>
+    <idea-version since-build="202.5103.13"/>
 
     <extensions defaultExtensionNs="IdeaVIM">
-        <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension"/>
+        <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension" name="easymotion">
+            <aliases>
+                <alias name="https://github.com/easymotion/vim-easymotion"/>
+                <alias name="easymotion/vim-easymotion"/>
+                <alias name="vim-easymotion"/>
+            </aliases>
+        </vimExtension>
     </extensions>
 
     <projectListeners>
