@@ -88,7 +88,9 @@ object BuildMaster : BuildType({
                 git clone https://github.com/JetBrains/ideavim IdeaVIM
                 
                 echo "Apply patch"
-                git apply -- masters.patch
+                sed -i '.gradle' "s/id 'org.jetbrains.intellij'.*/id 'org.jetbrains.intellij'/g" ./IdeaVIM/build.gradle
+                sed -i '.gradle' 's/kotlin("jvm").*/kotlin("jvm")/g' ./AceJump/build.gradle.kts
+                sed -i '.gradle' 's/id("org.jetbrains.intellij").*/id("org.jetbrains.intellij")/g' ./AceJump/build.gradle.kts
             """.trimIndent()
         }
         gradle {
