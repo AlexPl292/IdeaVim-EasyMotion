@@ -33,6 +33,21 @@ project {
     buildType(Build)
     buildType(BuildMaster)
     buildType(Publish)
+
+    features {
+        feature {
+            id = "PROJECT_EXT_242"
+            type = "IssueTracker"
+            param("secure:password", "")
+            param("name", "AlexPl292/IdeaVim-EasyMotion")
+            param("pattern", """#(\d+)""")
+            param("authType", "anonymous")
+            param("repository", "https://github.com/AlexPl292/IdeaVim-EasyMotion")
+            param("type", "GithubIssues")
+            param("secure:accessToken", "")
+            param("username", "")
+        }
+    }
 }
 
 object Build : BuildType({
