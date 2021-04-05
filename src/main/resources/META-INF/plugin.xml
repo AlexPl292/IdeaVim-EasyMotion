@@ -8,7 +8,7 @@
     ]]></description>
     <change-notes><![CDATA[
       <ul>
-          <li>Support alternative vim-plugin/vundle syntax to enable plugin</li>
+          <li>Update plugin to the latest version of AceJump</li>
       </ul>
     ]]></change-notes>
 
@@ -16,7 +16,7 @@
     <depends>IdeaVIM</depends>
     <depends>AceJump</depends>
     
-    <idea-version since-build="202.5103.13"/>
+    <idea-version since-build="203.7717.56"/>
 
     <extensions defaultExtensionNs="IdeaVIM">
         <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension" name="easymotion">

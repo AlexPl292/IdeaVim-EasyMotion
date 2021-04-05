@@ -21,7 +21,8 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.maddyhome.idea.vim.VimPlugin
-import org.acejump.control.Handler
+import org.acejump.session.AceJumpListener
+import org.acejump.session.SessionManager
 
 class EasyMotionActionListener : AnActionListener {
     override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
@@ -33,15 +34,17 @@ class EasyMotionActionListener : AnActionListener {
         VimPlugin.getMark().saveJumpLocation(editor)
         val offsetBeforeJump = editor.caretModel.offset
 
-        Handler.addAceJumpListener(object : Handler.AceJumpListener {
-            override fun finished() {
-                // Remove position from jumps list if caret haven't moved
-                if (offsetBeforeJump == editor.caretModel.offset) {
-                    VimPlugin.getMark().jumps.dropLast(1)
-                }
+        SessionManager.get(editor)?.let { session ->
+            session.addAceJumpListener(object : AceJumpListener {
+                override fun finished() {
+                    // Remove position from jumps list if caret haven't moved
+                    if (offsetBeforeJump == editor.caretModel.offset) {
+                        VimPlugin.getMark().jumps.dropLast(1)
+                    }
 
-                Handler.removeAceJumpListener(this)
-            }
-        })
+                    session.removeAceJumpListener(this)
+                }
+            })
+        }
     }
 }

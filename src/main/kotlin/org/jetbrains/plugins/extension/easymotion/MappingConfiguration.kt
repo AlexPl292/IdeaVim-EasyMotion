@@ -19,6 +19,7 @@
 package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.ui.ComponentUtil
@@ -29,7 +30,7 @@ import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.ShortcutOwner
-import org.acejump.control.Handler
+import org.acejump.session.SessionManager
 
 object MappingConfigurator {
     val aceJumpAlternatives = mapOf(
@@ -67,7 +68,8 @@ object MappingConfigurator {
 
 class ResetAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        Handler.reset()
+        val editor = e.getData(EDITOR) ?: return
+        SessionManager.end(editor)
     }
 
     companion object {

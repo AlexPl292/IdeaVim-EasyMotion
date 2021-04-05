@@ -18,28 +18,13 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
-import com.intellij.ide.IdeEventQueue
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.impl.EditorImpl
-import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.util.ui.UIUtil
-import com.maddyhome.idea.vim.KeyHandler
-import com.maddyhome.idea.vim.VimPlugin
-import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
-import com.maddyhome.idea.vim.group.visual.VimVisualTimer
-import com.maddyhome.idea.vim.helper.EditorDataContext
-import com.maddyhome.idea.vim.helper.StringHelper
-import com.maddyhome.idea.vim.helper.TestInputModel
-import org.acejump.control.Handler
-import org.acejump.view.Canvas
-import java.awt.Dimension
-import javax.swing.JViewport
-import javax.swing.KeyStroke
 
 abstract class EasyMotionTestCase : BasePlatformTestCase() {
-    protected fun doTest(
+    fun `test`() {
+
+    }
+/*    protected fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
         searchQuery: String? = null,
@@ -162,5 +147,5 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.startOfLine] = 1
         VimPlugin.getMark().jumps.clear()
         super.tearDown()
-    }
+    }*/
 }
