@@ -18,13 +18,28 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
+import com.intellij.ide.IdeEventQueue
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.impl.EditorImpl
+import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.testFramework.EditorTestUtil
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.ui.UIUtil
+import com.maddyhome.idea.vim.KeyHandler
+import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
+import com.maddyhome.idea.vim.group.visual.VimVisualTimer
+import com.maddyhome.idea.vim.helper.EditorDataContext
+import com.maddyhome.idea.vim.helper.StringHelper
+import com.maddyhome.idea.vim.helper.TestInputModel
+import org.acejump.session.SessionManager
+import java.awt.Dimension
+import javax.swing.JViewport
+import javax.swing.KeyStroke
 
 abstract class EasyMotionTestCase : BasePlatformTestCase() {
-    fun `test`() {
-
-    }
-/*    protected fun doTest(
+    protected fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,
         searchQuery: String? = null,
@@ -35,27 +50,29 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         test: (String, List<Int>) -> Unit = { _, _ -> }
     ) {
         setupEditor(editorText)
+
+        EditorTestUtil.setEditorVisibleSize(myFixture.editor, 100, 100)
+
         if (putCaretAtWord.isNotEmpty()) {
             myFixture.editor.moveCaretBefore(putCaretAtWord, caretShift)
         }
         afterEditorSetup(myFixture.editor)
 
-        TestObject.inputQuery = {
+        TestObject.inputQuery = { session ->
             searchQuery?.also {
                 myFixture.type(it)
                 PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
             }
-            var tag: String? = null
             if (jumpToNthQuery != null) {
-                val locations = Canvas.jumpLocations
+                val locations = session.tags
                 if (locations.isNotEmpty()) {
-                    tag = locations.toList()[jumpToNthQuery].tag
+                    val tag = locations[jumpToNthQuery].key
                     if (tag != null) {
                         myFixture.type(tag)
                     }
                 }
             }
-            (searchQuery ?: "") + (tag ?: "")
+            searchQuery ?: ""
         }
 
         TestObject.handler = { str, offsets ->
@@ -83,6 +100,8 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
                 hard by the torrent of a mountain pass.
         """.trimIndent()
 
+    // TODO: 09.04.2021 This should work good without a new line at the end, but at the moment there are some issues
+    //   in AceJump
     protected val iskeywordText = """
                     caseA oneA
                     case-twoA
@@ -93,6 +112,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
                     case-twoB
                     case#threeB
                     case1fourB
+                    
                 """.trimIndent()
 
     protected fun String.indentLineThatStartsWith(str: String): String {
@@ -108,7 +128,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     protected fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor
         val keyHandler = KeyHandler.getInstance()
-        val dataContext = EditorDataContext(editor)
+        val dataContext = EditorDataContext.init(editor)
         TestInputModel.getInstance(editor).setKeyStrokes(keys)
 
         val inputModel = TestInputModel.getInstance(editor)
@@ -139,7 +159,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     }
 
     override fun tearDown() {
-        Handler.reset()
+        SessionManager.end(myFixture.editor, true)
         UIUtil.dispatchAllInvocationEvents()
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
         TestObject.handlerWasCalled = false
@@ -147,5 +167,5 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.startOfLine] = 1
         VimPlugin.getMark().jumps.clear()
         super.tearDown()
-    }*/
+    }
 }

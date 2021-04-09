@@ -43,7 +43,7 @@ abstract class HandlerProcessor(val motionType: MotionType) {
     open fun customization(editor: Editor, session: Session) {}
 
     /** This function is called right after user finished to work with AceJump/EasyMotion */
-    open fun onFinish(editor: Editor/*, queryWithSuffix: String*/) {}
+    open fun onFinish(editor: Editor, query: String?) {}
 }
 
 /** Standard handled that is used in real work. For tests [TestObject.TestHandler] is used */
@@ -55,13 +55,11 @@ class StandardHandler(processor: HandlerProcessor) : EasyHandlerBase(processor) 
         val session = SessionManager.start(editor)
 
         session.addAceJumpListener(object : AceJumpListener {
-            override fun finished() {
-                finish(editor/*, Finder.query*/)
+            override fun finished(mark: String?, query: String?) {
+                finish(editor, query)
                 session.removeAceJumpListener(this)
             }
         })
-
-//        KeyHandler.executeAction(AceAction(), context)
 
         rightAfterAction(editor, session)
     }
@@ -72,7 +70,7 @@ object TestObject {
     var handlerWasCalled = false
 
     var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
-    var inputQuery: () -> String = { "" }
+    var inputQuery: (Session) -> String = { "" }
 
     /** Handler that is used during unit tests */
     class TestHandler(processor: HandlerProcessor) : EasyHandlerBase(processor) {
@@ -81,17 +79,17 @@ object TestObject {
 
             beforeAction(editor)
 
-//            KeyHandler.executeAction(AceAction(), context)
+            val session = SessionManager.start(editor)
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
-//            rightAfterAction(editor)
+            rightAfterAction(editor, session)
 
             PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-            val query = inputQuery()
+            val query = inputQuery(session)
             PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-            finish(editor/*, query*/)
+            finish(editor, query)
 
-//            handler(editor.document.text, Tagger.textMatches.sorted())
+            handler(editor.document.text, session.tags.map { it.value })
         }
     }
 }
@@ -113,8 +111,8 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
         ResetAction.register(editor)
     }
 
-    protected fun finish(editor: Editor/*, queryWithSuffix: String*/) {
-        processor.onFinish(editor/*, queryWithSuffix*/)
+    protected fun finish(editor: Editor, query: String?) {
+        processor.onFinish(editor, query)
         startSelection?.let {
             editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
         }

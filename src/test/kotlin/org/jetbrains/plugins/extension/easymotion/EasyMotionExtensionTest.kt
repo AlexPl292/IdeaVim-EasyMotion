@@ -18,9 +18,18 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
+import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.CommandState
+import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
+import com.maddyhome.idea.vim.group.visual.vimSetSelection
+import com.maddyhome.idea.vim.helper.Direction
+import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
+import com.maddyhome.idea.vim.helper.mode
+import com.maddyhome.idea.vim.option.OptionsManager
+import com.maddyhome.idea.vim.option.ToggleOption
+import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.startOfLine
+
 class EasyMotionExtensionTest : EasyMotionTestCase() {
-    fun `test emtpy`() {}
-/*
 
     override fun setUp() {
         super.setUp()
@@ -887,8 +896,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             editorText = "Hello\nWorld",
             command = parseKeys(command("jumptoanywhere"))
         ) { _: String, matchResults: List<Int> ->
-            // FIXME: 10/10/2019 Should be 4
-            assertEquals(5, matchResults.size)
+            assertEquals(4, matchResults.size)
         }
     }
 
@@ -937,7 +945,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeysWithLeader("n"),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+                VimPlugin.getSearch().processSearchCommand(it, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -951,7 +959,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeysWithLeader("N"),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+                VimPlugin.getSearch().processSearchCommand(it, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -965,7 +973,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeys(command("vim-n")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+                VimPlugin.getSearch().processSearchCommand(it, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -979,7 +987,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeys(command("vim-N")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+                VimPlugin.getSearch().processSearchCommand(it, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -993,7 +1001,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeys(command("bd-n")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().search(it, "Hello", 1, enumSetOf(CommandFlags.FLAG_SEARCH_REV), false)
+                VimPlugin.getSearch().processSearchCommand(it, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(2, matchResults.size)
@@ -1036,5 +1044,4 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
                 hard by the torrent of a mountain pass.
         """.trimIndent())
     }
-*/
 }

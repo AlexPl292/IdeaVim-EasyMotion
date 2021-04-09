@@ -69,7 +69,7 @@ object MappingConfigurator {
 class ResetAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData(EDITOR) ?: return
-        SessionManager.end(editor)
+        SessionManager.end(editor, false)
     }
 
     companion object {

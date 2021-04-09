@@ -18,11 +18,12 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
+import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.option.OptionsManager
+import com.maddyhome.idea.vim.option.ToggleOption
+import junit.framework.TestCase
+
 class EasyMotionJumpTest : EasyMotionTestCase() {
-    fun `test empty`() {}
-
-/*
-
     override fun setUp() {
         super.setUp()
         (OptionsManager.getOption("easymotion") as ToggleOption).set()
@@ -90,7 +91,6 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
     }
 
     // TODO: 25.05.2020 These tests should be enabled when there would be a possibility to send a key event to queue
-*/
 /*
     fun `test cancel search by esc`() {
         doTest(

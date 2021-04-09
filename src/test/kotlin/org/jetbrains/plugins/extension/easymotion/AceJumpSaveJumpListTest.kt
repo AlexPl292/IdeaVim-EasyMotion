@@ -18,10 +18,18 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.KeyboardShortcut
+import com.intellij.openapi.keymap.KeymapUtil
+import com.intellij.testFramework.PlatformTestUtil
+import com.maddyhome.idea.vim.VimPlugin
+import junit.framework.TestCase
+import org.acejump.session.SessionManager
+import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
+
 class AceJumpSaveJumpListTest : EasyMotionTestCase() {
-    fun `test empty`() {
-    }
-/*    fun `test acejump saves jumps to jumplist`() {
+    fun `test acejump saves jumps to jumplist`() {
         setupEditor(text)
 
         jumpTo("found")
@@ -65,11 +73,13 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
         val action = actionManager.getAction("AceAction")!!
         actionManager.tryToExecute(action, getInputEvent(), null, null, true)
 
+        val session = SessionManager[myFixture.editor]!!
+
         myFixture.type(word)
         PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-        val locations = Canvas.jumpLocations
+        val locations = session.tags
         if (locations.isNotEmpty()) {
-            val tag = locations.toList()[0].tag
+            val tag = locations[0].key
             if (tag != null) {
                 myFixture.type(tag)
             }
@@ -78,12 +88,15 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
 
     private fun jumpCancel(word: String) {
         val actionManager = ActionManager.getInstance()
-        val action = actionManager.getAction("AceAction") ?: error("")
+        val action = actionManager.getAction("AceAction")!!
         actionManager.tryToExecute(action, getInputEvent(), null, null, true)
+
+        val session = SessionManager[myFixture.editor]!!
+
 
         myFixture.type(word)
         PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-        val locations = Canvas.jumpLocations
+        val locations = session.tags
         if (locations.isNotEmpty()) {
             myFixture.performEditorAction("EditorEscape")
         }
@@ -102,5 +115,5 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
             keyStroke.keyChar,
             KeyEvent.KEY_LOCATION_STANDARD
         )
-    }*/
+    }
 }

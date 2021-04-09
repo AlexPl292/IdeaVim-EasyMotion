@@ -36,7 +36,7 @@ class EasyMotionActionListener : AnActionListener {
 
         SessionManager.get(editor)?.let { session ->
             session.addAceJumpListener(object : AceJumpListener {
-                override fun finished() {
+                override fun finished(mark: String?, query: String?) {
                     // Remove position from jumps list if caret haven't moved
                     if (offsetBeforeJump == editor.caretModel.offset) {
                         VimPlugin.getMark().jumps.dropLast(1)
