@@ -23,12 +23,12 @@ intellij {
     version = "2020.3.3"
 
     if (Boolean.valueOf(aceJumpFromMarketplace)) {
-        plugins += "AceJump:3.7"
+        plugins += "AceJump:3.7.1"
     } else {
         plugins += project(":AceJump")
     }
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins += "IdeaVIM:0.65"
+        plugins += "IdeaVIM:0.66"
     } else {
         plugins += project(":IdeaVIM")
     }

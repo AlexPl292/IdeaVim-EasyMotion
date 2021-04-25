@@ -215,7 +215,7 @@ class EasyMotionExtension : VimExtension {
     ) : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor, session: Session) {
             val lastSearch = VimPlugin.getSearch().lastSearchPattern ?: run {
-                session.end(false)
+                session.end()
                 return
             }
             val lastDirection = VimPlugin.getSearch().lastDir

@@ -123,7 +123,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     }
 
 
-    protected fun parseKeysWithLeader(keys: String) = StringHelper.parseKeys("${EasyMotionExtension.defaultPrefix}$keys")
+    protected fun parseKeysWithLeader(keys: String): List<KeyStroke> = StringHelper.parseKeys("${EasyMotionExtension.defaultPrefix}$keys")
 
     protected fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor
@@ -159,7 +159,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     }
 
     override fun tearDown() {
-        SessionManager.end(myFixture.editor, true)
+        SessionManager.end(myFixture.editor, null)
         UIUtil.dispatchAllInvocationEvents()
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
         TestObject.handlerWasCalled = false

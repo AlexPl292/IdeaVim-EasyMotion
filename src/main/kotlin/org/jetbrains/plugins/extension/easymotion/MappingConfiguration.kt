@@ -22,12 +22,10 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.ui.ComponentUtil
 import com.maddyhome.idea.vim.EventFacade
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
-import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.ShortcutOwner
 import org.acejump.session.SessionManager
@@ -55,7 +53,7 @@ object MappingConfigurator {
                             MappingMode.NVO,
                             listOf(keyStroke),
                             EasyMotionExtension.mappingOwner,
-                            StringHelper.parseKeys(command(alternative)),
+                            parseKeys(command(alternative)),
                             true
                         )
                         VimPlugin.getKey().savedShortcutConflicts[keyStroke] = ShortcutOwner.VIM
@@ -69,7 +67,7 @@ object MappingConfigurator {
 class ResetAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData(EDITOR) ?: return
-        SessionManager.end(editor, false)
+        SessionManager.end(editor, null)
     }
 
     companion object {
@@ -85,11 +83,6 @@ class ResetAction : AnAction() {
 
         fun unregister(editor: Editor) {
             EventFacade.getInstance().unregisterCustomShortcutSet(INSTANCE, editor.component)
-        }
-
-        fun registered(editor: Editor): Boolean {
-            val actionList: List<AnAction> = ComponentUtil.getClientProperty(editor.component, ACTIONS_KEY)
-            return INSTANCE in actionList
         }
     }
 }
