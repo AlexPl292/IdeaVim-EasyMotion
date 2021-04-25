@@ -104,7 +104,7 @@ object BuildMaster : BuildType({
                 
                 echo "Apply patch"
                 sed -i 's/kotlin("jvm").*/kotlin("jvm")/g' ./IdeaVIM/build.gradle.kts
-                sed -i 's/id("org.jetbrains.intellij").*/id("org.jetbrains.intellij")/g' ./IdeaVim/build.gradle.kts
+                sed -i 's/id("org.jetbrains.intellij").*/id("org.jetbrains.intellij")/g' ./IdeaViIM/build.gradle.kts
                 sed -i 's/kotlin("jvm").*/kotlin("jvm")/g' ./AceJump/build.gradle.kts
                 sed -i 's/id("org.jetbrains.intellij").*/id("org.jetbrains.intellij")/g' ./AceJump/build.gradle.kts
             """.trimIndent()
