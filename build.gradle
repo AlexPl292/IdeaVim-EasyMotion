@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    testCompile "junit:junit:4.13.2"
+    testImplementation "junit:junit:4.13.2"
 }
 
 intellij {
@@ -53,5 +53,11 @@ if (hasProperty('buildScan')) {
     buildScan {
         termsOfServiceUrl = 'https://gradle.com/terms-of-service'
         termsOfServiceAgree = 'yes'
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = gradleVersion
     }
 }
