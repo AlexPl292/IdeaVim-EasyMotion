@@ -89,7 +89,7 @@ object TestObject {
             PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
             finish(editor, query)
 
-            handler(editor.document.text, session.tags.map { it.value })
+            handler(editor.document.text, session.tags.map { it.value.offset })
         }
     }
 }
