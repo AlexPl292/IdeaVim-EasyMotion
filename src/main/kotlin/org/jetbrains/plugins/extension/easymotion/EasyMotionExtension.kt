@@ -73,7 +73,9 @@ class EasyMotionExtension : VimExtension {
     }
 
     override fun init() {
-        VimScriptGlobalEnvironment.getInstance().variables.let { vars ->
+        val vimScriptVariables = VimScriptGlobalEnvironment.getInstance().variables
+
+        vimScriptVariables.let { vars ->
             vars[jumpAnywhere] = defaultRe
             vars[lineJumpAnywhere] = defaultRe
             if (doMapping !in vars) vars[doMapping] = 1
@@ -187,10 +189,11 @@ class EasyMotionExtension : VimExtension {
         )
 
         // @formatter:on
+        if (vimScriptVariables[doMapping] == 1) {
+            putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), owner, parseKeys(pluginPrefix), true)
+        }
 
-        putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), owner, parseKeys(pluginPrefix), true)
-
-        if (VimScriptGlobalEnvironment.getInstance().variables[overrideAcejump] == 1) {
+        if (vimScriptVariables[overrideAcejump] == 1) {
             MappingConfigurator.configureMappings()
         }
     }
