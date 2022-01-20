@@ -229,8 +229,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             editorText = text.indentLineThatStartsWith("where"),
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
-            // TODO: 25.04.2021 Issue: here should be 3
-            assertEquals(2, jumpLocations.size)
+            assertEquals(3, jumpLocations.size)
             assertEquals(editorText.indexOf("sand") + 3, jumpLocations[1])
         }
     }
@@ -639,8 +638,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
-            // TODO: 25.04.2021 Issue: here should be 4
-            assertEquals(3, matches.size)
+            assertEquals(4, matches.size)
             assertTrue(editorText.indexOf("land") + 3 !in matches)
             assertTrue(editorText.indexOf("found") + 4 in matches)
         }
@@ -742,8 +740,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "lavender",
             caretShift = 2
         ) { _: String, matchResults: List<Int> ->
-            // TODO: 25.04.2021 Issue: here should be 18
-            assertEquals(17, matchResults.size)
+            assertEquals(18, matchResults.size)
         }
     }
 
@@ -793,8 +790,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "lavender",
             caretShift = 2
         ) { _: String, matchResults: List<Int> ->
-            // TODO: 25.04.2021 Issue: here should be ..+18
-            assertEquals(10 + 17, matchResults.size)
+            assertEquals(10 + 18, matchResults.size)
         }
     }
 
