@@ -5,7 +5,7 @@ plugins {
 }
 
 group "org.jetbrains"
-version "1.6"
+version "1.7"
 
 repositories {
     mavenCentral()
@@ -25,7 +25,7 @@ intellij {
         plugins.add(project(":AceJump"))
     }
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins.add("IdeaVIM:1.9.3")
+        plugins.add("IdeaVIM:1.9.2")
     } else {
         plugins.add(project(":IdeaVIM"))
     }
