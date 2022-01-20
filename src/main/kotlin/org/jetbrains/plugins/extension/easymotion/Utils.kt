@@ -19,6 +19,7 @@
 package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.application.ApplicationManager
+import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
@@ -55,7 +56,7 @@ fun getHandler(handler: HandlerProcessor): EasyHandlerBase {
 fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
     mapToFunction(keys, handler)
     if (VimScriptGlobalEnvironment.getInstance().variables[doMapping] == 1) {
-        VimExtensionFacade.putKeyMapping(
+        VimExtensionFacade.putKeyMappingIfMissing(
             MappingMode.NVO,
             StringHelper.parseKeys("${pluginPrefix}$keys"),
             EasyMotionExtension.mappingOwner,

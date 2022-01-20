@@ -19,8 +19,11 @@
 package org.jetbrains.plugins.extension.easymotion
 
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.helper.StringHelper
+import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
+import com.maddyhome.idea.vim.key.MappingOwner
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 
@@ -40,5 +43,16 @@ class EasyMotionPrefixTest : EasyMotionTestCase() {
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
         val prefixExists = mapping.filter { it.first.contains(StringHelper.parseKeys("\\").first()) }.any()
         kotlin.test.assertFalse(prefixExists)
+    }
+
+    fun `test remap prefix`() {
+        setupEditor()
+        VimPlugin.getKey()
+            .putKeyMapping(MappingMode.NVO, parseKeys(",s"), MappingOwner.IdeaVim, parseKeys(command("s")), true)
+
+        (OptionsManager.getOption("easymotion") as ToggleOption).set()
+
+        val mapping = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(command("s")))
+        kotlin.test.assertEquals(1, mapping.size)
     }
 }

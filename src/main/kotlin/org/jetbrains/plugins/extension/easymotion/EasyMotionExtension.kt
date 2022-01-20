@@ -28,6 +28,7 @@ import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
+import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMappingIfMissing
 import com.maddyhome.idea.vim.helper.*
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.MappingOwner
@@ -190,7 +191,7 @@ class EasyMotionExtension : VimExtension {
 
         // @formatter:on
         if (vimScriptVariables[doMapping] == 1) {
-            putKeyMapping(MappingMode.NVO, parseKeys(defaultPrefix), owner, parseKeys(pluginPrefix), true)
+            putKeyMappingIfMissing(MappingMode.NVO, parseKeys(defaultPrefix), owner, parseKeys(pluginPrefix), true)
         }
 
         if (vimScriptVariables[overrideAcejump] == 1) {
