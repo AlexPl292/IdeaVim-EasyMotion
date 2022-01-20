@@ -36,6 +36,11 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
         (OptionsManager.getOption("easymotion") as ToggleOption).set()
     }
 
+    override fun tearDown() {
+        (OptionsManager.getOption("easymotion") as ToggleOption).reset()
+        super.tearDown()
+    }
+
     fun `test save selection`() {
         doTest(
             command = parseKeysWithLeader("s"),

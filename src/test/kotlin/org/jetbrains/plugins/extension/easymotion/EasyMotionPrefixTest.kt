@@ -28,12 +28,18 @@ import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
 
 class EasyMotionPrefixTest : EasyMotionTestCase() {
+
+    override fun tearDown() {
+        (OptionsManager.getOption("easymotion") as ToggleOption).reset()
+        super.tearDown()
+    }
+
     fun `test create prefix`() {
         setupEditor()
         (OptionsManager.getOption("easymotion") as ToggleOption).set()
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
-        val prefixExists = mapping.filter { it.first.contains(StringHelper.parseKeys("\\").first()) }.any()
-        kotlin.test.assertTrue(prefixExists)
+        val prefixExists = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(EasyMotionExtension.pluginPrefix))
+        kotlin.test.assertTrue(prefixExists.isNotEmpty())
     }
 
     fun `test do not create prefix`() {

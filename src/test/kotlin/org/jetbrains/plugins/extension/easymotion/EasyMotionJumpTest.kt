@@ -29,6 +29,11 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
         (OptionsManager.getOption("easymotion") as ToggleOption).set()
     }
 
+    override fun tearDown() {
+        (OptionsManager.getOption("easymotion") as ToggleOption).reset()
+        super.tearDown()
+    }
+
     fun `test jumps`() {
         doTest(
             command = parseKeysWithLeader("s"),
