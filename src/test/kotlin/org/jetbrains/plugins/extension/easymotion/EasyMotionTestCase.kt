@@ -165,7 +165,9 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         TestObject.handlerWasCalled = false
         VimVisualTimer.swingTimer?.stop()
         VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.startOfLine] = 1
+        VimScriptGlobalEnvironment.getInstance().variables.remove(EasyMotionExtension.doMapping)
         VimPlugin.getMark().jumps.clear()
+        VimPlugin.getKey().resetKeyMappings()
         super.tearDown()
     }
 }
