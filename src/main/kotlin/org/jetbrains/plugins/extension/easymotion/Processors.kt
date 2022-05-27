@@ -58,6 +58,7 @@ class StandardHandler(processor: HandlerProcessor) : EasyHandlerBase(processor) 
             override fun finished(mark: String?, query: String?) {
                 finish(editor, query)
                 session.removeAceJumpListener(this)
+                continueVimExecution()
             }
         })
 
@@ -88,13 +89,14 @@ object TestObject {
             val query = inputQuery(session)
             PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
             finish(editor, query)
+            continueVimExecution()
 
             handler(editor.document.text, session.tags.map { it.value.offset })
         }
     }
 }
 
-abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExtensionHandler {
+abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExtensionHandler.WithCallback() {
 
     private var startSelection: Int? = null
     private var initialOffset: Int? = null
