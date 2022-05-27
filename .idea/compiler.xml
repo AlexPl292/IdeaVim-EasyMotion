@@ -4,8 +4,6 @@
     <bytecodeTargetLevel>
       <module name="IdeaVim-EasyMotion.AceJump.main" target="1.8" />
       <module name="IdeaVim-EasyMotion.AceJump.test" target="1.8" />
-      <module name="IdeaVim-EasyMotion.IdeaVIM.main" target="1.8" />
-      <module name="IdeaVim-EasyMotion.IdeaVIM.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
