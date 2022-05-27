@@ -33,6 +33,7 @@ import com.maddyhome.idea.vim.group.visual.VimVisualTimer
 import com.maddyhome.idea.vim.helper.EditorDataContext
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.TestInputModel
+import com.maddyhome.idea.vim.newapi.IjExecutionContext
 import org.acejump.session.SessionManager
 import java.awt.Dimension
 import javax.swing.JViewport
@@ -128,7 +129,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     protected fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor
         val keyHandler = KeyHandler.getInstance()
-        val dataContext = EditorDataContext.init(editor)
+        val dataContext = IjExecutionContext(EditorDataContext.init(editor))
         TestInputModel.getInstance(editor).setKeyStrokes(keys)
 
         val inputModel = TestInputModel.getInstance(editor)
