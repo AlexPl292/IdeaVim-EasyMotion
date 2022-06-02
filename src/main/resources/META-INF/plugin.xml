@@ -8,7 +8,7 @@
     ]]></description>
     <change-notes><![CDATA[
       <ul>
-          <li>Update plugin to the latest version of AceJump</li>
+          <li>Fix https://github.com/AlexPl292/IdeaVim-EasyMotion/issues/56</li>
       </ul>
     ]]></change-notes>
 
