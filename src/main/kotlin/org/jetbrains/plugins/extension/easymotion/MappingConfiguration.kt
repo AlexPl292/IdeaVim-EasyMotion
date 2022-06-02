@@ -27,7 +27,7 @@ import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
-import com.maddyhome.idea.vim.key.ShortcutOwner
+import com.maddyhome.idea.vim.key.ShortcutOwnerInfo
 import org.acejump.session.SessionManager
 
 object MappingConfigurator {
@@ -55,7 +55,7 @@ object MappingConfigurator {
                         parseKeys(command(alternative)),
                         true
                     )
-                    VimPlugin.getKey().savedShortcutConflicts[keyStroke] = ShortcutOwner.VIM
+                    VimPlugin.getKey().savedShortcutConflicts[keyStroke] = ShortcutOwnerInfo.allVim
                 }
             }
         }
