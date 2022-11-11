@@ -28,7 +28,7 @@ Keep in mind that labels should be typed in lower case.
     - Now you can use EasyMotion commands as an argument for `d`, `c`, or any other command that takes motion as an argument.
     - Use your existing EasyMotion mappings or create new mappings that will work both in Vim and IdeaVim.
     - If you use the `iskeyword` option, check out the ` <Plug>(easymotion-iskeyword-*)` commands.
-- There is now an additional set of commands. Use `<Plug>(easymotion-e)` to jump to a word and, or `<Plug>(easymotion-sl)` for jumping within the line. See the [full list of supported commands](#supported-commands).
+- There is now an additional set of commands. Use `<Plug>(easymotion-e)` to jump to a word end, or `<Plug>(easymotion-sl)` for jumping within the line. See the [full list of supported commands](#supported-commands).
 
 #### Keep typing
 
