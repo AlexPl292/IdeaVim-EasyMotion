@@ -23,6 +23,7 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.VimVisualPosition
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtension
@@ -32,6 +33,7 @@ import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMappingIfMissin
 import com.maddyhome.idea.vim.helper.*
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.MappingOwner
+import com.maddyhome.idea.vim.newapi.IjVimEditor
 import org.acejump.boundaries.Boundaries
 import org.acejump.boundaries.StandardBoundaries
 import org.acejump.input.JumpMode
@@ -347,7 +349,7 @@ class EasyMotionExtension : VimExtension {
                 val nextLine = vp.line + dir * counter
                 if (nextLine > lastLine || nextLine < 0) break
                 var offset =
-                    EditorHelper.visualPositionToOffset(editor, VisualPosition(nextLine, vp.column))
+                    IjVimEditor(editor).visualPositionToOffset(VimVisualPosition(nextLine, vp.column)).point
                 if (editor.offsetToVisualPosition(offset).column < vp.column) {
                     if (!EditorHelper.isLineEmpty(editor, editor.offsetToVisualPosition(offset).line, false)) {
                         if (!editor.mode.isEndAllowed) offset--
