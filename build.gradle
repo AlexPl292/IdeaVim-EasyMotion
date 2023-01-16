@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "org.jetbrains.intellij" version "1.11.0"
+    id "org.jetbrains.intellij" version "1.12.0"
     id "org.jetbrains.kotlin.jvm" version "1.5.0"
 }
 
@@ -25,7 +25,7 @@ intellij {
         plugins.add(project(":AceJump"))
     }
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins.add("IdeaVIM:2.0.0")
+        plugins.add("IdeaVIM:2.1.0")
     } else {
         plugins.add(project(":IdeaVIM"))
     }
@@ -39,10 +39,22 @@ intellij {
 }
 
 compileKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
 }
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 if (hasProperty('buildScan')) {

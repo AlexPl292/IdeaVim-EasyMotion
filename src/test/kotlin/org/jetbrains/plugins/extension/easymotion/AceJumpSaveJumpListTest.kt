@@ -40,10 +40,10 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
         TestCase.assertEquals(2, jumps.size)
 
         TestCase.assertEquals(0, jumps[0].col)
-        TestCase.assertEquals(0, jumps[0].logicalLine)
+        TestCase.assertEquals(0, jumps[0].line)
 
         TestCase.assertEquals(2, jumps[1].col)
-        TestCase.assertEquals(2, jumps[1].logicalLine)
+        TestCase.assertEquals(2, jumps[1].line)
     }
 
     fun `test acejump saves jumps with cancel to jumplist`() {
@@ -59,13 +59,13 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
         TestCase.assertEquals(3, jumps.size)
 
         TestCase.assertEquals(0, jumps[0].col)
-        TestCase.assertEquals(0, jumps[0].logicalLine)
+        TestCase.assertEquals(0, jumps[0].line)
 
         TestCase.assertEquals(2, jumps[1].col)
-        TestCase.assertEquals(2, jumps[1].logicalLine)
+        TestCase.assertEquals(2, jumps[1].line)
 
         TestCase.assertEquals(4, jumps[2].col)
-        TestCase.assertEquals(3, jumps[2].logicalLine)
+        TestCase.assertEquals(3, jumps[2].line)
     }
 
     private fun jumpTo(word: String) {

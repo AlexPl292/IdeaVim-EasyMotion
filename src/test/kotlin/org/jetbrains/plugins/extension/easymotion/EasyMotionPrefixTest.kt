@@ -19,6 +19,7 @@
 package org.jetbrains.plugins.extension.easymotion
 
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.helper.StringHelper
@@ -26,39 +27,41 @@ import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.MappingOwner
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
+import com.maddyhome.idea.vim.options.OptionScope
+import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 
 class EasyMotionPrefixTest : EasyMotionTestCase() {
 
     override fun tearDown() {
-        (OptionsManager.getOption("easymotion") as ToggleOption).reset()
+        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(0))
         super.tearDown()
     }
 
     fun `test create prefix`() {
         setupEditor()
-        (OptionsManager.getOption("easymotion") as ToggleOption).set()
+        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
         val prefixExists = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(EasyMotionExtension.pluginPrefix))
-        kotlin.test.assertTrue(prefixExists.isNotEmpty())
+        assertTrue(prefixExists.isNotEmpty())
     }
 
     fun `test do not create prefix`() {
         setupEditor()
         VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.doMapping] = 0
-        (OptionsManager.getOption("easymotion") as ToggleOption).set()
+        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
         val prefixExists = mapping.filter { it.first.contains(StringHelper.parseKeys("\\").first()) }.any()
-        kotlin.test.assertFalse(prefixExists)
+        assertFalse(prefixExists)
     }
 
     fun `test remap prefix`() {
         setupEditor()
         VimPlugin.getKey()
-            .putKeyMapping(MappingMode.NVO, parseKeys(",s"), MappingOwner.IdeaVim, parseKeys(command("s")), true)
+            .putKeyMapping(MappingMode.NVO, parseKeys(",s"), MappingOwner.IdeaVim.Other, parseKeys(command("s")), true)
 
-        (OptionsManager.getOption("easymotion") as ToggleOption).set()
+        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
 
         val mapping = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(command("s")))
-        kotlin.test.assertEquals(1, mapping.size)
+        assertEquals(1, mapping.size)
     }
 }

@@ -34,6 +34,7 @@ import com.maddyhome.idea.vim.helper.EditorDataContext
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.TestInputModel
 import com.maddyhome.idea.vim.newapi.IjExecutionContext
+import com.maddyhome.idea.vim.newapi.vim
 import org.acejump.session.SessionManager
 import java.awt.Dimension
 import javax.swing.JViewport
@@ -135,7 +136,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         val inputModel = TestInputModel.getInstance(editor)
         var key = inputModel.nextKeyStroke()
         while (key != null) {
-            keyHandler.handleKey(editor, key, dataContext)
+            keyHandler.handleKey(editor.vim, key, dataContext)
             key = inputModel.nextKeyStroke()
         }
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
@@ -156,7 +157,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
             IdeEventQueue.getInstance().flushQueue()
             if (condition()) return
         }
-        kotlin.test.fail(message)
+        fail(message)
     }
 
     override fun tearDown() {

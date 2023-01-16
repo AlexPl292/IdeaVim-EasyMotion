@@ -19,18 +19,21 @@
 package org.jetbrains.plugins.extension.easymotion
 
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.option.OptionsManager
 import com.maddyhome.idea.vim.option.ToggleOption
+import com.maddyhome.idea.vim.options.OptionScope
+import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 import junit.framework.TestCase
 
 class EasyMotionJumpTest : EasyMotionTestCase() {
     override fun setUp() {
         super.setUp()
-        (OptionsManager.getOption("easymotion") as ToggleOption).set()
+        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
     }
 
     override fun tearDown() {
-        (OptionsManager.getOption("easymotion") as ToggleOption).reset()
+        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(0))
         super.tearDown()
     }
 
@@ -50,10 +53,10 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
         TestCase.assertEquals(2, jumps.size)
 
         TestCase.assertEquals(0, jumps[0].col)
-        TestCase.assertEquals(0, jumps[0].logicalLine)
+        TestCase.assertEquals(0, jumps[0].line)
 
         TestCase.assertEquals(2, jumps[1].col)
-        TestCase.assertEquals(2, jumps[1].logicalLine)
+        TestCase.assertEquals(2, jumps[1].line)
     }
 
     fun `test jump with skipping`() {
@@ -86,13 +89,13 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
         TestCase.assertEquals(3, jumps.size)
 
         TestCase.assertEquals(0, jumps[0].col)
-        TestCase.assertEquals(0, jumps[0].logicalLine)
+        TestCase.assertEquals(0, jumps[0].line)
 
         TestCase.assertEquals(2, jumps[1].col)
-        TestCase.assertEquals(2, jumps[1].logicalLine)
+        TestCase.assertEquals(2, jumps[1].line)
 
         TestCase.assertEquals(4, jumps[2].col)
-        TestCase.assertEquals(3, jumps[2].logicalLine)
+        TestCase.assertEquals(3, jumps[2].line)
     }
 
     // TODO: 25.05.2020 These tests should be enabled when there would be a possibility to send a key event to queue
