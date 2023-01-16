@@ -31,7 +31,6 @@ version = "2020.2"
 project {
 
     buildType(Build)
-    buildType(BuildMaster)
     buildType(Publish)
 
     features {
@@ -72,55 +71,6 @@ object Build : BuildType({
 
     triggers {
         vcs {
-        }
-    }
-})
-
-object BuildMaster : BuildType({
-    name = "Build Master"
-    description = "Daily task that tests IdeaVim-EasyMotion against masters of IdeaVim and AceJump"
-
-    params {
-        param("env.ORG_GRADLE_PROJECT_aceJumpFromMarketplace", "false")
-        param("env.ORG_GRADLE_PROJECT_ideaVimFromMarketplace", "false")
-    }
-
-    vcs {
-        root(DslContext.settingsRoot)
-    }
-
-    steps {
-        script {
-            name = "Download masters"
-            scriptContent = """
-                echo "Clone AceJump"
-                if [ -d "AceJump" ]; then rm -Rf AceJump; fi
-                git clone https://github.com/acejump/AceJump.git
-                
-                echo "Clone IdeaVim"
-                if [ -d "ideavim" ]; then rm -Rf ideavim; fi
-                if [ -d "IdeaVIM" ]; then rm -Rf IdeaVIM; fi
-                git clone https://github.com/JetBrains/ideavim IdeaVIM
-                
-                echo "Apply patch"
-                sed -i 's/kotlin("jvm").*/kotlin("jvm")/g' ./IdeaVIM/build.gradle.kts
-                sed -i 's/id("org.jetbrains.intellij").*/id("org.jetbrains.intellij")/g' ./IdeaVIM/build.gradle.kts
-                sed -i 's/kotlin("jvm").*/kotlin("jvm")/g' ./AceJump/build.gradle.kts
-                sed -i 's/id("org.jetbrains.intellij").*/id("org.jetbrains.intellij")/g' ./AceJump/build.gradle.kts
-            """.trimIndent()
-        }
-        gradle {
-            tasks = "clean :test -x patchPluginXml --scan"
-            buildFile = "build.gradle"
-            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
-        }
-    }
-
-    triggers {
-        schedule {
-            branchFilter = ""
-            triggerBuild = always()
-            withPendingChangesOnly = false
         }
     }
 })
