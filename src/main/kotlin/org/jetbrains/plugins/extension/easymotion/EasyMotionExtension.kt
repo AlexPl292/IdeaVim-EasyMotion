@@ -24,16 +24,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.VimVisualPosition
+import com.maddyhome.idea.vim.api.injector
+import com.maddyhome.idea.vim.api.isLineEmpty
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
-import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMapping
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMappingIfMissing
 import com.maddyhome.idea.vim.helper.*
-import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.MappingOwner
-import com.maddyhome.idea.vim.newapi.IjVimEditor
+import com.maddyhome.idea.vim.newapi.vim
 import org.acejump.boundaries.Boundaries
 import org.acejump.boundaries.StandardBoundaries
 import org.acejump.input.JumpMode
@@ -185,7 +185,7 @@ class EasyMotionExtension : VimExtension {
 
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.NVO,
-            parseKeys("<Plug>(acejump-linemarks)"),
+            injector.parser.parseKeys("<Plug>(acejump-linemarks)"),
             owner,
             getHandler(LineMarks),
             false
@@ -193,7 +193,8 @@ class EasyMotionExtension : VimExtension {
 
         // @formatter:on
         if (vimScriptVariables[doMapping] == 1) {
-            putKeyMappingIfMissing(MappingMode.NVO, parseKeys(defaultPrefix), owner, parseKeys(pluginPrefix), true)
+            putKeyMappingIfMissing(MappingMode.NVO,
+                injector.parser.parseKeys(defaultPrefix), owner, injector.parser.parseKeys(pluginPrefix), true)
         }
 
         if (vimScriptVariables[overrideAcejump] == 1) {
@@ -203,7 +204,7 @@ class EasyMotionExtension : VimExtension {
 
     private object LineMarks : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor, session: Session) {
-            if (editor.mode.isEndAllowed) {
+            if (editor.vim.isEndAllowed) {
                 session.startRegexSearch(Pattern.LINE_ALL_MARKS, StandardBoundaries.VISIBLE_ON_SCREEN)
             } else {
                 session.startRegexSearch(
@@ -256,7 +257,7 @@ class EasyMotionExtension : VimExtension {
         override fun customization(editor: Editor, session: Session) {
             val pattern = VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] as? String ?: return
 
-            val fileSize = editor.fileSize
+            val fileSize = editor.vim.fileSize()
             val startOffsets = SearchHelper.findAll(editor, pattern, 0, -1, false)
                 .map { it.startOffset }
 
@@ -329,7 +330,7 @@ class EasyMotionExtension : VimExtension {
                     StandardBoundaries.BEFORE_CARET -> generateLineOffsets(editor, vp, false)
                     else -> throw UnsupportedOperationException("This boundary is not supported: $boundary")
                 }
-                val fileSize = editor.fileSize
+                val fileSize = editor.vim.fileSize()
                 val resultsToMark = res.filter { it < fileSize }.toSortedSet()
                 session.markResults(resultsToMark)
             }
@@ -348,11 +349,10 @@ class EasyMotionExtension : VimExtension {
                 counter++
                 val nextLine = vp.line + dir * counter
                 if (nextLine > lastLine || nextLine < 0) break
-                var offset =
-                    IjVimEditor(editor).visualPositionToOffset(VimVisualPosition(nextLine, vp.column)).point
+                var offset = editor.vim.visualPositionToOffset(VimVisualPosition(nextLine, vp.column)).point
                 if (editor.offsetToVisualPosition(offset).column < vp.column) {
-                    if (!EditorHelper.isLineEmpty(editor, editor.offsetToVisualPosition(offset).line, false)) {
-                        if (!editor.mode.isEndAllowed) offset--
+                    if (!editor.vim.isLineEmpty(editor.offsetToVisualPosition(offset).line, false)) {
+                        if (!editor.vim.isEndAllowed) offset--
                     }
                 }
                 if (boundary.isOffsetInside(editor, offset)) {
@@ -367,7 +367,7 @@ class EasyMotionExtension : VimExtension {
 
     private class EndOfLinePattern(val boundary: Boundaries) : HandlerProcessor(LINE) {
         override fun customization(editor: Editor, session: Session) {
-            if (editor.mode.isEndAllowed) {
+            if (editor.vim.isEndAllowed) {
                 session.startRegexSearch(Pattern.LINE_ENDS, boundary)
             } else {
                 session.startRegexSearch(LINE_END_NO_NEWLINE, boundary)

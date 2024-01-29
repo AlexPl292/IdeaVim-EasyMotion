@@ -21,14 +21,15 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.testFramework.PlatformTestUtil
-import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.dropLastJump
+import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.CommandState
-import com.maddyhome.idea.vim.command.CommandState.SubMode.VISUAL_CHARACTER
-import com.maddyhome.idea.vim.command.CommandState.SubMode.VISUAL_LINE
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.inVisualMode
 import com.maddyhome.idea.vim.helper.vimSelectionStart
+import com.maddyhome.idea.vim.newapi.vim
+import com.maddyhome.idea.vim.state.mode.SelectionType
 import org.acejump.action.AceAction
 import org.acejump.session.AceJumpListener
 import org.acejump.session.Session
@@ -108,7 +109,7 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
 
     protected fun rightAfterAction(editor: Editor, session: Session) {
         // Add position to jump list
-        VimPlugin.getMark().saveJumpLocation(editor)
+        injector.jumpService.saveJumpLocation(editor.vim)
         processor.customization(editor, session)
         ResetAction.register(editor)
     }
@@ -116,29 +117,29 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
     protected fun finish(editor: Editor, query: String?) {
         processor.onFinish(editor, query)
         startSelection?.let {
-            editor.caretModel.currentCaret.vimSetSelection(it, editor.caretModel.offset, false)
+            editor.caretModel.currentCaret.vim.vimSetSelection(it, editor.caretModel.offset, false)
         }
 
         // Inclusive / Exclusive / Linewise for op mode
         val myInitialOffset = initialOffset
         if (myInitialOffset != null && CommandState.getInstance(editor).isOperatorPending) {
             val selectionType = when (processor.motionType) {
-                MotionType.LINE -> VISUAL_LINE
-                MotionType.INCLUSIVE -> VISUAL_CHARACTER
+                MotionType.LINE -> SelectionType.LINE_WISE
+                MotionType.INCLUSIVE -> SelectionType.CHARACTER_WISE
                 MotionType.BIDIRECTIONAL_INCLUSIVE -> {
-                    if (myInitialOffset < editor.caretModel.currentCaret.offset) VISUAL_CHARACTER else null
+                    if (myInitialOffset < editor.caretModel.currentCaret.offset) SelectionType.CHARACTER_WISE else null
                 }
                 else -> null
             }
             if (selectionType != null) {
-                VimPlugin.getVisualMotion().enterVisualMode(editor, selectionType)
-                editor.caretModel.currentCaret.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
+                injector.visualMotionGroup.enterVisualMode(editor.vim, selectionType)
+                editor.caretModel.currentCaret.vim.vimSetSelection(myInitialOffset, editor.caretModel.currentCaret.offset)
             }
         }
 
         // Remove position from jumps list if caret haven't moved
         if (myInitialOffset == editor.caretModel.offset) {
-            VimPlugin.getMark().jumps.dropLast(1)
+            injector.jumpService.dropLastJump(editor.vim)
         }
 
         ResetAction.unregister(editor)

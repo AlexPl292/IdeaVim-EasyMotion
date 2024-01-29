@@ -19,12 +19,11 @@
 package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.application.ApplicationManager
-import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
-import com.maddyhome.idea.vim.helper.StringHelper
-import com.maddyhome.idea.vim.option.OptionsManager
+import com.maddyhome.idea.vim.options.helpers.KeywordOptionHelper
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.doMapping
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.pluginPrefix
 
@@ -32,7 +31,7 @@ import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.
 fun mapToFunction(keys: String, handler: HandlerProcessor) {
     VimExtensionFacade.putExtensionHandlerMapping(
         MappingMode.NVO,
-        StringHelper.parseKeys(command(keys)),
+        injector.parser.parseKeys(command(keys)),
         EasyMotionExtension.mappingOwner,
         getHandler(handler),
         false
@@ -58,9 +57,9 @@ fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
     if (VimScriptGlobalEnvironment.getInstance().variables[doMapping] == 1) {
         VimExtensionFacade.putKeyMappingIfMissing(
             MappingMode.NVO,
-            StringHelper.parseKeys("${pluginPrefix}$keys"),
+            injector.parser.parseKeys("${pluginPrefix}$keys"),
             EasyMotionExtension.mappingOwner,
-            StringHelper.parseKeys(command(keys)),
+            injector.parser.parseKeys(command(keys)),
             true
         )
     }
@@ -70,7 +69,7 @@ fun command(keys: String) = "<Plug>(easymotion-$keys)"
 
 /** Create regex representation of isKeyword option */
 fun keywordRegex(): String? {
-    val regex = OptionsManager.iskeyword.toRegex()
+    val regex = KeywordOptionHelper.toRegex()
     if (regex.isEmpty()) return null
     return regex.joinToString("") { if (it.startsWith("[")) it.substring(1, it.lastIndex) else it }
 }
