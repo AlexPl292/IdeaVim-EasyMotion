@@ -24,9 +24,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.EventFacade
 import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
-import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.ShortcutOwnerInfo
 import org.acejump.session.SessionManager
 
@@ -52,7 +52,7 @@ object MappingConfigurator {
                         MappingMode.NVO,
                         listOf(keyStroke),
                         EasyMotionExtension.mappingOwner,
-                        parseKeys(command(alternative)),
+                        injector.parser.parseKeys(command(alternative)),
                         true
                     )
                     VimPlugin.getKey().savedShortcutConflicts[keyStroke] = ShortcutOwnerInfo.allVim
@@ -71,7 +71,7 @@ class ResetAction : AnAction() {
     companion object {
         private val INSTANCE = ResetAction()
 
-        private val customShortcutSet = parseKeys("<C-[>", "<C-c>")
+        private val customShortcutSet = injector.parser.parseKeys("<C-[>" + "<C-c>")
             .map { KeyboardShortcut(it, null) }.toTypedArray()
             .let { CustomShortcutSet(*it) }
 
