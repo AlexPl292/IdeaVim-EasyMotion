@@ -25,21 +25,21 @@ import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.MappingOwner
-import com.maddyhome.idea.vim.option.OptionsManager
-import com.maddyhome.idea.vim.option.ToggleOption
-import com.maddyhome.idea.vim.options.OptionScope
+import com.maddyhome.idea.vim.options.OptionAccessScope
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 
 class EasyMotionPrefixTest : EasyMotionTestCase() {
 
     override fun tearDown() {
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(0))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(0))
         super.tearDown()
     }
 
     fun `test create prefix`() {
         setupEditor()
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
         val prefixExists = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(EasyMotionExtension.pluginPrefix))
         assertTrue(prefixExists.isNotEmpty())
@@ -47,8 +47,9 @@ class EasyMotionPrefixTest : EasyMotionTestCase() {
 
     fun `test do not create prefix`() {
         setupEditor()
-        VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.doMapping] = 0
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
+        injector.variableService.storeGlobalVariable(EasyMotionExtension.doMapping, VimInt.ZERO)
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
         val prefixExists = mapping.filter { it.first.contains(StringHelper.parseKeys("\\").first()) }.any()
         assertFalse(prefixExists)
@@ -59,7 +60,8 @@ class EasyMotionPrefixTest : EasyMotionTestCase() {
         VimPlugin.getKey()
             .putKeyMapping(MappingMode.NVO, parseKeys(",s"), MappingOwner.IdeaVim.Other, parseKeys(command("s")), true)
 
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
 
         val mapping = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(command("s")))
         assertEquals(1, mapping.size)

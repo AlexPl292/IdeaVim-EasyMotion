@@ -27,13 +27,14 @@ import com.maddyhome.idea.vim.api.VimVisualPosition
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.api.isLineEmpty
 import com.maddyhome.idea.vim.command.MappingMode
-import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.extension.VimExtensionFacade.putKeyMappingIfMissing
 import com.maddyhome.idea.vim.helper.*
 import com.maddyhome.idea.vim.key.MappingOwner
 import com.maddyhome.idea.vim.newapi.vim
+import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
+import com.maddyhome.idea.vim.vimscript.model.datatypes.VimString
 import org.acejump.boundaries.Boundaries
 import org.acejump.boundaries.StandardBoundaries
 import org.acejump.input.JumpMode
@@ -76,14 +77,14 @@ class EasyMotionExtension : VimExtension {
     }
 
     override fun init() {
-        val vimScriptVariables = VimScriptGlobalEnvironment.getInstance().variables
+        val vimScriptVariables = injector.variableService.getGlobalVariables() as MutableMap
 
         vimScriptVariables.let { vars ->
-            vars[jumpAnywhere] = defaultRe
-            vars[lineJumpAnywhere] = defaultRe
-            if (doMapping !in vars) vars[doMapping] = 1
-            if (startOfLine !in vars) vars[startOfLine] = 1
-            if (overrideAcejump !in vars) vars[overrideAcejump] = 1
+            vars[jumpAnywhere] = VimString(defaultRe)
+            vars[lineJumpAnywhere] = VimString(defaultRe)
+            if (doMapping !in vars) vars[doMapping] = VimInt.ONE
+            if (startOfLine !in vars) vars[startOfLine] = VimInt.ONE
+            if (overrideAcejump !in vars) vars[overrideAcejump] = VimInt.ONE
         }
 
         // -----------  Default mapping table ---------------------//
@@ -192,12 +193,12 @@ class EasyMotionExtension : VimExtension {
         )
 
         // @formatter:on
-        if (vimScriptVariables[doMapping] == 1) {
+        if (vimScriptVariables[doMapping] == VimInt.ONE) {
             putKeyMappingIfMissing(MappingMode.NVO,
                 injector.parser.parseKeys(defaultPrefix), owner, injector.parser.parseKeys(pluginPrefix), true)
         }
 
-        if (vimScriptVariables[overrideAcejump] == 1) {
+        if (vimScriptVariables[overrideAcejump] == VimInt.ONE) {
             MappingConfigurator.configureMappings()
         }
     }
@@ -255,7 +256,7 @@ class EasyMotionExtension : VimExtension {
 
     private class Jumptoanywhere : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor, session: Session) {
-            val pattern = VimScriptGlobalEnvironment.getInstance().variables[jumpAnywhere] as? String ?: return
+            val pattern = injector.variableService.getGlobalVariableValue(jumpAnywhere)?.asString() ?: return
 
             val fileSize = editor.vim.fileSize()
             val startOffsets = SearchHelper.findAll(editor, pattern, 0, -1, false)
@@ -271,7 +272,7 @@ class EasyMotionExtension : VimExtension {
     /** Directions as in vim */
     private class JumptoanywhereInLine(private val direction: Int) : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor, session: Session) {
-            val pattern = VimScriptGlobalEnvironment.getInstance().variables[lineJumpAnywhere] as? String ?: return
+            val pattern = injector.variableService.getGlobalVariableValue(lineJumpAnywhere)?.asString() ?: return
             val boundary = when (direction) {
                 0 -> AfterCaretLineBoundary
                 1 -> BeforeCaretLineBoundary
@@ -321,7 +322,7 @@ class EasyMotionExtension : VimExtension {
 
     private class JkMotion(val boundary: Boundaries) : HandlerProcessor(LINE) {
         override fun customization(editor: Editor, session: Session) {
-            if (VimScriptGlobalEnvironment.getInstance().variables[startOfLine] != 0) {
+            if (injector.variableService.getGlobalVariableValue(startOfLine) != VimInt.ZERO) {
                 session.startRegexSearch(Pattern.LINE_INDENTS, boundary)
             } else {
                 val vp = editor.caretModel.visualPosition

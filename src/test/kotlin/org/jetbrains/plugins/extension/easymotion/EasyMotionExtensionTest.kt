@@ -22,14 +22,11 @@ import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.common.Direction
-import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.mode
 import com.maddyhome.idea.vim.newapi.vim
-import com.maddyhome.idea.vim.option.OptionsManager
-import com.maddyhome.idea.vim.option.ToggleOption
-import com.maddyhome.idea.vim.options.OptionScope
+import com.maddyhome.idea.vim.options.OptionAccessScope
 import com.maddyhome.idea.vim.vimscript.model.commands.parseOptionLine
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.startOfLine
@@ -38,11 +35,13 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     override fun setUp() {
         super.setUp()
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
     }
 
     override fun tearDown() {
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(0))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(0))
         super.tearDown()
     }
 
@@ -52,8 +51,8 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             searchQuery = "found",
             jumpToNthQuery = 0,
             afterEditorSetup = {
-                VimPlugin.getVisualMotion().enterVisualMode(it)
-                it.caretModel.currentCaret.vimSetSelection(0, 2)
+                injector.visualMotionGroup.enterVisualMode(it.vim)
+                it.caretModel.currentCaret.vim.vimSetSelection(0, 2)
             }
         ) { editorText, _ ->
             assertEquals(CommandState.Mode.VISUAL, myFixture.editor.mode)
@@ -140,7 +139,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
                 sh
                 Second long line
             """.trimIndent(),
-            afterEditorSetup = { VimScriptGlobalEnvironment.getInstance().variables[startOfLine] = 0 },
+            afterEditorSetup = { injector.variableService.storeGlobalVariable(startOfLine, VimInt(0)) },
             putCaretAtWord = "long"
         ) { editorText, jumpLocations ->
             // It should probably be one less jump location because currently AceJump includes the current line
@@ -170,7 +169,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
                 sh
                 Second very long line
             """.trimIndent(),
-            afterEditorSetup = { VimScriptGlobalEnvironment.getInstance().variables[startOfLine] = 0 },
+            afterEditorSetup = { injector.variableService.storeGlobalVariable(startOfLine, VimInt(0)) },
             putCaretAtWord = "very"
         ) { editorText, jumpLocations ->
             // It should probably be one less jump location because currently AceJump includes the current line
@@ -207,7 +206,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
         doTest(
             command = parseKeys(command("eol-k")),
             editorText = text.indentLineThatStartsWith("I found"),
-            afterEditorSetup = { VimPlugin.getVisualMotion().enterVisualMode(it) },
+            afterEditorSetup = { injector.visualMotionGroup.enterVisualMode(it.vim) },
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
             // It should probably be one less jump location because currently AceJump includes the current line
@@ -243,7 +242,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
         doTest(
             command = parseKeys(command("eol-j")),
             editorText = text.indentLineThatStartsWith("where"),
-            afterEditorSetup = { VimPlugin.getVisualMotion().enterVisualMode(it) },
+            afterEditorSetup = { injector.visualMotionGroup.enterVisualMode(it.vim) },
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
             // Bug in AceJump. Should be 3
@@ -807,7 +806,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             caretShift = 2,
             afterEditorSetup = {
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionScope.GLOBAL, false)
+                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(9, matchResults.size)
@@ -824,7 +823,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             caretShift = 2,
             afterEditorSetup = {
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionScope.GLOBAL, false)
+                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(10, matchResults.size)
@@ -841,7 +840,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             caretShift = 2,
             afterEditorSetup = {
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionScope.GLOBAL, false)
+                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(10 + 9, matchResults.size)
@@ -858,7 +857,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             caretShift = 2,
             afterEditorSetup = {
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionScope.GLOBAL, false)
+                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(10, matchResults.size)
@@ -875,7 +874,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             caretShift = 2,
             afterEditorSetup = {
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionScope.GLOBAL, false)
+                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(9, matchResults.size)
@@ -892,7 +891,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             caretShift = 2,
             afterEditorSetup = {
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionScope.GLOBAL, false)
+                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(9 + 10, matchResults.size)
@@ -1042,7 +1041,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "lavender",
             jumpToNthQuery = 2,
             afterEditorSetup = {
-                VimPlugin.getVisualMotion().enterVisualMode(it)
+                injector.visualMotionGroup.enterVisualMode(it.vim)
             }
         )
         myFixture.checkResult("""

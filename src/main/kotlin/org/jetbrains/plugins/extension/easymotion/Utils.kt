@@ -21,9 +21,9 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.application.ApplicationManager
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
-import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.maddyhome.idea.vim.options.helpers.KeywordOptionHelper
+import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.doMapping
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.pluginPrefix
 
@@ -54,7 +54,7 @@ fun getHandler(handler: HandlerProcessor): EasyHandlerBase {
  */
 fun mapToFunctionAndProvideKeys(keys: String, handler: HandlerProcessor) {
     mapToFunction(keys, handler)
-    if (VimScriptGlobalEnvironment.getInstance().variables[doMapping] == 1) {
+    if (injector.variableService.getGlobalVariableValue(doMapping) == VimInt.ONE) {
         VimExtensionFacade.putKeyMappingIfMissing(
             MappingMode.NVO,
             injector.parser.parseKeys("${pluginPrefix}$keys"),

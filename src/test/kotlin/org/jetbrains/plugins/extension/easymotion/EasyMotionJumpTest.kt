@@ -18,22 +18,22 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
-import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.injector
-import com.maddyhome.idea.vim.option.OptionsManager
-import com.maddyhome.idea.vim.option.ToggleOption
-import com.maddyhome.idea.vim.options.OptionScope
+import com.maddyhome.idea.vim.newapi.vim
+import com.maddyhome.idea.vim.options.OptionAccessScope
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 import junit.framework.TestCase
 
 class EasyMotionJumpTest : EasyMotionTestCase() {
     override fun setUp() {
         super.setUp()
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(1))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
     }
 
     override fun tearDown() {
-        injector.optionService.setOptionValue(OptionScope.GLOBAL, "easymotion", VimInt(0))
+        val option = injector.optionGroup.getOption("easymotion")!!
+        injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(0))
         super.tearDown()
     }
 
@@ -48,7 +48,7 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
             searchQuery = "rocks",
             jumpToNthQuery = 0
         )
-        val jumps = VimPlugin.getMark().jumps
+        val jumps = injector.jumpService.getJumps(myFixture.editor.vim.projectId)
 
         TestCase.assertEquals(2, jumps.size)
 
@@ -84,7 +84,7 @@ class EasyMotionJumpTest : EasyMotionTestCase() {
             jumpToNthQuery = 0
         )
 
-        val jumps = VimPlugin.getMark().jumps
+        val jumps = injector.jumpService.getJumps(myFixture.editor.vim.projectId)
 
         TestCase.assertEquals(3, jumps.size)
 
