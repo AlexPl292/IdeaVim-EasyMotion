@@ -71,6 +71,10 @@ object Build : BuildType({
         vcs {
         }
     }
+
+    failureConditions {
+        javaCrash = false
+    }
 })
 
 object Publish : BuildType({
@@ -93,5 +97,9 @@ object Publish : BuildType({
             buildFile = "build.gradle"
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
         }
+    }
+
+    failureConditions {
+        javaCrash = false
     }
 })
