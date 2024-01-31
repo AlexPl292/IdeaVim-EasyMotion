@@ -28,13 +28,12 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
-import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
+import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.group.visual.VimVisualTimer
-import com.maddyhome.idea.vim.helper.EditorDataContext
 import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.TestInputModel
-import com.maddyhome.idea.vim.newapi.IjExecutionContext
 import com.maddyhome.idea.vim.newapi.vim
+import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 import org.acejump.session.SessionManager
 import java.awt.Dimension
 import javax.swing.JViewport
@@ -130,7 +129,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     protected fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor
         val keyHandler = KeyHandler.getInstance()
-        val dataContext = IjExecutionContext(EditorDataContext.init(editor))
+        val dataContext = injector.executionContextManager.onEditor(editor.vim)
         TestInputModel.getInstance(editor).setKeyStrokes(keys)
 
         val inputModel = TestInputModel.getInstance(editor)
@@ -166,9 +165,9 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
         assertEmpty(myFixture.editor.markupModel.allHighlighters)
         TestObject.handlerWasCalled = false
         VimVisualTimer.swingTimer?.stop()
-        VimScriptGlobalEnvironment.getInstance().variables[EasyMotionExtension.startOfLine] = 1
-        VimScriptGlobalEnvironment.getInstance().variables.remove(EasyMotionExtension.doMapping)
-        VimPlugin.getMark().jumps.clear()
+        injector.variableService.storeGlobalVariable(EasyMotionExtension.startOfLine, VimInt(1))
+        (injector.variableService.getGlobalVariables() as MutableMap).remove(EasyMotionExtension.doMapping)
+        injector.jumpService.resetJumps()
         VimPlugin.getKey().resetKeyMappings()
         super.tearDown()
     }

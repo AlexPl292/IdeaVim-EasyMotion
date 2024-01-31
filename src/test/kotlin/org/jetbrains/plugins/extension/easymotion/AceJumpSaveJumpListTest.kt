@@ -22,7 +22,8 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.KeyboardShortcut
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.testFramework.PlatformTestUtil
-import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.injector
+import com.maddyhome.idea.vim.newapi.vim
 import junit.framework.TestCase
 import org.acejump.session.SessionManager
 import java.awt.event.InputEvent
@@ -35,7 +36,7 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
         jumpTo("found")
         jumpTo("rocks")
 
-        val jumps = VimPlugin.getMark().jumps
+        val jumps = injector.jumpService.getJumps(myFixture.editor.vim.projectId)
 
         TestCase.assertEquals(2, jumps.size)
 
@@ -54,7 +55,7 @@ class AceJumpSaveJumpListTest : EasyMotionTestCase() {
         jumpTo("rocks")
         jumpTo("settled")
 
-        val jumps = VimPlugin.getMark().jumps
+        val jumps = injector.jumpService.getJumps(myFixture.editor.vim.projectId)
 
         TestCase.assertEquals(3, jumps.size)
 

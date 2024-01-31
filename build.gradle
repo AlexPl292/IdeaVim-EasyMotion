@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     id "java"
-    id "org.jetbrains.intellij" version "1.12.0"
-    id "org.jetbrains.kotlin.jvm" version "1.5.0"
+    id "org.jetbrains.intellij" version "1.17.0"
+    id "org.jetbrains.kotlin.jvm" version "1.8.20"
 }
 
 group "org.jetbrains"
@@ -17,15 +20,15 @@ dependencies {
 }
 
 intellij {
-    version = "2023.2"
+    version = "2023.3.2"
 
     if (Boolean.valueOf(aceJumpFromMarketplace)) {
-        plugins.add("AceJump:3.8.10")
+        plugins.add("AceJump:3.8.18")
     } else {
         plugins.add(project(":AceJump"))
     }
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins.add("IdeaVIM:2.7.5")
+        plugins.add("IdeaVIM:2.8.1")
     } else {
         plugins.add(project(":IdeaVIM"))
     }
@@ -56,6 +59,14 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(17)
     }
 }
+
+// Switching to K2 because AceJump plugin also switched to it
+// https://github.com/acejump/AceJump/commit/c52f046a6ff8162e8b18541dff5fc9bda715c269
+tasks
+        .withType(KotlinCompilationTask.class)
+        .configureEach {
+            compilerOptions.languageVersion = KotlinVersion.KOTLIN_2_0
+        }
 
 if (hasProperty('buildScan')) {
     buildScan {
