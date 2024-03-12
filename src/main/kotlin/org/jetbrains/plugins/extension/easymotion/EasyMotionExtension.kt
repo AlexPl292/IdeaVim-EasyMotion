@@ -67,6 +67,7 @@ class EasyMotionExtension : VimExtension {
         private const val jumpAnywhere = "g:EasyMotion_re_anywhere"
         private const val lineJumpAnywhere = "g:EasyMotion_re_line_anywhere"
         const val doMapping = "g:EasyMotion_do_mapping"
+        const val doMappingNoG = "EasyMotion_do_mapping"
         const val startOfLine = "g:EasyMotion_startofline"
         const val overrideAcejump = "g:EasyMotion_override_acejump"
 
@@ -82,7 +83,7 @@ class EasyMotionExtension : VimExtension {
         vimScriptVariables.let { vars ->
             vars[jumpAnywhere] = VimString(defaultRe)
             vars[lineJumpAnywhere] = VimString(defaultRe)
-            if (doMapping !in vars) vars[doMapping] = VimInt.ONE
+            if (doMapping !in vars && doMappingNoG !in vars) vars[doMapping] = VimInt.ONE
             if (startOfLine !in vars) vars[startOfLine] = VimInt.ONE
             if (overrideAcejump !in vars) vars[overrideAcejump] = VimInt.ONE
         }
@@ -193,7 +194,7 @@ class EasyMotionExtension : VimExtension {
         )
 
         // @formatter:on
-        if (vimScriptVariables[doMapping] == VimInt.ONE) {
+        if (vimScriptVariables[doMapping] == VimInt.ONE || vimScriptVariables[doMappingNoG] == VimInt.ONE) {
             putKeyMappingIfMissing(MappingMode.NVO,
                 injector.parser.parseKeys(defaultPrefix), owner, injector.parser.parseKeys(pluginPrefix), true)
         }
