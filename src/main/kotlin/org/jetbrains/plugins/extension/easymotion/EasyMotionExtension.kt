@@ -351,7 +351,7 @@ class EasyMotionExtension : VimExtension {
                 counter++
                 val nextLine = vp.line + dir * counter
                 if (nextLine > lastLine || nextLine < 0) break
-                var offset = editor.vim.visualPositionToOffset(VimVisualPosition(nextLine, vp.column)).point
+                var offset = editor.visualPositionToOffset(VisualPosition(nextLine, vp.column))
                 if (editor.offsetToVisualPosition(offset).column < vp.column) {
                     if (!editor.vim.isLineEmpty(editor.offsetToVisualPosition(offset).line, false)) {
                         if (!editor.vim.isEndAllowed) offset--
