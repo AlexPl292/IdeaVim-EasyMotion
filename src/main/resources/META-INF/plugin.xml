@@ -16,7 +16,7 @@
     <depends>IdeaVIM</depends>
     <depends>AceJump</depends>
     
-    <idea-version since-build="233.11799.30"/>
+    <idea-version since-build="241.15989.150"/>
 
     <extensions defaultExtensionNs="IdeaVIM">
         <vimExtension implementation="org.jetbrains.plugins.extension.easymotion.EasyMotionExtension" name="easymotion">

@@ -129,13 +129,13 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     protected fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor
         val keyHandler = KeyHandler.getInstance()
-        val dataContext = injector.executionContextManager.onEditor(editor.vim)
+        val dataContext = injector.executionContextManager.getEditorExecutionContext(editor.vim)
         TestInputModel.getInstance(editor).setKeyStrokes(keys)
 
         val inputModel = TestInputModel.getInstance(editor)
         var key = inputModel.nextKeyStroke()
         while (key != null) {
-            keyHandler.handleKey(editor.vim, key, dataContext)
+            keyHandler.handleKey(editor.vim, key, dataContext, keyHandler.keyHandlerState)
             key = inputModel.nextKeyStroke()
         }
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()

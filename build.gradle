@@ -8,7 +8,7 @@ plugins {
 }
 
 group "org.jetbrains"
-version "1.13"
+version "1.14"
 
 repositories {
     mavenCentral()
@@ -20,15 +20,15 @@ dependencies {
 }
 
 intellij {
-    version = "2023.3.2"
+    version = "2024.1.1"
 
     if (Boolean.valueOf(aceJumpFromMarketplace)) {
-        plugins.add("AceJump:3.8.18")
+        plugins.add("AceJump:3.8.19")
     } else {
         plugins.add(project(":AceJump"))
     }
     if (Boolean.valueOf(ideaVimFromMarketplace)) {
-        plugins.add("IdeaVIM:2.8.1")
+        plugins.add("IdeaVIM:2.12.0")
     } else {
         plugins.add(project(":IdeaVIM"))
     }

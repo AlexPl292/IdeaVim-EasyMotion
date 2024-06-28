@@ -23,7 +23,6 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
 import com.maddyhome.idea.vim.VimPlugin
-import com.maddyhome.idea.vim.api.VimVisualPosition
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.api.isLineEmpty
 import com.maddyhome.idea.vim.command.MappingMode
@@ -246,7 +245,7 @@ class EasyMotionExtension : VimExtension {
                 }
             }
 
-            val startOffsets = SearchHelper.findAll(editor, lastSearch, lineRange.first, lineRange.second, false)
+            val startOffsets = injector.searchHelper.findAll(editor.vim, lastSearch, lineRange.first, lineRange.second, false)
                 .map { it.startOffset }
                 .filter { if (bidirect) true else if (lineRange.second == -1) it > currentOffset else it < currentOffset }
                 .toSortedSet()
@@ -260,7 +259,7 @@ class EasyMotionExtension : VimExtension {
             val pattern = injector.variableService.getGlobalVariableValue(jumpAnywhere)?.asString() ?: return
 
             val fileSize = editor.vim.fileSize()
-            val startOffsets = SearchHelper.findAll(editor, pattern, 0, -1, false)
+            val startOffsets = injector.searchHelper.findAll(editor.vim, pattern, 0, -1, false)
                 .map { it.startOffset }
 
                 // TODO: 09.04.2021 Some issues on the IdeaVim side. Adds a boundary outsize of the file size
@@ -281,7 +280,7 @@ class EasyMotionExtension : VimExtension {
             }
 
             val currentLine = editor.caretModel.logicalPosition.line
-            val startOffsets = SearchHelper.findAll(editor, pattern, currentLine, currentLine, false)
+            val startOffsets = injector.searchHelper.findAll(editor.vim, pattern, currentLine, currentLine, false)
                 .map { it.startOffset }
                 .filter { boundary.isOffsetInside(editor, it) }
                 .toSortedSet()
