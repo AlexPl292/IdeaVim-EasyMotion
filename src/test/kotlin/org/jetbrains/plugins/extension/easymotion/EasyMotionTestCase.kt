@@ -30,7 +30,6 @@ import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.group.visual.VimVisualTimer
-import com.maddyhome.idea.vim.helper.StringHelper
 import com.maddyhome.idea.vim.helper.TestInputModel
 import com.maddyhome.idea.vim.newapi.vim
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
@@ -124,7 +123,7 @@ abstract class EasyMotionTestCase : BasePlatformTestCase() {
     }
 
 
-    protected fun parseKeysWithLeader(keys: String): List<KeyStroke> = StringHelper.parseKeys("${EasyMotionExtension.defaultPrefix}$keys")
+    protected fun parseKeysWithLeader(keys: String): List<KeyStroke> = injector.parser.parseKeys("${EasyMotionExtension.defaultPrefix}$keys")
 
     protected fun typeText(keys: List<KeyStroke>) {
         val editor = myFixture.editor

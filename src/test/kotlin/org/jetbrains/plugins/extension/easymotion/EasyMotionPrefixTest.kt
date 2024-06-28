@@ -21,9 +21,6 @@ package org.jetbrains.plugins.extension.easymotion
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
-import com.maddyhome.idea.vim.ex.vimscript.VimScriptGlobalEnvironment
-import com.maddyhome.idea.vim.helper.StringHelper
-import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.key.MappingOwner
 import com.maddyhome.idea.vim.options.OptionAccessScope
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
@@ -41,7 +38,7 @@ class EasyMotionPrefixTest : EasyMotionTestCase() {
         val option = injector.optionGroup.getOption("easymotion")!!
         injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
-        val prefixExists = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(EasyMotionExtension.pluginPrefix))
+        val prefixExists = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, injector.parser.parseKeys(EasyMotionExtension.pluginPrefix))
         assertTrue(prefixExists.isNotEmpty())
     }
 
@@ -51,19 +48,19 @@ class EasyMotionPrefixTest : EasyMotionTestCase() {
         val option = injector.optionGroup.getOption("easymotion")!!
         injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
         val mapping = VimPlugin.getKey().getKeyMappingByOwner(EasyMotionExtension.mappingOwner)
-        val prefixExists = mapping.filter { it.first.contains(StringHelper.parseKeys("\\").first()) }.any()
+        val prefixExists = mapping.filter { it.first.contains(injector.parser.parseKeys("\\").first()) }.any()
         assertFalse(prefixExists)
     }
 
     fun `test remap prefix`() {
         setupEditor()
         VimPlugin.getKey()
-            .putKeyMapping(MappingMode.NVO, parseKeys(",s"), MappingOwner.IdeaVim.Other, parseKeys(command("s")), true)
+            .putKeyMapping(MappingMode.NVO, injector.parser.parseKeys(",s"), MappingOwner.IdeaVim.Other, injector.parser.parseKeys(command("s")), true)
 
         val option = injector.optionGroup.getOption("easymotion")!!
         injector.optionGroup.setOptionValue(option, OptionAccessScope.GLOBAL(null), VimInt(1))
 
-        val mapping = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, parseKeys(command("s")))
+        val mapping = VimPlugin.getKey().getMapTo(MappingMode.NORMAL, injector.parser.parseKeys(command("s")))
         assertEquals(1, mapping.size)
     }
 }

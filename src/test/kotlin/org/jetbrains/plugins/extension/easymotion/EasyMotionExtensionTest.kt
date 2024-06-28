@@ -23,7 +23,6 @@ import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.common.Direction
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
-import com.maddyhome.idea.vim.helper.StringHelper.parseKeys
 import com.maddyhome.idea.vim.helper.mode
 import com.maddyhome.idea.vim.newapi.vim
 import com.maddyhome.idea.vim.options.OptionAccessScope
@@ -75,7 +74,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Inclusive motion
     fun `test delete bidirectional forward`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("s"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("s"),
             putCaretAtWord = "lavender",
             searchQuery = "tufted",
             jumpToNthQuery = 0
@@ -93,7 +92,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test delete bidirectional backward`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("s"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("s"),
             putCaretAtWord = "lavender",
             searchQuery = "found",
             jumpToNthQuery = 0
@@ -109,7 +108,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test bidirectional line motion`() {
         doTest(
-            command = parseKeys(command("bd-jk")),
+            command = injector.parser.parseKeys(command("bd-jk")),
             editorText = text.indentLineThatStartsWith("I found"),
             putCaretAtWord = "all"
         ) { editorText, jumpLocations ->
@@ -180,7 +179,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test backward line motion sol`() {
         doTest(
-            command = parseKeys(command("sol-k")),
+            command = injector.parser.parseKeys(command("sol-k")),
             editorText = text.indentLineThatStartsWith("I found"),
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
@@ -192,7 +191,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test backward line motion eol`() {
         doTest(
-            command = parseKeys(command("eol-k")),
+            command = injector.parser.parseKeys(command("eol-k")),
             editorText = text.indentLineThatStartsWith("I found"),
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
@@ -204,7 +203,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test backward line motion eol visual mode`() {
         doTest(
-            command = parseKeys(command("eol-k")),
+            command = injector.parser.parseKeys(command("eol-k")),
             editorText = text.indentLineThatStartsWith("I found"),
             afterEditorSetup = { injector.visualMotionGroup.enterVisualMode(it.vim) },
             putCaretAtWord = "lavender"
@@ -217,7 +216,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test forward line motion sol`() {
         doTest(
-            command = parseKeys(command("sol-j")),
+            command = injector.parser.parseKeys(command("sol-j")),
             editorText = text.indentLineThatStartsWith("where"),
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
@@ -229,7 +228,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test forward line motion eol`() {
         doTest(
-            command = parseKeys(command("eol-j")),
+            command = injector.parser.parseKeys(command("eol-j")),
             editorText = text.indentLineThatStartsWith("where"),
             putCaretAtWord = "lavender"
         ) { editorText, jumpLocations ->
@@ -240,7 +239,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test forward line motion eol visual mode`() {
         doTest(
-            command = parseKeys(command("eol-j")),
+            command = injector.parser.parseKeys(command("eol-j")),
             editorText = text.indentLineThatStartsWith("where"),
             afterEditorSetup = { injector.visualMotionGroup.enterVisualMode(it.vim) },
             putCaretAtWord = "lavender"
@@ -278,7 +277,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test delete till word backward`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("b"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("b"),
             putCaretAtWord = "lavender",
             jumpToNthQuery = 11
         )
@@ -294,7 +293,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test both directions word motion`() {
         doTest(
-            command = parseKeys(command("bd-w")),
+            command = injector.parser.parseKeys(command("bd-w")),
             putCaretAtWord = "lavender",
             caretShift = 2
         ) { _, jumpLocations ->
@@ -319,7 +318,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Inclusive motion
     fun `test delete found`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("f"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("f"),
             putCaretAtWord = "lavender",
             searchQuery = "and",
             jumpToNthQuery = 0
@@ -349,7 +348,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test delete found backward`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("F"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("F"),
             putCaretAtWord = "lavender",
             searchQuery = "and",
             jumpToNthQuery = 1
@@ -378,7 +377,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Inclusive motion
     fun `test delete till found`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("t"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("t"),
             putCaretAtWord = "lavender",
             searchQuery = "and",
             jumpToNthQuery = 0
@@ -407,7 +406,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test delete till found backward`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("T"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("T"),
             putCaretAtWord = "lavender",
             searchQuery = "and",
             jumpToNthQuery = 1
@@ -424,7 +423,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test line motions are linewise for op pending`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("j"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("j"),
             editorText = text.indentLineThatStartsWith("where"),
             putCaretAtWord = "all",
             jumpToNthQuery = 1
@@ -441,7 +440,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line s motion`() {
         doTest(
-            command = parseKeys(command("sl")),
+            command = injector.parser.parseKeys(command("sl")),
             putCaretAtWord = "in",
             searchQuery = "nd"
         ) { editorText, matches ->
@@ -453,7 +452,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line f motion`() {
         doTest(
-            command = parseKeys(command("fl")),
+            command = injector.parser.parseKeys(command("fl")),
             putCaretAtWord = "in",
             searchQuery = "nd"
         ) { editorText, matches ->
@@ -465,7 +464,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line big f motion`() {
         doTest(
-            command = parseKeys(command("Fl")),
+            command = injector.parser.parseKeys(command("Fl")),
             putCaretAtWord = "in",
             searchQuery = "nd"
         ) { editorText, matches ->
@@ -477,7 +476,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line bd-fl motion`() {
         doTest(
-            command = parseKeys(command("bd-fl")),
+            command = injector.parser.parseKeys(command("bd-fl")),
             putCaretAtWord = "in",
             searchQuery = "nd"
         ) { editorText, matches ->
@@ -489,7 +488,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line tl motion`() {
         doTest(
-            command = parseKeys(command("tl")),
+            command = injector.parser.parseKeys(command("tl")),
             putCaretAtWord = "in",
             searchQuery = "nd",
             jumpToNthQuery = 1
@@ -506,7 +505,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line big T motion`() {
         doTest(
-            command = parseKeys(command("Tl")),
+            command = injector.parser.parseKeys(command("Tl")),
             putCaretAtWord = "in",
             searchQuery = "nd",
             jumpToNthQuery = 0
@@ -523,7 +522,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line bd-tl motion`() {
         doTest(
-            command = parseKeys(command("bd-tl")),
+            command = injector.parser.parseKeys(command("bd-tl")),
             putCaretAtWord = "in",
             searchQuery = "nd",
             jumpToNthQuery = 2
@@ -540,7 +539,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line w motion`() {
         doTest(
-            command = parseKeys(command("wl")),
+            command = injector.parser.parseKeys(command("wl")),
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
@@ -552,7 +551,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line b motion`() {
         doTest(
-            command = parseKeys(command("bl")),
+            command = injector.parser.parseKeys(command("bl")),
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
@@ -564,7 +563,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line bd-wl motion`() {
         doTest(
-            command = parseKeys(command("bd-wl")),
+            command = injector.parser.parseKeys(command("bd-wl")),
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
@@ -588,7 +587,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Inclusive motion
     fun `test delete word end`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("e"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("e"),
             putCaretAtWord = "lavender",
             jumpToNthQuery = 1
         )
@@ -615,7 +614,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test jump to word end bd`() {
         doTest(
-            command = parseKeys(command("bd-e")),
+            command = injector.parser.parseKeys(command("bd-e")),
             putCaretAtWord = "lavender"
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(12 + 20, matchResults.size)
@@ -626,7 +625,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line e motion`() {
         doTest(
-            command = parseKeys(command("el")),
+            command = injector.parser.parseKeys(command("el")),
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
@@ -638,7 +637,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line ge motion`() {
         doTest(
-            command = parseKeys(command("gel")),
+            command = injector.parser.parseKeys(command("gel")),
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
@@ -650,7 +649,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test within line bd-ge motion`() {
         doTest(
-            command = parseKeys(command("bd-el")),
+            command = injector.parser.parseKeys(command("bd-el")),
             putCaretAtWord = "in",
             caretShift = 1
         ) { editorText, matches ->
@@ -674,7 +673,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test delete big word`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("W"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("W"),
             editorText = text.replace("tufted grass", "tufted.grass").replace("was settled", "was#settled"),
             putCaretAtWord = "lavender",
             caretShift = 2,
@@ -704,7 +703,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test delete big word backward`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("B"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("B"),
             editorText = text.replace("tufted grass", "tufted.grass").replace("was settled", "was#settled"),
             putCaretAtWord = "lavender",
             caretShift = 2,
@@ -752,7 +751,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     // Exclusive motion
     fun `test end of big word`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("E"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("E"),
             editorText = text.replace("found it", "found.it")
                 .replace("legendary land", "legendary#land")
                 .replace("tufted grass", "tufted.grass")
@@ -786,7 +785,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test bd big word end motion`() {
         doTest(
-            command = parseKeys(command("bd-E")),
+            command = injector.parser.parseKeys(command("bd-E")),
             editorText = text.replace("found it", "found.it")
                 .replace("legendary land", "legendary#land")
                 .replace("tufted grass", "tufted.grass")
@@ -800,7 +799,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test iskeyword w`() {
         doTest(
-            command = parseKeys(command("iskeyword-w")),
+            command = injector.parser.parseKeys(command("iskeyword-w")),
             editorText = iskeywordText,
             putCaretAtWord = "middle",
             caretShift = 2,
@@ -817,7 +816,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test iskeyword b`() {
         doTest(
-            command = parseKeys(command("iskeyword-b")),
+            command = injector.parser.parseKeys(command("iskeyword-b")),
             editorText = iskeywordText,
             putCaretAtWord = "middle",
             caretShift = 2,
@@ -834,7 +833,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test iskeyword bd-w`() {
         doTest(
-            command = parseKeys(command("iskeyword-bd-w")),
+            command = injector.parser.parseKeys(command("iskeyword-bd-w")),
             editorText = iskeywordText,
             putCaretAtWord = "middle",
             caretShift = 2,
@@ -851,7 +850,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test iskeyword e`() {
         doTest(
-            command = parseKeys(command("iskeyword-e")),
+            command = injector.parser.parseKeys(command("iskeyword-e")),
             editorText = iskeywordText,
             putCaretAtWord = "middle",
             caretShift = 2,
@@ -868,7 +867,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test iskeyword ge`() {
         doTest(
-            command = parseKeys(command("iskeyword-ge")),
+            command = injector.parser.parseKeys(command("iskeyword-ge")),
             editorText = iskeywordText,
             putCaretAtWord = "middle",
             caretShift = 2,
@@ -885,7 +884,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test iskeyword bd-e`() {
         doTest(
-            command = parseKeys(command("iskeyword-bd-e")),
+            command = injector.parser.parseKeys(command("iskeyword-bd-e")),
             editorText = iskeywordText,
             putCaretAtWord = "middle",
             caretShift = 2,
@@ -903,7 +902,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test jumptoanywhere`() {
         doTest(
             editorText = "Hello\nWorld",
-            command = parseKeys(command("jumptoanywhere"))
+            command = injector.parser.parseKeys(command("jumptoanywhere"))
         ) { _: String, matchResults: List<Int> ->
             assertEquals(4, matchResults.size)
         }
@@ -912,7 +911,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test lineforward`() {
         doTest(
             editorText = "This is a text for test",
-            command = parseKeys(command("lineforward")),
+            command = injector.parser.parseKeys(command("lineforward")),
             putCaretAtWord = "text",
             caretShift = 2
         ) { editorText: String, matchResults: List<Int> ->
@@ -925,7 +924,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test linebackward`() {
         doTest(
             editorText = "This is a text for test",
-            command = parseKeys(command("linebackward")),
+            command = injector.parser.parseKeys(command("linebackward")),
             putCaretAtWord = "text",
             caretShift = 2
         ) { editorText: String, matchResults: List<Int> ->
@@ -938,7 +937,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test lineanywhere`() {
         doTest(
             editorText = "This is a text for test",
-            command = parseKeys(command("lineanywhere")),
+            command = injector.parser.parseKeys(command("lineanywhere")),
             putCaretAtWord = "text",
             caretShift = 2
         ) { editorText: String, matchResults: List<Int> ->
@@ -954,7 +953,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeysWithLeader("n"),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -968,7 +967,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeysWithLeader("N"),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -979,10 +978,10 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test repeat search forward respect`() {
         doTest(
             editorText = "Hello middle Hello",
-            command = parseKeys(command("vim-n")),
+            command = injector.parser.parseKeys(command("vim-n")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -993,10 +992,10 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test repeat search backward respect`() {
         doTest(
             editorText = "Hello middle Hello",
-            command = parseKeys(command("vim-N")),
+            command = injector.parser.parseKeys(command("vim-N")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -1007,7 +1006,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
     fun `test repeat search bd`() {
         doTest(
             editorText = "Hello middle Hello",
-            command = parseKeys(command("bd-n")),
+            command = injector.parser.parseKeys(command("bd-n")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
                 VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
@@ -1021,7 +1020,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
 
     fun `test delete till word`() {
         doTest(
-            command = parseKeys("d") + parseKeysWithLeader("w"),
+            command = injector.parser.parseKeys("d") + parseKeysWithLeader("w"),
             putCaretAtWord = "lavender",
             jumpToNthQuery = 2
         )

@@ -222,11 +222,11 @@ class EasyMotionExtension : VimExtension {
         val bidirect: Boolean = false
     ) : HandlerProcessor(EXCLUSIVE) {
         override fun customization(editor: Editor, session: Session) {
-            val lastSearch = VimPlugin.getSearch().lastSearchPattern ?: run {
+            val lastSearch = injector.searchGroup.lastSearchPattern ?: run {
                 session.end()
                 return
             }
-            val lastDirection = VimPlugin.getSearch().lastDir
+            val lastDirection = injector.searchGroup.getLastSearchDirection().toInt()
 
             val currentOffset = editor.caretModel.offset
             val currentLine = editor.caretModel.logicalPosition.line
