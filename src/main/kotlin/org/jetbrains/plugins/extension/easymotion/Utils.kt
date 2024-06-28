@@ -30,7 +30,7 @@ import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.
 
 /** Map some <Plug>(easymotion-[keys]) command to given handler */
 fun mapToFunction(keys: String, handler: HandlerProcessor) {
-    VimExtensionFacade.putExtensionHandlerMapping(
+    injector.keyGroup.putKeyMapping(
         MappingMode.NVO,
         injector.parser.parseKeys(command(keys)),
         EasyMotionExtension.mappingOwner,

@@ -22,7 +22,7 @@ package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
-import com.maddyhome.idea.vim.VimPlugin
+import com.maddyhome.idea.vim.api.getVisualLineCount
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.api.isLineEmpty
 import com.maddyhome.idea.vim.command.MappingMode
@@ -184,7 +184,7 @@ class EasyMotionExtension : VimExtension {
         mapToFunction("Tln", MultiInputPreStop(EXCLUSIVE, BeforeCaretLineBoundary))
         mapToFunction("bd-tln", BiDirectionalPreStop(true))
 
-        VimExtensionFacade.putExtensionHandlerMapping(
+        injector.keyGroup.putKeyMapping(
             MappingMode.NVO,
             injector.parser.parseKeys("<Plug>(acejump-linemarks)"),
             owner,
@@ -345,7 +345,7 @@ class EasyMotionExtension : VimExtension {
             val dir = if (direction) 1 else -1
             var counter = 0
             val res = mutableSetOf<Int>()
-            val lastLine = EditorHelper.getVisualLineCount(editor)
+            val lastLine = editor.vim.getVisualLineCount()
             while (counter >= 0) {
                 counter++
                 val nextLine = vp.line + dir * counter
