@@ -20,12 +20,12 @@ package org.jetbrains.plugins.extension.easymotion
 
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.injector
-import com.maddyhome.idea.vim.command.CommandState
 import com.maddyhome.idea.vim.common.Direction
 import com.maddyhome.idea.vim.group.visual.vimSetSelection
-import com.maddyhome.idea.vim.helper.mode
 import com.maddyhome.idea.vim.newapi.vim
 import com.maddyhome.idea.vim.options.OptionAccessScope
+import com.maddyhome.idea.vim.state.mode.Mode
+import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.maddyhome.idea.vim.vimscript.model.commands.parseOptionLine
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimInt
 import org.jetbrains.plugins.extension.easymotion.EasyMotionExtension.Companion.startOfLine
@@ -54,7 +54,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
                 it.caretModel.currentCaret.vim.vimSetSelection(0, 2)
             }
         ) { editorText, _ ->
-            assertEquals(CommandState.Mode.VISUAL, myFixture.editor.mode)
+            assertEquals(Mode.VISUAL(selectionType = SelectionType.CHARACTER_WISE), myFixture.editor.vim.mode)
             myFixture.editor.caretModel.currentCaret.let { caret ->
                 assertEquals(0, caret.selectionStart)
                 assertEquals(editorText.indexOf("found") + 1, caret.selectionEnd)
@@ -953,7 +953,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeysWithLeader("n"),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, 1, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -967,7 +967,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = parseKeysWithLeader("N"),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, 1, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -981,7 +981,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = injector.parser.parseKeys(command("vim-n")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, 1, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -995,7 +995,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = injector.parser.parseKeys(command("vim-N")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                injector.searchGroup.processSearchCommand(it.vim, "Hello", 0, 1, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(1, matchResults.size)
@@ -1009,7 +1009,7 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             command = injector.parser.parseKeys(command("bd-n")),
             putCaretAtWord = "middle",
             afterEditorSetup = {
-                VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, Direction.BACKWARDS)
+                VimPlugin.getSearch().processSearchCommand(it.vim, "Hello", 0, 1, Direction.BACKWARDS)
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(2, matchResults.size)
