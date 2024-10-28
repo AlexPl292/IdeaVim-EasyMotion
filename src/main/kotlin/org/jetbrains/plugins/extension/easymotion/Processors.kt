@@ -21,7 +21,6 @@ package org.jetbrains.plugins.extension.easymotion
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.testFramework.PlatformTestUtil
-import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.api.dropLastJump
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.extension.VimExtensionHandler
@@ -29,6 +28,7 @@ import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.helper.inVisualMode
 import com.maddyhome.idea.vim.helper.vimSelectionStart
 import com.maddyhome.idea.vim.newapi.vim
+import com.maddyhome.idea.vim.state.mode.Mode
 import com.maddyhome.idea.vim.state.mode.SelectionType
 import org.acejump.action.AceAction
 import org.acejump.session.AceJumpListener
@@ -122,8 +122,7 @@ abstract class EasyHandlerBase(private val processor: HandlerProcessor) : VimExt
 
         // Inclusive / Exclusive / Linewise for op mode
         val myInitialOffset = initialOffset
-        val keyHandler = KeyHandler.getInstance()
-        if (myInitialOffset != null && keyHandler.isOperatorPending(editor.vim.mode, keyHandler.keyHandlerState)) {
+        if (myInitialOffset != null && editor.vim.mode is Mode.OP_PENDING) {
             val selectionType = when (processor.motionType) {
                 MotionType.LINE -> SelectionType.LINE_WISE
                 MotionType.INCLUSIVE -> SelectionType.CHARACTER_WISE
