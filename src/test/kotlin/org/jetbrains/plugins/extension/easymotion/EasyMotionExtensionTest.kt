@@ -18,6 +18,7 @@
 
 package org.jetbrains.plugins.extension.easymotion
 
+import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.common.Direction
@@ -804,8 +805,9 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "middle",
             caretShift = 2,
             afterEditorSetup = {
+                val context = EditorUtil.getEditorDataContext(it).vim
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
+                parseOptionLine(it.vim, context, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(9, matchResults.size)
@@ -821,8 +823,9 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "middle",
             caretShift = 2,
             afterEditorSetup = {
+                val context = EditorUtil.getEditorDataContext(it).vim
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
+                parseOptionLine(it.vim, context,  "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(10, matchResults.size)
@@ -838,8 +841,9 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "middle",
             caretShift = 2,
             afterEditorSetup = {
+                val context = EditorUtil.getEditorDataContext(it).vim
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
+                parseOptionLine(it.vim, context,  "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(10 + 9, matchResults.size)
@@ -855,8 +859,9 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "middle",
             caretShift = 2,
             afterEditorSetup = {
+                val context = EditorUtil.getEditorDataContext(it).vim
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
+                parseOptionLine(it.vim, context,  "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(10, matchResults.size)
@@ -872,8 +877,9 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "middle",
             caretShift = 2,
             afterEditorSetup = {
+                val context = EditorUtil.getEditorDataContext(it).vim
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
+                parseOptionLine(it.vim, context,  "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(9, matchResults.size)
@@ -889,8 +895,9 @@ class EasyMotionExtensionTest : EasyMotionTestCase() {
             putCaretAtWord = "middle",
             caretShift = 2,
             afterEditorSetup = {
+                val context = EditorUtil.getEditorDataContext(it).vim
                 val value = "@,-"
-                parseOptionLine(it.vim, "iskeyword=$value", OptionAccessScope.GLOBAL(null))
+                parseOptionLine(it.vim, context,  "iskeyword=$value", OptionAccessScope.GLOBAL(null))
             }
         ) { editorText: String, matchResults: List<Int> ->
             assertEquals(9 + 10, matchResults.size)

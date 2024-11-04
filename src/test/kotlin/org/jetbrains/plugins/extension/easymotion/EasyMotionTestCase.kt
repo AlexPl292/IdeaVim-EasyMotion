@@ -39,6 +39,12 @@ import javax.swing.JViewport
 import javax.swing.KeyStroke
 
 abstract class EasyMotionTestCase : BasePlatformTestCase() {
+    override fun setUp() {
+        super.setUp()
+        TestObject.dispatchAllEvents = { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
+        TestObject.dispatchAllInvokEvents = { PlatformTestUtil.dispatchAllEventsInIdeEventQueue() }
+    }
+
     protected fun doTest(
         command: List<KeyStroke>,
         editorText: String = text,

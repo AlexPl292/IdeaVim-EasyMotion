@@ -165,3 +165,5 @@ Temporary Items
 /.idea/vcs.xml
 /.idea/jarRepositories.xml
 /.idea/modules.xml
+
+.intellijPlatform

@@ -20,7 +20,6 @@ package org.jetbrains.plugins.extension.easymotion
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
-import com.intellij.testFramework.PlatformTestUtil
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.api.dropLastJump
 import com.maddyhome.idea.vim.api.injector
@@ -73,6 +72,8 @@ object TestObject {
 
     var handler: (editorText: String, jumpLocations: List<Int>) -> Unit = { _, _ -> }
     var inputQuery: (Session) -> String = { "" }
+    var dispatchAllEvents: () -> Unit = { }
+    var dispatchAllInvokEvents: () -> Unit = { }
 
     /** Handler that is used during unit tests */
     class TestHandler(processor: HandlerProcessor) : EasyHandlerBase(processor) {
@@ -82,13 +83,13 @@ object TestObject {
             beforeAction(editor)
 
             val session = SessionManager.start(editor)
-            PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+            dispatchAllInvokEvents()
 
             rightAfterAction(editor, session)
 
-            PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+            dispatchAllInvokEvents()
             val query = inputQuery(session)
-            PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+            dispatchAllEvents()
             finish(editor, query)
             continueVimExecution()
 
