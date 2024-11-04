@@ -62,7 +62,7 @@ object Build : BuildType({
     steps {
         gradle {
             tasks = "clean :test"
-            buildFile = "build.gradle"
+            buildFile = "build.gradle.kts"
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
         }
     }
@@ -94,7 +94,7 @@ object Publish : BuildType({
     steps {
         gradle {
             tasks = "clean publishPlugin"
-            buildFile = "build.gradle"
+            buildFile = "build.gradle.kts"
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
         }
     }
