@@ -1,9 +1,10 @@
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.aware.SplitModeAware
 
 plugins {
     java
-    id("org.jetbrains.intellij.platform") version "2.1.0"
-    id("org.jetbrains.kotlin.jvm")version "1.9.24"
+    id("org.jetbrains.intellij.platform") version "2.11.0"
+    id("org.jetbrains.kotlin.jvm") version "2.2.21"
 }
 
 group = "org.jetbrains"
@@ -21,9 +22,9 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     intellijPlatform {
-        create("IU", "2024.1.1")
-        plugins("AceJump:3.8.20")
-        plugins("IdeaVIM:2.16.0")
+        create("IU", "2025.3")
+        plugins("AceJump:3.8.19")
+        plugin("IdeaVIM:2.31.0-eap.1@eap")
 
         pluginVerifier()
         zipSigner()
@@ -57,34 +58,33 @@ intellijPlatform {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
-    sourceSets.all {
-        languageSettings.apply {
-            languageVersion = "2.0"
+    compilerOptions {
+        freeCompilerArgs = listOf(
+            // AceJump is compiled with a pre-release Kotlin version
+            "-Xskip-prerelease-check",
+            "-Xallow-unstable-dependencies",
+        )
+    }
+}
+
+intellijPlatformTesting {
+    runIde {
+        register("runIdeSplitMode") {
+            splitMode = true
+            splitModeTarget = SplitModeAware.SplitModeTarget.BOTH
         }
     }
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = "17"
-        }
-    }
-
-    compileTestKotlin {
-        kotlinOptions {
-            jvmTarget = "17"
-        }
-    }
-
     wrapper {
         gradleVersion = gradleVersion
     }
